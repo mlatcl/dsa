@@ -936,7 +936,7 @@ Introduction to Gaussian processes given by Neil Lawrence at the 2014 Gaussian p
 <h2></h2>
 <p><span class="math display">\[
 \begin{aligned}
-    \mathcal{N}\left(\mathbf{ y}|\mathbf{0},\mathbf{K}\right)=\frac{1}{(2\pi)^\frac{n}{2}{\color{yellow} \det{\mathbf{K}}^{\frac{1}{2}}}}{\color{cyan}\exp\left(-\frac{\mathbf{ y}^{\top}\mathbf{K}^{-1}\mathbf{ y}}{2}\right)}
+    \mathcal{N}\left(\mathbf{ y}|\mathbf{0},\mathbf{K}\right)=\frac{1}{(2\pi)^\frac{n}{2}\color{yellow}{\det{\mathbf{K}}^{\frac{1}{2}}}}\color{cyan}{\exp\left(-\frac{\mathbf{ y}^{\top}\mathbf{K}^{-1}\mathbf{ y}}{2}\right)}
 \end{aligned}
 \]</span></p>
 </section>
@@ -944,11 +944,11 @@ Introduction to Gaussian processes given by Neil Lawrence at the 2014 Gaussian p
 <h2></h2>
 <p><span class="math display">\[
 \begin{aligned}
-    \log \mathcal{N}\left(\mathbf{ y}|\mathbf{0},\mathbf{K}\right)=&amp;{\color{yellow}-\frac{1}{2}\log\det{\mathbf{K}}}{\color{cyan}-\frac{\mathbf{ y}^{\top}\mathbf{K}^{-1}\mathbf{ y}}{2}} \\ &amp;-\frac{n}{2}\log2\pi
+    \log \mathcal{N}\left(\mathbf{ y}|\mathbf{0},\mathbf{K}\right)=&amp;\color{yellow}{-\frac{1}{2}\log\det{\mathbf{K}}}\color{cyan}{-\frac{\mathbf{ y}^{\top}\mathbf{K}^{-1}\mathbf{ y}}{2}} \\ &amp;-\frac{n}{2}\log2\pi
 \end{aligned}
 \]</span></p>
 <p><span class="math display">\[
-E(\boldsymbol{ \theta}) = {\color{yellow} \frac{1}{2}\log\det{\mathbf{K}}} + {\color{cyan} \frac{\mathbf{ y}^{\top}\mathbf{K}^{-1}\mathbf{ y}}{2}}
+E(\boldsymbol{ \theta}) = \color{yellow}{\frac{1}{2}\log\det{\mathbf{K}}} + \color{cyan}{\frac{\mathbf{ y}^{\top}\mathbf{K}^{-1}\mathbf{ y}}{2}}
 \]</span></p>
 </section>
 <section id="section-24" class="slide level2">
@@ -978,19 +978,19 @@ E(\boldsymbol{ \theta}) = {\color{yellow} \frac{1}{2}\log\det{\mathbf{K}}} + {\c
 <li>Useful representation since <span class="math inline">\(\det{\mathbf{K}} = \det{\boldsymbol{ \Lambda}^2} = \det{\boldsymbol{ \Lambda}}^2\)</span>.</li>
 </ul>
 </section>
-<section id="capacity-control-coloryellow-log-detmathbfk" class="slide level2">
-<h2>Capacity control: <span class="math inline">\({\color{yellow} \log \det{\mathbf{K}}}\)</span></h2>
+<section id="capacity-control-coloryellowlog-detmathbfk" class="slide level2">
+<h2>Capacity control: <span class="math inline">\(\color{yellow}{\log \det{\mathbf{K}}}\)</span></h2>
 <!--
 \only<1>{\input{../../../gp/tex/diagrams/gpOptimiseDeterminant1.svg}}\only<2>{\input{../../../gp/tex/diagrams/gpOptimiseDeterminant2.svg}}\only<3>{\input{../../../gp/tex/diagrams/gpOptimiseDeterminant3.svg}}\only<4>{\input{../../../gp/tex/diagrams/gpOptimiseDeterminant4.svg}}\only<5>{\input{../../../gp/tex/diagrams/gpOptimiseDeterminant5.svg}}\only<6>{\input{../../../gp/tex/diagrams/gpOptimiseDeterminant6.svg}}\only<7>{\input{../../../gp/tex/diagrams/gpOptimiseDeterminant7.svg}}\only<8>{\input{../../../gp/tex/diagrams/gpOptimiseDeterminant8.svg}}\only<9>{\input{../../../gp/tex/diagrams/gpOptimiseDeterminant9.svg}}\only<10>{\input{../../../gp/tex/diagrams/gpOptimiseDeterminant10.svg}}-->
 </section>
-<section id="data-fit-colorcyan-fracmathbf-ytopmathbfk-1mathbf-y2" class="slide level2">
-<h2>Data Fit: <span class="math inline">\({\color{cyan} \frac{\mathbf{ y}^\top\mathbf{K}^{-1}\mathbf{ y}}{2}}\)</span></h2>
+<section id="data-fit-colorcyanfracmathbf-ytopmathbfk-1mathbf-y2" class="slide level2">
+<h2>Data Fit: <span class="math inline">\(\color{cyan}{\frac{\mathbf{ y}^\top\mathbf{K}^{-1}\mathbf{ y}}{2}}\)</span></h2>
 <!--
 
 \only<1>{\input{../../../gp/tex/diagrams/gpOptimiseQuadratic1.svg}}\only<2>{\input{../../../gp/tex/diagrams/gpOptimiseQuadratic2.svg}}\only<3>{\input{../../../gp/tex/diagrams/gpOptimiseQuadratic3.svg}}-->
 </section>
 <section id="eboldsymbol-theta-coloryellowfrac12logdetmathbfkcolorcyanfracmathbf-ytopmathbfk-1mathbf-y2" class="slide level2">
-<h2><span class="math display">\[E(\boldsymbol{ \theta}) = {\color{yellow}\frac{1}{2}\log\det{\mathbf{K}}}+{\color{cyan}\frac{\mathbf{ y}^{\top}\mathbf{K}^{-1}\mathbf{ y}}{2}}\]</span></h2>
+<h2><span class="math display">\[E(\boldsymbol{ \theta}) = \color{yellow}{\frac{1}{2}\log\det{\mathbf{K}}}+\color{cyan}{\frac{\mathbf{ y}^{\top}\mathbf{K}^{-1}\mathbf{ y}}{2}}\]</span></h2>
 <script>
 showDivs(0, 'gp-optimise');
 </script>
@@ -1422,7 +1422,7 @@ circle {
 <title>
 James Hensman
 </title>
-<image preserveAspectRatio="xMinYMin slice" width="100%" xlink:href="../slides/diagrams/people/james-hensman.jpg" clip-path="url(#clip4)"/>
+<image preserveAspectRatio="xMinYMin slice" width="100%" xlink:href="../slides/diagrams/people/james-hensman.png" clip-path="url(#clip4)"/>
 </svg>
 <svg viewBox="0 0 200 200" style="width:15%">
 <defs> <clipPath id="clip5">

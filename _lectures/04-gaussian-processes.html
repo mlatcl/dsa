@@ -476,22 +476,24 @@ $$</span><br /> So we see that the kernel function is developed from an inner pr
 <p>In general we won’t be able to find parameters of the covariance function through fixed point equations, we will need to do gradient based optimization.</p>
 <h2 id="capacity-control-and-data-fit">Capacity Control and Data Fit</h2>
 <p>The objective function can be decomposed into two terms, a capacity control term, and a data fit term. The capacity control term is the log determinant of the covariance. The data fit term is the matrix inner product between the data and the inverse covariance.</p>
+<h2 id="learning-covariance-parameters">Learning Covariance Parameters</h2>
+<p><span style="text-align:right"><span class="editsection-bracket" style="">[</span><span class="editsection" style=""><a href="https://github.com/lawrennd/talks/edit/gh-pages/_gp/includes/gp-optimize-eigenvector.md" target="_blank" onclick="ga('send', 'event', 'Edit Page', 'Edit', 'https://github.com/lawrennd/talks/edit/gh-pages/_gp/includes/gp-optimize-eigenvector.md', 13);">edit</a></span><span class="editsection-bracket" style="">]</span></span></p>
 <p>Can we determine covariance parameters from the data?</p>
 <p><br /><span class="math display">$$
 \gaussianDist{\dataVector}{\mathbf{0}}{\kernelMatrix}=\frac{1}{(2\pi)^\frac{\numData}{2}{\det{\kernelMatrix}^{\frac{1}{2}}}}{\exp\left(-\frac{\dataVector^{\top}\kernelMatrix^{-1}\dataVector}{2}\right)}
 $$</span><br /></p>
 <p><br /><span class="math display">$$
 \begin{aligned}
-    \gaussianDist{\dataVector}{\mathbf{0}}{\kernelMatrix}=\frac{1}{(2\pi)^\frac{\numData}{2}{\color{blue} \det{\kernelMatrix}^{\frac{1}{2}}}}{\color{red}\exp\left(-\frac{\dataVector^{\top}\kernelMatrix^{-1}\dataVector}{2}\right)}
+    \gaussianDist{\dataVector}{\mathbf{0}}{\kernelMatrix}=\frac{1}{(2\pi)^\frac{\numData}{2}\color{blue}{\det{\kernelMatrix}^{\frac{1}{2}}}}\color{red}{\exp\left(-\frac{\dataVector^{\top}\kernelMatrix^{-1}\dataVector}{2}\right)}
 \end{aligned}
 $$</span><br /></p>
 <p><br /><span class="math display">$$
 \begin{aligned}
-    \log \gaussianDist{\dataVector}{\mathbf{0}}{\kernelMatrix}=&amp;{\color{blue}-\frac{1}{2}\log\det{\kernelMatrix}}{\color{red}-\frac{\dataVector^{\top}\kernelMatrix^{-1}\dataVector}{2}} \\ &amp;-\frac{\numData}{2}\log2\pi
+    \log \gaussianDist{\dataVector}{\mathbf{0}}{\kernelMatrix}=&amp;\color{blue}{-\frac{1}{2}\log\det{\kernelMatrix}}\color{red}{-\frac{\dataVector^{\top}\kernelMatrix^{-1}\dataVector}{2}} \\ &amp;-\frac{\numData}{2}\log2\pi
 \end{aligned}
 $$</span><br /></p>
 <p><br /><span class="math display">$$
-\errorFunction(\parameterVector) = {\color{blue} \frac{1}{2}\log\det{\kernelMatrix}} + {\color{red} \frac{\dataVector^{\top}\kernelMatrix^{-1}\dataVector}{2}}
+\errorFunction(\parameterVector) = \color{blue}{\frac{1}{2}\log\det{\kernelMatrix}} + \color{red}{\frac{\dataVector^{\top}\kernelMatrix^{-1}\dataVector}{2}}
 $$</span><br /></p>
 <p>The parameters are <em>inside</em> the covariance function (matrix).  <br /><span class="math display">$$\kernelScalar_{i, j} = \kernelScalar(\inputVals_i, \inputVals_j; \parameterVector)$$</span><br /></p>
 <p><span> <br /><span class="math display">$$\kernelMatrix = \rotationMatrix \eigenvalueMatrix^2 \rotationMatrix^\top$$</span><br /></span></p>
@@ -790,7 +792,7 @@ circle {
 <title>
 James Hensman
 </title>
-<image preserveAspectRatio="xMinYMin slice" width="100%" xlink:href="../slides/diagrams/people/james-hensman.jpg" clip-path="url(#clip4)"/>
+<image preserveAspectRatio="xMinYMin slice" width="100%" xlink:href="../slides/diagrams/people/james-hensman.png" clip-path="url(#clip4)"/>
 </svg>
 <svg viewBox="0 0 200 200" style="width:15%">
 <defs> <clipPath id="clip5">
