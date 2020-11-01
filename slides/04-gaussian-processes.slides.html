@@ -482,23 +482,14 @@ f(x) = {\color{cyan}w_0}   + {\color{green}w_1 x} + {\color{yellow}w_2 x^2}
 showDivs(0, 'quadratic_basis');
 </script>
 <p><small></small> <input id="range-quadratic_basis" type="range" min="0" max="2" value="0" onchange="setDivs('quadratic_basis')" oninput="setDivs('quadratic_basis')"> <button onclick="plusDivs(-1, 'quadratic_basis')">❮</button> <button onclick="plusDivs(1, 'quadratic_basis')">❯</button></p>
-</section>
-<section id="section-1" class="slide level2">
-<h2></h2>
 <div class="quadratic_basis" style="text-align:center;">
 <object class="svgplot " data="../slides/diagrams/ml/quadratic_basis000.svg" width style=" ">
 </object>
 </div>
-</section>
-<section id="section-2" class="slide level2">
-<h2></h2>
 <div class="quadratic_basis" style="text-align:center;">
 <object class="svgplot " data="../slides/diagrams/ml/quadratic_basis001.svg" width style=" ">
 </object>
 </div>
-</section>
-<section id="section-3" class="slide level2">
-<h2></h2>
 <div class="quadratic_basis" style="text-align:center;">
 <object class="svgplot " data="../slides/diagrams/ml/quadratic_basis002.svg" width style=" ">
 </object>
@@ -510,23 +501,14 @@ showDivs(0, 'quadratic_basis');
 showDivs(0, 'quadratic_function');
 </script>
 <p><small></small> <input id="range-quadratic_function" type="range" min="0" max="2" value="0" onchange="setDivs('quadratic_function')" oninput="setDivs('quadratic_function')"> <button onclick="plusDivs(-1, 'quadratic_function')">❮</button> <button onclick="plusDivs(1, 'quadratic_function')">❯</button></p>
-</section>
-<section id="section-4" class="slide level2">
-<h2></h2>
 <div class="quadratic_function" style="text-align:center;">
 <object class="svgplot " data="../slides/diagrams/ml/quadratic_function000.svg" width="80%" style=" ">
 </object>
 </div>
-</section>
-<section id="section-5" class="slide level2">
-<h2></h2>
 <div class="quadratic_function" style="text-align:center;">
 <object class="svgplot " data="../slides/diagrams/ml/quadratic_function001.svg" width="80%" style=" ">
 </object>
 </div>
-</section>
-<section id="section-6" class="slide level2">
-<h2></h2>
 <div class="quadratic_function" style="text-align:center;">
 <object class="svgplot " data="../slides/diagrams/ml/quadratic_function002.svg" width="80%" style=" ">
 </object>
@@ -563,13 +545,37 @@ f(\mathbf{ x}) = \mathbf{ w}^\top \boldsymbol{ \phi}(\mathbf{ x}).
 <p><span class="math display">\[
 \mathbf{ f}= \boldsymbol{ \Phi}\mathbf{ w}.
 \]</span></p>
+</section>
+<section id="section-1" class="slide level2">
+<h2></h2>
 <p><span class="math display">\[
 \mathbf{ f}\sim \mathcal{N}\left(\mathbf{0},\alpha \boldsymbol{ \Phi}\boldsymbol{ \Phi}^\top\right).
 \]</span></p>
+</section>
+<section id="section-2" class="slide level2">
+<h2></h2>
 <p><span class="math display">\[
 \mathbf{K}= \alpha
 \boldsymbol{ \Phi}\boldsymbol{ \Phi}^\top.
 \]</span></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a>K <span class="op">=</span> alpha<span class="op">*</span>Phi_pred<span class="op">@</span>Phi_pred.T</span></code></pre></div>
+</section>
+<section id="section-3" class="slide level2">
+<h2></h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1"></a>K <span class="op">=</span> alpha<span class="op">*</span>Phi_pred<span class="op">@</span>Phi_pred.T</span>
+<span id="cb2-2"><a href="#cb2-2"></a>f_sample <span class="op">=</span> np.random.multivariate_normal(mean<span class="op">=</span>np.zeros(x_pred.size), cov<span class="op">=</span>K)</span></code></pre></div>
+<div class="figure">
+<div id="gp-sample-basis-function-figure" class="figure-frame">
+<object class="svgplot " data="../slides/diagrams/kern/gp-sample-basis-function.svg" width="80%" style=" ">
+</object>
+</div>
+</div>
+<aside class="notes">
+Samples directly from the covariance function implied by the basis function based covariance, <span class="math inline">\(\alpha \boldsymbol{ \Phi}\boldsymbol{ \Phi}^\top\)</span>.
+</aside>
+</section>
+<section id="section-4" class="slide level2">
+<h2></h2>
 <div class="figure">
 <div id="basis-covariance-function-figure" class="figure-frame">
 <object class="svgplot " data="../slides/diagrams/kern/basis-covariance-function.svg" width="60%" style=" ">
@@ -579,6 +585,9 @@ f(\mathbf{ x}) = \mathbf{ w}^\top \boldsymbol{ \phi}(\mathbf{ x}).
 <aside class="notes">
 Covariance of the function implied by the basis set <span class="math inline">\(\alpha\boldsymbol{ \Phi}\boldsymbol{ \Phi}^\top\)</span>.
 </aside>
+</section>
+<section id="section-5" class="slide level2">
+<h2></h2>
 <p><span class="math display">\[
 \mathbf{ y}= \mathbf{ f}+ \boldsymbol{\epsilon}
 \]</span></p>
@@ -588,6 +597,27 @@ Covariance of the function implied by the basis set <span class="math inline">\(
 <p><span class="math display">\[
 \mathbf{ y}\sim \mathcal{N}\left(\mathbf{0},\boldsymbol{ \Phi}\boldsymbol{ \Phi}^\top +\sigma^2\mathbf{I}\right).
 \]</span></p>
+</section>
+<section id="section-6" class="slide level2">
+<h2></h2>
+<div class="figure">
+<div id="gp-sample-basis-functions-plus-noise-figure" class="figure-frame">
+<object class="svgplot " data="../slides/diagrams/kern/gp-sample-basis-function-plus-noise.svg" width="80%" style=" ">
+</object>
+</div>
+</div>
+<aside class="notes">
+Samples directly from the covariance function implied by the noise corrupted basis function based covariance, <span class="math inline">\(\alpha \boldsymbol{ \Phi}\boldsymbol{ \Phi}^\top + \sigma^2 \mathbf{I}\)</span>.
+</aside>
+<div class="figure">
+<div id="gp-sample-basis-functions-plus-large-noise-figure" class="figure-frame">
+<object class="svgplot " data="../slides/diagrams/kern/gp-sample-basis-function-plus-large-noise.svg" width="80%" style=" ">
+</object>
+</div>
+</div>
+<aside class="notes">
+Samples directly from the covariance function implied by the noise corrupted basis function based covariance, <span class="math inline">\(\alpha \boldsymbol{ \Phi}\boldsymbol{ \Phi}^\top + \mathbf{I}\)</span>.
+</aside>
 </section>
 <section id="exercise-2" class="slide level2">
 <h2>Exercise 2</h2>
@@ -760,30 +790,18 @@ E(\boldsymbol{\theta}) = \frac{1}{2} \log |\mathbf{K}|
 showDivs(9, 'two_point_sample2');
 </script>
 <p><small></small> <input id="range-two_point_sample2" type="range" min="9" max="12" value="9" onchange="setDivs('two_point_sample2')" oninput="setDivs('two_point_sample2')"> <button onclick="plusDivs(-1, 'two_point_sample2')">❮</button> <button onclick="plusDivs(1, 'two_point_sample2')">❯</button></p>
-</section>
-<section id="section-12" class="slide level2">
-<h2></h2>
 <div class="two_point_sample2" style="text-align:center;">
 <object class="svgplot " data="../slides/diagrams/gp/two_point_sample009.svg" width style=" ">
 </object>
 </div>
-</section>
-<section id="section-13" class="slide level2">
-<h2></h2>
 <div class="two_point_sample2" style="text-align:center;">
 <object class="svgplot " data="../slides/diagrams/gp/two_point_sample010.svg" width style=" ">
 </object>
 </div>
-</section>
-<section id="section-14" class="slide level2">
-<h2></h2>
 <div class="two_point_sample2" style="text-align:center;">
 <object class="svgplot " data="../slides/diagrams/gp/two_point_sample011.svg" width style=" ">
 </object>
 </div>
-</section>
-<section id="section-15" class="slide level2">
-<h2></h2>
 <div class="two_point_sample2" style="text-align:center;">
 <object class="svgplot " data="../slides/diagrams/gp/two_point_sample012.svg" width style=" ">
 </object>
@@ -820,37 +838,22 @@ p(f_2|f_1) = {\mathcal{N}\left(f_2|\frac{k_{1, 2}}{k_{1, 1}}f_1,k_{2, 2} - \frac
 showDivs(13, 'two_point_sample3');
 </script>
 <p><small></small> <input id="range-two_point_sample3" type="range" min="13" max="17" value="13" onchange="setDivs('two_point_sample3')" oninput="setDivs('two_point_sample3')"> <button onclick="plusDivs(-1, 'two_point_sample3')">❮</button> <button onclick="plusDivs(1, 'two_point_sample3')">❯</button></p>
-</section>
-<section id="section-16" class="slide level2">
-<h2></h2>
 <div class="two_point_sample3" style="text-align:center;">
 <object class="svgplot " data="../slides/diagrams/gp/two_point_sample013.svg" width style=" ">
 </object>
 </div>
-</section>
-<section id="section-17" class="slide level2">
-<h2></h2>
 <div class="two_point_sample3" style="text-align:center;">
 <object class="svgplot " data="../slides/diagrams/gp/two_point_sample014.svg" width style=" ">
 </object>
 </div>
-</section>
-<section id="section-18" class="slide level2">
-<h2></h2>
 <div class="two_point_sample3" style="text-align:center;">
 <object class="svgplot " data="../slides/diagrams/gp/two_point_sample015.svg" width style=" ">
 </object>
 </div>
-</section>
-<section id="section-19" class="slide level2">
-<h2></h2>
 <div class="two_point_sample3" style="text-align:center;">
 <object class="svgplot " data="../slides/diagrams/gp/two_point_sample016.svg" width style=" ">
 </object>
 </div>
-</section>
-<section id="section-20" class="slide level2">
-<h2></h2>
 <div class="two_point_sample3" style="text-align:center;">
 <object class="svgplot " data="../slides/diagrams/gp/two_point_sample017.svg" width style=" ">
 </object>
@@ -935,13 +938,13 @@ Introduction to Gaussian processes given by Neil Lawrence at the 2014 Gaussian p
 <h2>Learning Covariance Parameters</h2>
 <p>Can we determine covariance parameters from the data?</p>
 </section>
-<section id="section-21" class="slide level2">
+<section id="section-12" class="slide level2">
 <h2></h2>
 <p><span class="math display">\[
 \mathcal{N}\left(\mathbf{ y}|\mathbf{0},\mathbf{K}\right)=\frac{1}{(2\pi)^\frac{n}{2}{\det{\mathbf{K}}^{\frac{1}{2}}}}{\exp\left(-\frac{\mathbf{ y}^{\top}\mathbf{K}^{-1}\mathbf{ y}}{2}\right)}
 \]</span></p>
 </section>
-<section id="section-22" class="slide level2">
+<section id="section-13" class="slide level2">
 <h2></h2>
 <p><span class="math display">\[
 \begin{aligned}
@@ -949,7 +952,7 @@ Introduction to Gaussian processes given by Neil Lawrence at the 2014 Gaussian p
 \end{aligned}
 \]</span></p>
 </section>
-<section id="section-23" class="slide level2">
+<section id="section-14" class="slide level2">
 <h2></h2>
 <p><span class="math display">\[
 \begin{aligned}
@@ -1010,9 +1013,6 @@ E(\boldsymbol{ \theta}) = \color{yellow}{\frac{1}{2}\log\det{\mathbf{K}}} + \col
 showDivs(0, 'gp-optimise');
 </script>
 <p><small></small> <input id="range-gp-optimise" type="range" min="0" max="10" value="0" onchange="setDivs('gp-optimise')" oninput="setDivs('gp-optimise')"> <button onclick="plusDivs(-1, 'gp-optimise')">❮</button> <button onclick="plusDivs(1, 'gp-optimise')">❯</button></p>
-</section>
-<section id="section-24" class="slide level2">
-<h2></h2>
 <div class="gp-optimise" style="text-align:center;">
 <table>
 <tr>
@@ -1027,9 +1027,6 @@ showDivs(0, 'gp-optimise');
 </tr>
 </table>
 </div>
-</section>
-<section id="section-25" class="slide level2">
-<h2></h2>
 <div class="gp-optimise" style="text-align:center;">
 <table>
 <tr>
@@ -1044,9 +1041,6 @@ showDivs(0, 'gp-optimise');
 </tr>
 </table>
 </div>
-</section>
-<section id="section-26" class="slide level2">
-<h2></h2>
 <div class="gp-optimise" style="text-align:center;">
 <table>
 <tr>
@@ -1061,9 +1055,6 @@ showDivs(0, 'gp-optimise');
 </tr>
 </table>
 </div>
-</section>
-<section id="section-27" class="slide level2">
-<h2></h2>
 <div class="gp-optimise" style="text-align:center;">
 <table>
 <tr>
@@ -1078,9 +1069,6 @@ showDivs(0, 'gp-optimise');
 </tr>
 </table>
 </div>
-</section>
-<section id="section-28" class="slide level2">
-<h2></h2>
 <div class="gp-optimise" style="text-align:center;">
 <table>
 <tr>
@@ -1095,9 +1083,6 @@ showDivs(0, 'gp-optimise');
 </tr>
 </table>
 </div>
-</section>
-<section id="section-29" class="slide level2">
-<h2></h2>
 <div class="gp-optimise" style="text-align:center;">
 <table>
 <tr>
@@ -1112,9 +1097,6 @@ showDivs(0, 'gp-optimise');
 </tr>
 </table>
 </div>
-</section>
-<section id="section-30" class="slide level2">
-<h2></h2>
 <div class="gp-optimise" style="text-align:center;">
 <table>
 <tr>
@@ -1129,9 +1111,6 @@ showDivs(0, 'gp-optimise');
 </tr>
 </table>
 </div>
-</section>
-<section id="section-31" class="slide level2">
-<h2></h2>
 <div class="gp-optimise" style="text-align:center;">
 <table>
 <tr>
@@ -1146,9 +1125,6 @@ showDivs(0, 'gp-optimise');
 </tr>
 </table>
 </div>
-</section>
-<section id="section-32" class="slide level2">
-<h2></h2>
 <div class="gp-optimise" style="text-align:center;">
 <table>
 <tr>
@@ -1163,9 +1139,6 @@ showDivs(0, 'gp-optimise');
 </tr>
 </table>
 </div>
-</section>
-<section id="section-33" class="slide level2">
-<h2></h2>
 <div class="gp-optimise" style="text-align:center;">
 <table>
 <tr>
@@ -1180,9 +1153,6 @@ showDivs(0, 'gp-optimise');
 </tr>
 </table>
 </div>
-</section>
-<section id="section-34" class="slide level2">
-<h2></h2>
 <div class="gp-optimise" style="text-align:center;">
 <table>
 <tr>
@@ -1459,12 +1429,12 @@ Nicolas Durrande
 <p><span class="math display">\[
 k(\mathbf{ x}, \mathbf{ x}^\prime) = \alpha \exp\left(-\frac{\left\Vert \mathbf{ x}- \mathbf{ x}^\prime \right\Vert_2^2}{2\ell^2}\right),
 \]</span></p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a>input_dim<span class="op">=</span><span class="dv">1</span></span>
-<span id="cb1-2"><a href="#cb1-2"></a>alpha <span class="op">=</span> <span class="fl">1.0</span></span>
-<span id="cb1-3"><a href="#cb1-3"></a>lengthscale <span class="op">=</span> <span class="fl">2.0</span></span>
-<span id="cb1-4"><a href="#cb1-4"></a>kern <span class="op">=</span> GPy.kern.RBF(input_dim<span class="op">=</span>input_dim, </span>
-<span id="cb1-5"><a href="#cb1-5"></a>                    variance<span class="op">=</span>alpha, </span>
-<span id="cb1-6"><a href="#cb1-6"></a>                    lengthscale<span class="op">=</span>lengthscale)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1"></a>input_dim<span class="op">=</span><span class="dv">1</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a>alpha <span class="op">=</span> <span class="fl">1.0</span></span>
+<span id="cb3-3"><a href="#cb3-3"></a>lengthscale <span class="op">=</span> <span class="fl">2.0</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a>kern <span class="op">=</span> GPy.kern.RBF(input_dim<span class="op">=</span>input_dim, </span>
+<span id="cb3-5"><a href="#cb3-5"></a>                    variance<span class="op">=</span>alpha, </span>
+<span id="cb3-6"><a href="#cb3-6"></a>                    lengthscale<span class="op">=</span>lengthscale)</span></code></pre></div>
 </section>
 <section id="kernel-output" class="slide level2">
 <h2>Kernel Output</h2>
@@ -1490,11 +1460,11 @@ The exponentiated quadratic covariance function plotted for different lengthscal
 </section>
 <section id="combining-covariance-functions-in-gpy" class="slide level2">
 <h2>Combining Covariance Functions in GPy</h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1"></a>kern1 <span class="op">=</span> GPy.kern.RBF(<span class="dv">1</span>, variance<span class="op">=</span><span class="fl">1.</span>, lengthscale<span class="op">=</span><span class="fl">2.</span>)</span>
-<span id="cb2-2"><a href="#cb2-2"></a>kern2 <span class="op">=</span> GPy.kern.Matern52(<span class="dv">1</span>, variance<span class="op">=</span><span class="fl">2.</span>, lengthscale<span class="op">=</span><span class="fl">4.</span>)</span>
-<span id="cb2-3"><a href="#cb2-3"></a>kern <span class="op">=</span> kern1 <span class="op">+</span> kern2</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1"></a>kern1 <span class="op">=</span> GPy.kern.RBF(<span class="dv">1</span>, variance<span class="op">=</span><span class="fl">1.</span>, lengthscale<span class="op">=</span><span class="fl">2.</span>)</span>
+<span id="cb4-2"><a href="#cb4-2"></a>kern2 <span class="op">=</span> GPy.kern.Matern52(<span class="dv">1</span>, variance<span class="op">=</span><span class="fl">2.</span>, lengthscale<span class="op">=</span><span class="fl">4.</span>)</span>
+<span id="cb4-3"><a href="#cb4-3"></a>kern <span class="op">=</span> kern1 <span class="op">+</span> kern2</span></code></pre></div>
 </section>
-<section id="section-35" class="slide level2">
+<section id="section-15" class="slide level2">
 <h2></h2>
 <div class="figure">
 <div id="gpy-eq-plus-matern52-covariance-figure" class="figure-frame">
@@ -1508,12 +1478,12 @@ A combination of the exponentiated quadratic covariance plus the Matern <span cl
 </section>
 <section id="multiplication" class="slide level2">
 <h2>Multiplication</h2>
-<div class="sourceCode" id="cb3"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1"></a>kern1 <span class="op">=</span> GPy.kern.RBF(<span class="dv">1</span>, variance<span class="op">=</span><span class="fl">1.</span>, lengthscale<span class="op">=</span><span class="fl">2.</span>)</span>
-<span id="cb3-2"><a href="#cb3-2"></a>kern2 <span class="op">=</span> GPy.kern.Matern52(<span class="dv">1</span>, variance<span class="op">=</span><span class="fl">2.</span>, lengthscale<span class="op">=</span><span class="fl">4.</span>)</span>
-<span id="cb3-3"><a href="#cb3-3"></a>kern <span class="op">=</span> kern1 <span class="op">*</span> kern2</span>
-<span id="cb3-4"><a href="#cb3-4"></a>display(kern)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1"></a>kern1 <span class="op">=</span> GPy.kern.RBF(<span class="dv">1</span>, variance<span class="op">=</span><span class="fl">1.</span>, lengthscale<span class="op">=</span><span class="fl">2.</span>)</span>
+<span id="cb5-2"><a href="#cb5-2"></a>kern2 <span class="op">=</span> GPy.kern.Matern52(<span class="dv">1</span>, variance<span class="op">=</span><span class="fl">2.</span>, lengthscale<span class="op">=</span><span class="fl">4.</span>)</span>
+<span id="cb5-3"><a href="#cb5-3"></a>kern <span class="op">=</span> kern1 <span class="op">*</span> kern2</span>
+<span id="cb5-4"><a href="#cb5-4"></a>display(kern)</span></code></pre></div>
 </section>
-<section id="section-36" class="slide level2">
+<section id="section-16" class="slide level2">
 <h2></h2>
 <div class="figure">
 <div id="nicolas-durrande-on-kernel-design-figure" class="figure-frame">
@@ -1545,8 +1515,8 @@ y(x) = f(x) + \epsilon,
 <aside class="notes">
 Data from the noisy sine wave for fitting with a GPy model.
 </aside>
-<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1"></a>kern <span class="op">=</span> GPy.kern.RBF(input_dim<span class="op">=</span><span class="dv">1</span>, variance<span class="op">=</span><span class="fl">1.</span>, lengthscale<span class="op">=</span><span class="fl">1.</span>)</span>
-<span id="cb4-2"><a href="#cb4-2"></a>model <span class="op">=</span> GPy.models.GPRegression(X,Y,kern)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1"></a>kern <span class="op">=</span> GPy.kern.RBF(input_dim<span class="op">=</span><span class="dv">1</span>, variance<span class="op">=</span><span class="fl">1.</span>, lengthscale<span class="op">=</span><span class="fl">1.</span>)</span>
+<span id="cb6-2"><a href="#cb6-2"></a>model <span class="op">=</span> GPy.models.GPRegression(X,Y,kern)</span></code></pre></div>
 </section>
 <section id="gp-fit-to-noisy-sine" class="slide level2">
 <h2>GP Fit to Noisy Sine</h2>
@@ -1562,7 +1532,7 @@ A Gaussian process fit to the noisy sine data. Here the parameters of the proces
 </section>
 <section id="covariance-function-parameter-estimation" class="slide level2">
 <h2>Covariance Function Parameter Estimation</h2>
-<div class="sourceCode" id="cb5"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1"></a>model.optimize(messages<span class="op">=</span><span class="va">True</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1"></a>model.optimize(messages<span class="op">=</span><span class="va">True</span>)</span></code></pre></div>
 <div class="figure">
 <div id="noisy-sine-gp-optimized-fit-figure" class="figure-frame">
 <object class="svgplot " data="../slides/diagrams/gp/noisy-sine-gp-optimized-fit.svg" width="80%" style=" ">
