@@ -559,10 +559,10 @@ f(\mathbf{ x}) = \mathbf{ w}^\top \boldsymbol{ \phi}(\mathbf{ x}).
 <p><span class="math display">\[
 \mathbf{ f}= \begin{bmatrix} f_1
 \\ \vdots f_n\end{bmatrix}
-\]</span> in the form <span class="math display">\[
-\mathbf{ f}= \boldsymbol{ \Phi}
-\mathbf{ w}.
-\]</span>}</p>
+\]</span></p>
+<p><span class="math display">\[
+\mathbf{ f}= \boldsymbol{ \Phi}\mathbf{ w}.
+\]</span></p>
 <p><span class="math display">\[
 \mathbf{ f}\sim \mathcal{N}\left(\mathbf{0},\alpha \boldsymbol{ \Phi}\boldsymbol{ \Phi}^\top\right).
 \]</span></p>
@@ -570,7 +570,16 @@ f(\mathbf{ x}) = \mathbf{ w}^\top \boldsymbol{ \phi}(\mathbf{ x}).
 \mathbf{K}= \alpha
 \boldsymbol{ \Phi}\boldsymbol{ \Phi}^\top.
 \]</span></p>
-<p>{This image is the covariance expressed between different points on the function. In regression we normally also add independent Gaussian noise to obtain our observations <span class="math inline">\(\mathbf{ y}\)</span>, <span class="math display">\[
+<div class="figure">
+<div id="basis-covariance-function-figure" class="figure-frame">
+<object class="svgplot " data="../slides/diagrams/kern/basis-covariance-function.svg" width="60%" style=" ">
+</object>
+</div>
+</div>
+<aside class="notes">
+Covariance of the function implied by the basis set <span class="math inline">\(\alpha\boldsymbol{ \Phi}\boldsymbol{ \Phi}^\top\)</span>.
+</aside>
+<p><span class="math display">\[
 \mathbf{ y}= \mathbf{ f}+ \boldsymbol{\epsilon}
 \]</span></p>
 <p><span class="math display">\[
@@ -951,8 +960,8 @@ Introduction to Gaussian processes given by Neil Lawrence at the 2014 Gaussian p
 E(\boldsymbol{ \theta}) = \color{yellow}{\frac{1}{2}\log\det{\mathbf{K}}} + \color{cyan}{\frac{\mathbf{ y}^{\top}\mathbf{K}^{-1}\mathbf{ y}}{2}}
 \]</span></p>
 </section>
-<section id="section-24" class="slide level2">
-<h2></h2>
+<section id="capacity-control-through-the-determinant" class="slide level2">
+<h2>Capacity Control through the Determinant</h2>
 <p>The parameters are <em>inside</em> the covariance function (matrix).  <span class="math display">\[k_{i, j} = k(\mathbf{ x}_i, \mathbf{ x}_j; \boldsymbol{ \theta})\]</span></p>
 </section>
 <section id="eigendecomposition-of-covariance" class="slide level2">
@@ -991,12 +1000,18 @@ E(\boldsymbol{ \theta}) = \color{yellow}{\frac{1}{2}\log\det{\mathbf{K}}} + \col
 </section>
 <section id="eboldsymbol-theta-coloryellowfrac12logdetmathbfkcolorcyanfracmathbf-ytopmathbfk-1mathbf-y2" class="slide level2">
 <h2><span class="math display">\[E(\boldsymbol{ \theta}) = \color{yellow}{\frac{1}{2}\log\det{\mathbf{K}}}+\color{cyan}{\frac{\mathbf{ y}^{\top}\mathbf{K}^{-1}\mathbf{ y}}{2}}\]</span></h2>
+</section>
+<section id="quadratic-data-fit" class="slide level2">
+<h2>Quadratic Data Fit</h2>
+</section>
+<section id="data-fit-term" class="slide level2">
+<h2>Data Fit Term</h2>
 <script>
 showDivs(0, 'gp-optimise');
 </script>
 <p><small></small> <input id="range-gp-optimise" type="range" min="0" max="10" value="0" onchange="setDivs('gp-optimise')" oninput="setDivs('gp-optimise')"> <button onclick="plusDivs(-1, 'gp-optimise')">❮</button> <button onclick="plusDivs(1, 'gp-optimise')">❯</button></p>
 </section>
-<section id="section-25" class="slide level2">
+<section id="section-24" class="slide level2">
 <h2></h2>
 <div class="gp-optimise" style="text-align:center;">
 <table>
@@ -1013,7 +1028,7 @@ showDivs(0, 'gp-optimise');
 </table>
 </div>
 </section>
-<section id="section-26" class="slide level2">
+<section id="section-25" class="slide level2">
 <h2></h2>
 <div class="gp-optimise" style="text-align:center;">
 <table>
@@ -1030,7 +1045,7 @@ showDivs(0, 'gp-optimise');
 </table>
 </div>
 </section>
-<section id="section-27" class="slide level2">
+<section id="section-26" class="slide level2">
 <h2></h2>
 <div class="gp-optimise" style="text-align:center;">
 <table>
@@ -1047,7 +1062,7 @@ showDivs(0, 'gp-optimise');
 </table>
 </div>
 </section>
-<section id="section-28" class="slide level2">
+<section id="section-27" class="slide level2">
 <h2></h2>
 <div class="gp-optimise" style="text-align:center;">
 <table>
@@ -1064,7 +1079,7 @@ showDivs(0, 'gp-optimise');
 </table>
 </div>
 </section>
-<section id="section-29" class="slide level2">
+<section id="section-28" class="slide level2">
 <h2></h2>
 <div class="gp-optimise" style="text-align:center;">
 <table>
@@ -1081,7 +1096,7 @@ showDivs(0, 'gp-optimise');
 </table>
 </div>
 </section>
-<section id="section-30" class="slide level2">
+<section id="section-29" class="slide level2">
 <h2></h2>
 <div class="gp-optimise" style="text-align:center;">
 <table>
@@ -1098,7 +1113,7 @@ showDivs(0, 'gp-optimise');
 </table>
 </div>
 </section>
-<section id="section-31" class="slide level2">
+<section id="section-30" class="slide level2">
 <h2></h2>
 <div class="gp-optimise" style="text-align:center;">
 <table>
@@ -1115,7 +1130,7 @@ showDivs(0, 'gp-optimise');
 </table>
 </div>
 </section>
-<section id="section-32" class="slide level2">
+<section id="section-31" class="slide level2">
 <h2></h2>
 <div class="gp-optimise" style="text-align:center;">
 <table>
@@ -1132,7 +1147,7 @@ showDivs(0, 'gp-optimise');
 </table>
 </div>
 </section>
-<section id="section-33" class="slide level2">
+<section id="section-32" class="slide level2">
 <h2></h2>
 <div class="gp-optimise" style="text-align:center;">
 <table>
@@ -1149,7 +1164,7 @@ showDivs(0, 'gp-optimise');
 </table>
 </div>
 </section>
-<section id="section-34" class="slide level2">
+<section id="section-33" class="slide level2">
 <h2></h2>
 <div class="gp-optimise" style="text-align:center;">
 <table>
@@ -1166,7 +1181,7 @@ showDivs(0, 'gp-optimise');
 </table>
 </div>
 </section>
-<section id="section-35" class="slide level2">
+<section id="section-34" class="slide level2">
 <h2></h2>
 <div class="gp-optimise" style="text-align:center;">
 <table>
@@ -1479,7 +1494,7 @@ The exponentiated quadratic covariance function plotted for different lengthscal
 <span id="cb2-2"><a href="#cb2-2"></a>kern2 <span class="op">=</span> GPy.kern.Matern52(<span class="dv">1</span>, variance<span class="op">=</span><span class="fl">2.</span>, lengthscale<span class="op">=</span><span class="fl">4.</span>)</span>
 <span id="cb2-3"><a href="#cb2-3"></a>kern <span class="op">=</span> kern1 <span class="op">+</span> kern2</span></code></pre></div>
 </section>
-<section id="section-36" class="slide level2">
+<section id="section-35" class="slide level2">
 <h2></h2>
 <div class="figure">
 <div id="gpy-eq-plus-matern52-covariance-figure" class="figure-frame">
@@ -1498,7 +1513,7 @@ A combination of the exponentiated quadratic covariance plus the Matern <span cl
 <span id="cb3-3"><a href="#cb3-3"></a>kern <span class="op">=</span> kern1 <span class="op">*</span> kern2</span>
 <span id="cb3-4"><a href="#cb3-4"></a>display(kern)</span></code></pre></div>
 </section>
-<section id="section-37" class="slide level2">
+<section id="section-36" class="slide level2">
 <h2></h2>
 <div class="figure">
 <div id="nicolas-durrande-on-kernel-design-figure" class="figure-frame">

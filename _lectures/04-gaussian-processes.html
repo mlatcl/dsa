@@ -176,9 +176,8 @@ $$</span><br /> then we can write down the vector of function values, as evaluat
 \mappingFunctionVector = \begin{bmatrix} \mappingFunction_1
 \\ \vdots \mappingFunction_\numData\end{bmatrix}
 $$</span><br /> in the form <br /><span class="math display">$$
-\mappingFunctionVector = \basisMatrix
-\weightVector.
-$$</span><br />}</p>
+\mappingFunctionVector = \basisMatrix\weightVector.
+$$</span><br /></p>
 <p>Now we can use standard properties of multivariate Gaussians to write down the probability density that is implied over <span class="math inline">$\mappingFunctionVector$</span>. In particular we know that if <span class="math inline">$\weightVector$</span> is sampled from a multivariate normal (or multivariate Gaussian) with covariance <span class="math inline">$\alpha \eye$</span> and zero mean, then assuming that <span class="math inline">$\basisMatrix$</span> is a deterministic matrix (i.e. it is not sampled from a probability density) then the vector <span class="math inline">$\mappingFunctionVector$</span> will also be distributed according to a zero mean multivariate normal as follows, <br /><span class="math display">$$
 \mappingFunctionVector \sim \gaussianSamp{\zerosVector}{\alpha \basisMatrix\basisMatrix^\top}.
 $$</span><br /></p>
@@ -188,30 +187,39 @@ $$</span><br /></p>
 $$</span><br /></p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1"></a>K <span class="op">=</span> alpha<span class="op">*</span>Phi_pred<span class="op">@</span>Phi_pred.T</span></code></pre></div>
 <p>Now we can use the <code>np.random.multivariate_normal</code> command for sampling from a multivariate normal with covariance given by <span class="math inline">$\kernelMatrix$</span> and zero mean,</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1"></a><span class="cf">for</span> i <span class="kw">in</span> np.arange(<span class="dv">10</span>):</span>
+<div class="sourceCode" id="cb16"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>):</span>
 <span id="cb16-2"><a href="#cb16-2"></a>    f_sample <span class="op">=</span> np.random.multivariate_normal(mean<span class="op">=</span>np.zeros(x_pred.size), cov<span class="op">=</span>K)</span>
 <span id="cb16-3"><a href="#cb16-3"></a>    plt.plot(x_pred.flatten(), f_sample.flatten())</span></code></pre></div>
 <p>The samples appear very similar to those which we obtained indirectly. That is no surprise because they are effectively drawn from the same mutivariate normal density. However, when sampling <span class="math inline">$\mappingFunctionVector$</span> directly we created the covariance for <span class="math inline">$\mappingFunctionVector$</span>. We can visualise the form of this covaraince in an image in python with a colorbar to show scale.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">8</span>))</span>
-<span id="cb17-2"><a href="#cb17-2"></a>im <span class="op">=</span> ax.imshow(K, interpolation<span class="op">=</span><span class="st">&#39;none&#39;</span>)</span>
-<span id="cb17-3"><a href="#cb17-3"></a>fig.colorbar(im)</span></code></pre></div>
-<p>{This image is the covariance expressed between different points on the function. In regression we normally also add independent Gaussian noise to obtain our observations <span class="math inline">$\dataVector$</span>, <br /><span class="math display">$$
+<div class="figure">
+<div id="basis-covariance-function-figure" class="figure-frame">
+<object class="svgplot " data="../slides/diagrams/kern/basis-covariance-function.svg" width="60%" style=" ">
+</object>
+</div>
+<div id="basis-covariance-function-magnify" class="magnify" onclick="magnifyFigure(&#39;basis-covariance-function&#39;)">
+<img class="img-button" src="{{ '/assets/images/Magnify_Large.svg' | relative_url }}" style="width:1.5ex">
+</div>
+<div id="basis-covariance-function-caption" class="caption-frame">
+<p>Figure: Covariance of the function implied by the basis set <span class="math inline">$\alpha\basisMatrix\basisMatrix^\top$</span>.</p>
+</div>
+</div>
+<p>This image is the covariance expressed between different points on the function. In regression we normally also add independent Gaussian noise to obtain our observations <span class="math inline">$\dataVector$</span>, <br /><span class="math display">$$
 \dataVector = \mappingFunctionVector + \boldsymbol{\epsilon}
 $$</span><br /> where the noise is sampled from an independent Gaussian distribution with variance <span class="math inline">$\dataStd^2$</span>, <br /><span class="math display">$$
 \epsilon \sim \gaussianSamp{\zerosVector}{\dataStd^2\eye}.
 $$</span><br /> we can use properties of Gaussian variables, i.e. the fact that sum of two Gaussian variables is also Gaussian, and that it’s covariance is given by the sum of the two covariances, whilst the mean is given by the sum of the means, to write down the marginal likelihood, <br /><span class="math display">$$
 \dataVector \sim \gaussianSamp{\zerosVector}{\basisMatrix\basisMatrix^\top +\dataStd^2\eye}.
 $$</span><br /> Sampling directly from this density gives us the noise corrupted functions,</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1"></a>K <span class="op">=</span> alpha<span class="op">*</span>Phi_pred<span class="op">@</span>Phi_pred.T <span class="op">+</span> sigma2<span class="op">*</span>np.eye(x_pred.size)</span>
-<span id="cb18-2"><a href="#cb18-2"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>):</span>
-<span id="cb18-3"><a href="#cb18-3"></a>    y_sample <span class="op">=</span> np.random.multivariate_normal(mean<span class="op">=</span>np.zeros(x_pred.size), cov<span class="op">=</span>K)</span>
-<span id="cb18-4"><a href="#cb18-4"></a>    plt.plot(x_pred.flatten(), y_sample.flatten())</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1"></a>K <span class="op">=</span> alpha<span class="op">*</span>Phi_pred<span class="op">@</span>Phi_pred.T <span class="op">+</span> sigma2<span class="op">*</span>np.eye(x_pred.size)</span>
+<span id="cb17-2"><a href="#cb17-2"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>):</span>
+<span id="cb17-3"><a href="#cb17-3"></a>    y_sample <span class="op">=</span> np.random.multivariate_normal(mean<span class="op">=</span>np.zeros(x_pred.size), cov<span class="op">=</span>K)</span>
+<span id="cb17-4"><a href="#cb17-4"></a>    plt.plot(x_pred.flatten(), y_sample.flatten())</span></code></pre></div>
 <p>where the effect of our noise term is to roughen the sampled functions, we can also increase the variance of the noise to see a different effect,</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1"></a>sigma2 <span class="op">=</span> <span class="fl">1.</span></span>
-<span id="cb19-2"><a href="#cb19-2"></a>K <span class="op">=</span> alpha<span class="op">*</span>Phi_pred<span class="op">@</span>Phi_pred.T <span class="op">+</span> sigma2<span class="op">*</span>np.eye(x_pred.size)</span>
-<span id="cb19-3"><a href="#cb19-3"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>):</span>
-<span id="cb19-4"><a href="#cb19-4"></a>    y_sample <span class="op">=</span> np.random.multivariate_normal(mean<span class="op">=</span>np.zeros(x_pred.size), cov<span class="op">=</span>K)</span>
-<span id="cb19-5"><a href="#cb19-5"></a>    plt.plot(x_pred.flatten(), y_sample.flatten())</span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1"></a>sigma2 <span class="op">=</span> <span class="fl">1.</span></span>
+<span id="cb18-2"><a href="#cb18-2"></a>K <span class="op">=</span> alpha<span class="op">*</span>Phi_pred<span class="op">@</span>Phi_pred.T <span class="op">+</span> sigma2<span class="op">*</span>np.eye(x_pred.size)</span>
+<span id="cb18-3"><a href="#cb18-3"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>):</span>
+<span id="cb18-4"><a href="#cb18-4"></a>    y_sample <span class="op">=</span> np.random.multivariate_normal(mean<span class="op">=</span>np.zeros(x_pred.size), cov<span class="op">=</span>K)</span>
+<span id="cb18-5"><a href="#cb18-5"></a>    plt.plot(x_pred.flatten(), y_sample.flatten())</span></code></pre></div>
 <h3 id="exercise-2">Exercise 2</h3>
 <p><strong>Function Space Reflection</strong> How do you include the noise term when sampling in the weight space point of view?</p>
 <h2 id="non-degenerate-gaussian-processes">Non-degenerate Gaussian Processes</h2>
@@ -271,14 +279,14 @@ $$</span><br /> And that’s not <em>only</em> for Gaussian <span class="math in
 $$</span><br /> where <span class="math inline">$\left\Vert\inputVector - \inputVector^\prime\right\Vert^2$</span> is the squared distance between the two input vectors <br /><span class="math display">$$
 \left\Vert\inputVector - \inputVector^\prime\right\Vert^2 = (\inputVector - \inputVector^\prime)^\top (\inputVector - \inputVector^\prime) 
 $$</span><br /> Let’s build a covariance matrix based on this function. First we define the form of the covariance function,</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1"></a></span>
-<span id="cb20-2"><a href="#cb20-2"></a><span class="im">from</span> mlai <span class="im">import</span> eq_cov</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1"></a></span>
+<span id="cb19-2"><a href="#cb19-2"></a><span class="im">from</span> mlai <span class="im">import</span> eq_cov</span></code></pre></div>
 <p>We can use this to compute <em>directly</em> the covariance for <span class="math inline">$\mappingFunctionVector$</span> at the points given by <code>x_pred</code>. Let’s define a new function <code>K()</code> which does this,</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1"></a></span>
-<span id="cb21-2"><a href="#cb21-2"></a><span class="im">from</span> mlai <span class="im">import</span> Kernel</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1"></a></span>
+<span id="cb20-2"><a href="#cb20-2"></a><span class="im">from</span> mlai <span class="im">import</span> Kernel</span></code></pre></div>
 <p>Now we can image the resulting covariance,</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1"></a>kernel <span class="op">=</span> Kernel(function<span class="op">=</span>eq_cov, variance<span class="op">=</span><span class="fl">1.</span>, lengthscale<span class="op">=</span><span class="fl">10.</span>)</span>
-<span id="cb22-2"><a href="#cb22-2"></a>K <span class="op">=</span> kernel.K(x_pred, x_pred)</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1"></a>kernel <span class="op">=</span> Kernel(function<span class="op">=</span>eq_cov, variance<span class="op">=</span><span class="fl">1.</span>, lengthscale<span class="op">=</span><span class="fl">10.</span>)</span>
+<span id="cb21-2"><a href="#cb21-2"></a>K <span class="op">=</span> kernel.K(x_pred, x_pred)</span></code></pre></div>
 <p>To visualise the covariance between the points we can use the <code>imshow</code> function in matplotlib.</p>
 <p>Finally, we can sample functions from the marginal likelihood.</p>
 <h3 id="exercise-3">Exercise 3</h3>
@@ -294,8 +302,8 @@ $$</span><br /> Let’s build a covariance matrix based on this function. First 
 <p>However, in the Gaussian process case, when the likelihood also assumes Gaussian noise, we can operate this mechanism mathematically, and obtain the posterior density <em>analytically</em>. This is the benefit of Gaussian processes.</p>
 <p>First we will load in two python functions for computing the covariance function.</p>
 <p>Next we sample from a multivariate normal density (a multivariate Gaussian), using the covariance function as the covariance matrix.</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1"></a>plot.rejection_samples(kernel<span class="op">=</span>kernel, </span>
-<span id="cb23-2"><a href="#cb23-2"></a>    diagrams<span class="op">=</span><span class="st">&#39;../slides/diagrams/gp&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1"></a>plot.rejection_samples(kernel<span class="op">=</span>kernel, </span>
+<span id="cb22-2"><a href="#cb22-2"></a>    diagrams<span class="op">=</span><span class="st">&#39;../slides/diagrams/gp&#39;</span>)</span></code></pre></div>
 <div class="figure">
 <div id="gp-rejection-samples-figure" class="figure-frame">
 <div class="centered" style="">
@@ -327,23 +335,23 @@ $$</span><br /> where the input data, <span class="math inline">$\inputMatrix$</
 + \frac{1}{2} \dataVector^\top \left(\kernelMatrix +
 \dataStd^2\eye\right)^{-1}\dataVector
 $$</span><br /> where the <em>parameters</em> of the model are also embedded in the covariance function, they include the parameters of the kernel (such as lengthscale and variance), and the noise variance, <span class="math inline">$\dataStd^2$</span>. Let’s create a class in python for storing these variables.</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1"></a></span>
-<span id="cb24-2"><a href="#cb24-2"></a><span class="im">from</span> mlai <span class="im">import</span> GP</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1"></a></span>
+<span id="cb23-2"><a href="#cb23-2"></a><span class="im">from</span> mlai <span class="im">import</span> GP</span></code></pre></div>
 <h2 id="making-predictions">Making Predictions</h2>
 <p>We now have a probability density that represents functions. How do we make predictions with this density? The density is known as a process because it is <em>consistent</em>. By consistency, here, we mean that the model makes predictions for <span class="math inline">$\mappingFunctionVector$</span> that are unaffected by future values of <span class="math inline">$\mappingFunctionVector^*$</span> that are currently unobserved (such as test points). If we think of <span class="math inline">$\mappingFunctionVector^*$</span> as test points, we can still write down a joint probability density over the training observations, <span class="math inline">$\mappingFunctionVector$</span> and the test observations, <span class="math inline">$\mappingFunctionVector^*$</span>. This joint probability density will be Gaussian, with a covariance matrix given by our covariance function, <span class="math inline">$\kernelScalar(\inputVector_i, \inputVector_j)$</span>. <br /><span class="math display">$$
 \begin{bmatrix}\mappingFunctionVector \\ \mappingFunctionVector^*\end{bmatrix} \sim \gaussianSamp{\zerosVector}{\begin{bmatrix} \kernelMatrix &amp; \kernelMatrix_\ast \\
 \kernelMatrix_\ast^\top &amp; \kernelMatrix_{\ast,\ast}\end{bmatrix}}
 $$</span><br /> where here <span class="math inline">$\kernelMatrix$</span> is the covariance computed between all the training points, <span class="math inline">$\kernelMatrix_\ast$</span> is the covariance matrix computed between the training points and the test points and <span class="math inline">$\kernelMatrix_{\ast,\ast}$</span> is the covariance matrix computed betwen all the tests points and themselves. To be clear, let’s compute these now for our example, using <code>x</code> and <code>y</code> for the training data (although <code>y</code> doesn’t enter the covariance) and <code>x_pred</code> as the test locations.</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1"></a><span class="co"># set covariance function parameters</span></span>
-<span id="cb25-2"><a href="#cb25-2"></a>variance <span class="op">=</span> <span class="fl">16.0</span></span>
-<span id="cb25-3"><a href="#cb25-3"></a>lengthscale <span class="op">=</span> <span class="dv">8</span></span>
-<span id="cb25-4"><a href="#cb25-4"></a><span class="co"># set noise variance</span></span>
-<span id="cb25-5"><a href="#cb25-5"></a>sigma2 <span class="op">=</span> <span class="fl">0.05</span></span>
-<span id="cb25-6"><a href="#cb25-6"></a></span>
-<span id="cb25-7"><a href="#cb25-7"></a>kernel <span class="op">=</span> Kernel(eq_cov, variance<span class="op">=</span>variance, lengthscale<span class="op">=</span>lengthscale)</span>
-<span id="cb25-8"><a href="#cb25-8"></a>K <span class="op">=</span> kernel.K(x, x)</span>
-<span id="cb25-9"><a href="#cb25-9"></a>K_star <span class="op">=</span> kernel.K(x, x_pred)</span>
-<span id="cb25-10"><a href="#cb25-10"></a>K_starstar <span class="op">=</span> kernel.K(x_pred, x_pred)</span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1"></a><span class="co"># set covariance function parameters</span></span>
+<span id="cb24-2"><a href="#cb24-2"></a>variance <span class="op">=</span> <span class="fl">16.0</span></span>
+<span id="cb24-3"><a href="#cb24-3"></a>lengthscale <span class="op">=</span> <span class="dv">8</span></span>
+<span id="cb24-4"><a href="#cb24-4"></a><span class="co"># set noise variance</span></span>
+<span id="cb24-5"><a href="#cb24-5"></a>sigma2 <span class="op">=</span> <span class="fl">0.05</span></span>
+<span id="cb24-6"><a href="#cb24-6"></a></span>
+<span id="cb24-7"><a href="#cb24-7"></a>kernel <span class="op">=</span> Kernel(eq_cov, variance<span class="op">=</span>variance, lengthscale<span class="op">=</span>lengthscale)</span>
+<span id="cb24-8"><a href="#cb24-8"></a>K <span class="op">=</span> kernel.K(x, x)</span>
+<span id="cb24-9"><a href="#cb24-9"></a>K_star <span class="op">=</span> kernel.K(x, x_pred)</span>
+<span id="cb24-10"><a href="#cb24-10"></a>K_starstar <span class="op">=</span> kernel.K(x_pred, x_pred)</span></code></pre></div>
 <p>Now we use this structure to visualise the covariance between test data and training data. This structure is how information is passed between test and training data. Unlike the maximum likelihood formalisms we’ve been considering so far, the structure expresses <em>correlation</em> between our different data points. However, just like the  we now have a <em>joint density</em> between some variables of interest. In particular we have the joint density over <span class="math inline">$p(\mappingFunctionVector, \mappingFunctionVector^*)$</span>. The joint density is <em>Gaussian</em> and <em>zero mean</em>. It is specified entirely by the <em>covariance matrix</em>, <span class="math inline">$\kernelMatrix$</span>. That covariance matrix is, in turn, defined by a covariance function. Now we will visualise the form of that covariance in the form of the matrix, <br /><span class="math display">$$
 \begin{bmatrix} \kernelMatrix &amp; \kernelMatrix_\ast \\ \kernelMatrix_\ast^\top
 &amp; \kernelMatrix_{\ast,\ast}\end{bmatrix}
@@ -351,10 +359,10 @@ $$</span><br /></p>
 <p>There are four blocks to this color plot. The upper left block is the covariance of the training data with itself, <span class="math inline">$\kernelMatrix$</span>. We see some structure here due to the missing data from the first and second world wars. Alongside this covariance (to the right and below) we see the cross covariance between the training and the test data (<span class="math inline">$\kernelMatrix_*$</span> and <span class="math inline">$\kernelMatrix_*^\top$</span>). This is giving us the covariation between our training and our test data. Finally the lower right block The banded structure we now observe is because some of the training points are near to some of the test points. This is how we obtain ‘communication’ between our training data and our test data. If there is no structure in <span class="math inline">$\kernelMatrix_*$</span> then our belief about the test data simply matches our prior.</p>
 <h2 id="prediction-across-two-points-with-gps">Prediction Across Two Points with GPs</h2>
 <p><span style="text-align:right"><span class="editsection-bracket" style="">[</span><span class="editsection" style=""><a href="https://github.com/lawrennd/talks/edit/gh-pages/_gp/includes/gptwopointpred.md" target="_blank" onclick="ga('send', 'event', 'Edit Page', 'Edit', 'https://github.com/lawrennd/talks/edit/gh-pages/_gp/includes/gptwopointpred.md', 13);">edit</a></span><span class="editsection-bracket" style="">]</span></span></p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb26-2"><a href="#cb26-2"></a>np.random.seed(<span class="dv">4949</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb27"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1"></a><span class="im">import</span> teaching_plots <span class="im">as</span> plot</span>
-<span id="cb27-2"><a href="#cb27-2"></a><span class="im">import</span> pods</span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb25-2"><a href="#cb25-2"></a>np.random.seed(<span class="dv">4949</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1"></a><span class="im">import</span> teaching_plots <span class="im">as</span> plot</span>
+<span id="cb26-2"><a href="#cb26-2"></a><span class="im">import</span> pods</span></code></pre></div>
 <div class="figure">
 <div id="two-point-sample-one-two-figure" class="figure-frame">
 <object class="svgplot " data="../slides/diagrams/gp/two_point_sample012.svg" width="80%" style=" ">
@@ -461,9 +469,9 @@ $$</span><br /> where <span class="math inline">$\dataVector$</span> were our <e
 <h2 id="improving-the-numerics">Improving the Numerics</h2>
 <p><span style="text-align:right"><span class="editsection-bracket" style="">[</span><span class="editsection" style=""><a href="https://github.com/lawrennd/talks/edit/gh-pages/_gp/includes/gp-numerics-and-optimization.md" target="_blank" onclick="ga('send', 'event', 'Edit Page', 'Edit', 'https://github.com/lawrennd/talks/edit/gh-pages/_gp/includes/gp-numerics-and-optimization.md', 13);">edit</a></span><span class="editsection-bracket" style="">]</span></span></p>
 <p>In practice we shouldn’t be using matrix inverse directly to solve the GP system. One more stable way is to compute the <em>Cholesky decomposition</em> of the kernel matrix. The log determinant of the covariance can also be derived from the Cholesky decomposition.</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1"></a></span>
-<span id="cb28-2"><a href="#cb28-2"></a><span class="im">from</span> mlai <span class="im">import</span> update_inverse</span></code></pre></div>
-<div class="sourceCode" id="cb29"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1"></a>GP.update_inverse <span class="op">=</span> update_inverse</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1"></a></span>
+<span id="cb27-2"><a href="#cb27-2"></a><span class="im">from</span> mlai <span class="im">import</span> update_inverse</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1"></a>GP.update_inverse <span class="op">=</span> update_inverse</span></code></pre></div>
 <h2 id="capacity-control">Capacity Control</h2>
 <p>Gaussian processes are sometimes seen as part of a wider family of methods known as kernel methods. Kernel methods are also based around covariance functions, but in the field they are known as Mercer kernels. Mercer kernels have interpretations as inner products in potentially infinite dimensional Hilbert spaces. This interpretation arises because, if we take <span class="math inline"><em>α</em> = 1</span>, then the kernel can be expressed as <br /><span class="math display">$$
 \kernelMatrix = \basisMatrix\basisMatrix^\top 
@@ -477,7 +485,7 @@ $$</span><br /> So we see that the kernel function is developed from an inner pr
 <h2 id="capacity-control-and-data-fit">Capacity Control and Data Fit</h2>
 <p>The objective function can be decomposed into two terms, a capacity control term, and a data fit term. The capacity control term is the log determinant of the covariance. The data fit term is the matrix inner product between the data and the inverse covariance.</p>
 <h2 id="learning-covariance-parameters">Learning Covariance Parameters</h2>
-<p><span style="text-align:right"><span class="editsection-bracket" style="">[</span><span class="editsection" style=""><a href="https://github.com/lawrennd/talks/edit/gh-pages/_gp/includes/gp-optimize-eigenvector.md" target="_blank" onclick="ga('send', 'event', 'Edit Page', 'Edit', 'https://github.com/lawrennd/talks/edit/gh-pages/_gp/includes/gp-optimize-eigenvector.md', 13);">edit</a></span><span class="editsection-bracket" style="">]</span></span></p>
+<p><span style="text-align:right"><span class="editsection-bracket" style="">[</span><span class="editsection" style=""><a href="https://github.com/lawrennd/talks/edit/gh-pages/_gp/includes/gp-optimize.md" target="_blank" onclick="ga('send', 'event', 'Edit Page', 'Edit', 'https://github.com/lawrennd/talks/edit/gh-pages/_gp/includes/gp-optimize.md', 13);">edit</a></span><span class="editsection-bracket" style="">]</span></span></p>
 <p>Can we determine covariance parameters from the data?</p>
 <p><br /><span class="math display">$$
 \gaussianDist{\dataVector}{\mathbf{0}}{\kernelMatrix}=\frac{1}{(2\pi)^\frac{\numData}{2}{\det{\kernelMatrix}^{\frac{1}{2}}}}{\exp\left(-\frac{\dataVector^{\top}\kernelMatrix^{-1}\dataVector}{2}\right)}
@@ -495,9 +503,11 @@ $$</span><br /></p>
 <p><br /><span class="math display">$$
 \errorFunction(\parameterVector) = \color{blue}{\frac{1}{2}\log\det{\kernelMatrix}} + \color{red}{\frac{\dataVector^{\top}\kernelMatrix^{-1}\dataVector}{2}}
 $$</span><br /></p>
+<h2 id="capacity-control-through-the-determinant">Capacity Control through the Determinant</h2>
+<p><span style="text-align:right"><span class="editsection-bracket" style="">[</span><span class="editsection" style=""><a href="https://github.com/lawrennd/talks/edit/gh-pages/_gp/includes/gp-optimize-capacity.md" target="_blank" onclick="ga('send', 'event', 'Edit Page', 'Edit', 'https://github.com/lawrennd/talks/edit/gh-pages/_gp/includes/gp-optimize-capacity.md', 13);">edit</a></span><span class="editsection-bracket" style="">]</span></span></p>
 <p>The parameters are <em>inside</em> the covariance function (matrix).  <br /><span class="math display">$$\kernelScalar_{i, j} = \kernelScalar(\inputVals_i, \inputVals_j; \parameterVector)$$</span><br /></p>
 <p><span> <br /><span class="math display">$$\kernelMatrix = \rotationMatrix \eigenvalueMatrix^2 \rotationMatrix^\top$$</span><br /></span></p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1"></a>gpoptimizePlot1</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1"></a>gpoptimizePlot1</span></code></pre></div>
 <table>
 <tr>
 <td width="50%">
@@ -521,6 +531,10 @@ gpoptimizePlot3
 ```
 
 \only<1>{\input{../../../gp/tex/diagrams/gpOptimiseQuadratic1.svg}}\only<2>{\input{../../../gp/tex/diagrams/gpOptimiseQuadratic2.svg}}\only<3>{\input{../../../gp/tex/diagrams/gpOptimiseQuadratic3.svg}}-->
+<h2 id="quadratic-data-fit">Quadratic Data Fit</h2>
+<p><span style="text-align:right"><span class="editsection-bracket" style="">[</span><span class="editsection" style=""><a href="https://github.com/lawrennd/talks/edit/gh-pages/_gp/includes/gp-optimize-data-fit.md" target="_blank" onclick="ga('send', 'event', 'Edit Page', 'Edit', 'https://github.com/lawrennd/talks/edit/gh-pages/_gp/includes/gp-optimize-data-fit.md', 13);">edit</a></span><span class="editsection-bracket" style="">]</span></span></p>
+<h2 id="data-fit-term">Data Fit Term</h2>
+<p><span style="text-align:right"><span class="editsection-bracket" style="">[</span><span class="editsection" style=""><a href="https://github.com/lawrennd/talks/edit/gh-pages/_gp/includes/gp-optimize-data-fit-capacity.md" target="_blank" onclick="ga('send', 'event', 'Edit Page', 'Edit', 'https://github.com/lawrennd/talks/edit/gh-pages/_gp/includes/gp-optimize-data-fit-capacity.md', 13);">edit</a></span><span class="editsection-bracket" style="">]</span></span></p>
 <div class="figure">
 <div id="gp-optimise-figure" class="figure-frame">
 <table>
@@ -809,22 +823,22 @@ Nicolas Durrande
 </svg>
 </div>
 <p>This GPy tutorial is based on material we share in the Gaussian process summer school for teaching these models <a href="https://gpss.cc" class="uri">https://gpss.cc</a>. It contains material from various members and former members of the Sheffield machine learning group, but particular mention should be made of <a href="https://sites.google.com/site/nicolasdurrandehomepage/">Nicolas Durrande</a> and <a href="https://jameshensman.github.io/">James Hensman</a>, see <a href="http://gpss.cc/gpss17/labs/GPSS_Lab1_2017.ipynb" class="uri">http://gpss.cc/gpss17/labs/GPSS_Lab1_2017.ipynb</a>.</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1"></a><span class="op">%</span>pip install gpy</span></code></pre></div>
-<div class="sourceCode" id="cb32"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1"></a>urllib.request.urlretrieve(<span class="st">&#39;https://raw.githubusercontent.com/lawrennd/talks/gh-pages/mlai.py&#39;</span>,<span class="st">&#39;mlai.py&#39;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb33"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1"></a>urllib.request.urlretrieve(<span class="st">&#39;https://raw.githubusercontent.com/lawrennd/talks/gh-pages/teaching_plots.py&#39;</span>,<span class="st">&#39;teaching_plots.py&#39;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb34"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1"></a>urllib.request.urlretrieve(<span class="st">&#39;https://raw.githubusercontent.com/lawrennd/talks/gh-pages/gp_tutorial.py&#39;</span>,<span class="st">&#39;gp_tutorial.py&#39;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb35"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb35-2"><a href="#cb35-2"></a><span class="im">import</span> GPy</span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1"></a><span class="op">%</span>pip install gpy</span></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1"></a>urllib.request.urlretrieve(<span class="st">&#39;https://raw.githubusercontent.com/lawrennd/talks/gh-pages/mlai.py&#39;</span>,<span class="st">&#39;mlai.py&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1"></a>urllib.request.urlretrieve(<span class="st">&#39;https://raw.githubusercontent.com/lawrennd/talks/gh-pages/teaching_plots.py&#39;</span>,<span class="st">&#39;teaching_plots.py&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1"></a>urllib.request.urlretrieve(<span class="st">&#39;https://raw.githubusercontent.com/lawrennd/talks/gh-pages/gp_tutorial.py&#39;</span>,<span class="st">&#39;gp_tutorial.py&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb34-2"><a href="#cb34-2"></a><span class="im">import</span> GPy</span></code></pre></div>
 <p>To give a feel for the sofware we’ll start by creating an exponentiated quadratic covariance function, <br /><span class="math display">$$
 \kernelScalar(\inputVector, \inputVector^\prime) = \alpha \exp\left(-\frac{\ltwoNorm{\inputVector - \inputVector^\prime}^2}{2\ell^2}\right),
 $$</span><br /> where the length scale is <span class="math inline">ℓ</span> and the variance is <span class="math inline"><em>α</em></span>.</p>
 <p>To set this up in GPy we create a kernel in the following manner.</p>
-<div class="sourceCode" id="cb36"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1"></a>input_dim<span class="op">=</span><span class="dv">1</span></span>
-<span id="cb36-2"><a href="#cb36-2"></a>alpha <span class="op">=</span> <span class="fl">1.0</span></span>
-<span id="cb36-3"><a href="#cb36-3"></a>lengthscale <span class="op">=</span> <span class="fl">2.0</span></span>
-<span id="cb36-4"><a href="#cb36-4"></a>kern <span class="op">=</span> GPy.kern.RBF(input_dim<span class="op">=</span>input_dim, variance<span class="op">=</span>alpha, lengthscale<span class="op">=</span>lengthscale)</span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1"></a>input_dim<span class="op">=</span><span class="dv">1</span></span>
+<span id="cb35-2"><a href="#cb35-2"></a>alpha <span class="op">=</span> <span class="fl">1.0</span></span>
+<span id="cb35-3"><a href="#cb35-3"></a>lengthscale <span class="op">=</span> <span class="fl">2.0</span></span>
+<span id="cb35-4"><a href="#cb35-4"></a>kern <span class="op">=</span> GPy.kern.RBF(input_dim<span class="op">=</span>input_dim, variance<span class="op">=</span>alpha, lengthscale<span class="op">=</span>lengthscale)</span></code></pre></div>
 <p>That builds a kernel object for us. The kernel can be displayed.</p>
-<div class="sourceCode" id="cb37"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1"></a>display(kern)</span></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1"></a>display(kern)</span></code></pre></div>
 <p>Or because it’s one dimensional, you can also plot the kernel as a function of its inputs (while the other is fixed).</p>
 <div class="figure">
 <div id="gpy-eq-covariance-figure" class="figure-frame">
@@ -839,8 +853,8 @@ $$</span><br /> where the length scale is <span class="math inline">ℓ</span> a
 </div>
 </div>
 <p>You can set the lengthscale of the covariance to different values and plot the result.</p>
-<div class="sourceCode" id="cb38"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1"></a>kern <span class="op">=</span> GPy.kern.RBF(input_dim<span class="op">=</span>input_dim)     <span class="co"># By default, the parameters are set to 1.</span></span>
-<span id="cb38-2"><a href="#cb38-2"></a>lengthscales <span class="op">=</span> np.asarray([<span class="fl">0.2</span>,<span class="fl">0.5</span>,<span class="fl">1.</span>,<span class="fl">2.</span>,<span class="fl">4.</span>])</span></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1"></a>kern <span class="op">=</span> GPy.kern.RBF(input_dim<span class="op">=</span>input_dim)     <span class="co"># By default, the parameters are set to 1.</span></span>
+<span id="cb37-2"><a href="#cb37-2"></a>lengthscales <span class="op">=</span> np.asarray([<span class="fl">0.2</span>,<span class="fl">0.5</span>,<span class="fl">1.</span>,<span class="fl">2.</span>,<span class="fl">4.</span>])</span></code></pre></div>
 <div class="figure">
 <div id="gpy-eq-covariance-figure" class="figure-frame">
 <object class="svgplot " data="../slides/diagrams/kern/gpy-eq-covariance-lengthscales.svg" width="80%" style=" ">
@@ -857,10 +871,10 @@ $$</span><br /> where the length scale is <span class="math inline">ℓ</span> a
 <p>Many covariance functions are already implemented in GPy. Instead of rbf, try constructing and plotting the following covariance functions: <code>exponential</code>, <code>Matern32</code>, <code>Matern52</code>, <code>Brownian</code>, <code>linear</code>, <code>bias</code>, <code>rbfcos</code>, <code>periodic_Matern32</code>, etc. Some of these covariance functions, such as <code>rbfcos</code>, are not parametrized by a variance and a lengthscale. Furthermore, not all kernels are stationary (i.e., they can’t all be written as <span class="math inline">$\kernelScalar(\inputVector, \inputVector^\prime) = f(\inputVector-\inputVector^\prime)$</span>, see for example the Brownian covariance function). For plotting so it may be interesting to change the value of the fixed input.</p>
 <h2 id="combining-covariance-functions-in-gpy">Combining Covariance Functions in GPy</h2>
 <p>In GPy you can easily combine covariance functions you have created using the sum and product operators, <code>+</code> and <code>*</code>. So, for example, if we wish to combine an exponentiated quadratic covariance with a Matern 5/2 then we can write</p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1"></a>kern1 <span class="op">=</span> GPy.kern.RBF(<span class="dv">1</span>, variance<span class="op">=</span><span class="fl">1.</span>, lengthscale<span class="op">=</span><span class="fl">2.</span>)</span>
-<span id="cb39-2"><a href="#cb39-2"></a>kern2 <span class="op">=</span> GPy.kern.Matern52(<span class="dv">1</span>, variance<span class="op">=</span><span class="fl">2.</span>, lengthscale<span class="op">=</span><span class="fl">4.</span>)</span>
-<span id="cb39-3"><a href="#cb39-3"></a>kern <span class="op">=</span> kern1 <span class="op">+</span> kern2</span>
-<span id="cb39-4"><a href="#cb39-4"></a>display(kern)</span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1"></a>kern1 <span class="op">=</span> GPy.kern.RBF(<span class="dv">1</span>, variance<span class="op">=</span><span class="fl">1.</span>, lengthscale<span class="op">=</span><span class="fl">2.</span>)</span>
+<span id="cb38-2"><a href="#cb38-2"></a>kern2 <span class="op">=</span> GPy.kern.Matern52(<span class="dv">1</span>, variance<span class="op">=</span><span class="fl">2.</span>, lengthscale<span class="op">=</span><span class="fl">4.</span>)</span>
+<span id="cb38-3"><a href="#cb38-3"></a>kern <span class="op">=</span> kern1 <span class="op">+</span> kern2</span>
+<span id="cb38-4"><a href="#cb38-4"></a>display(kern)</span></code></pre></div>
 <div class="figure">
 <div id="gpy-eq-plus-matern52-covariance-figure" class="figure-frame">
 <object class="svgplot " data="../slides/diagrams/kern/gpy-eq-plus-matern52-covariance.svg" width="80%" style=" ">
@@ -874,10 +888,10 @@ $$</span><br /> where the length scale is <span class="math inline">ℓ</span> a
 </div>
 </div>
 <p>Or if we wanted to multiply them we can write</p>
-<div class="sourceCode" id="cb40"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1"></a>kern1 <span class="op">=</span> GPy.kern.RBF(<span class="dv">1</span>, variance<span class="op">=</span><span class="fl">1.</span>, lengthscale<span class="op">=</span><span class="fl">2.</span>)</span>
-<span id="cb40-2"><a href="#cb40-2"></a>kern2 <span class="op">=</span> GPy.kern.Matern52(<span class="dv">1</span>, variance<span class="op">=</span><span class="fl">2.</span>, lengthscale<span class="op">=</span><span class="fl">4.</span>)</span>
-<span id="cb40-3"><a href="#cb40-3"></a>kern <span class="op">=</span> kern1 <span class="op">*</span> kern2</span>
-<span id="cb40-4"><a href="#cb40-4"></a>display(kern)</span></code></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1"></a>kern1 <span class="op">=</span> GPy.kern.RBF(<span class="dv">1</span>, variance<span class="op">=</span><span class="fl">1.</span>, lengthscale<span class="op">=</span><span class="fl">2.</span>)</span>
+<span id="cb39-2"><a href="#cb39-2"></a>kern2 <span class="op">=</span> GPy.kern.Matern52(<span class="dv">1</span>, variance<span class="op">=</span><span class="fl">2.</span>, lengthscale<span class="op">=</span><span class="fl">4.</span>)</span>
+<span id="cb39-3"><a href="#cb39-3"></a>kern <span class="op">=</span> kern1 <span class="op">*</span> kern2</span>
+<span id="cb39-4"><a href="#cb39-4"></a>display(kern)</span></code></pre></div>
 <div class="figure">
 <div id="gpy-eq-times-matern52-covariance-figure" class="figure-frame">
 <object class="svgplot " data="../slides/diagrams/kern/gpy-eq-times-matern52-covariance.svg" width="80%" style=" ">
@@ -909,8 +923,8 @@ $$</span><br /> where the length scale is <span class="math inline">ℓ</span> a
 $$</span><br /> over the domain <span class="math inline">[0, 1]</span>, adding some noise to gives <br /><span class="math display">$$
 \dataScalar(\inputScalar) = \mappingFunction(\inputScalar) + \noiseScalar,
 $$</span><br /> with the noise being Gaussian distributed, <span class="math inline">$\noiseScalar \sim \gaussianSamp{0}{0.01}$</span>.</p>
-<div class="sourceCode" id="cb41"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1"></a>X <span class="op">=</span> np.linspace(<span class="fl">0.05</span>,<span class="fl">0.95</span>,<span class="dv">10</span>)[:,np.newaxis]</span>
-<span id="cb41-2"><a href="#cb41-2"></a>Y <span class="op">=</span> <span class="op">-</span>np.cos(np.pi<span class="op">*</span>X) <span class="op">+</span> np.sin(<span class="dv">4</span><span class="op">*</span>np.pi<span class="op">*</span>X) <span class="op">+</span> np.random.normal(loc<span class="op">=</span><span class="fl">0.0</span>, scale<span class="op">=</span><span class="fl">0.1</span>, size<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">1</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1"></a>X <span class="op">=</span> np.linspace(<span class="fl">0.05</span>,<span class="fl">0.95</span>,<span class="dv">10</span>)[:,np.newaxis]</span>
+<span id="cb40-2"><a href="#cb40-2"></a>Y <span class="op">=</span> <span class="op">-</span>np.cos(np.pi<span class="op">*</span>X) <span class="op">+</span> np.sin(<span class="dv">4</span><span class="op">*</span>np.pi<span class="op">*</span>X) <span class="op">+</span> np.random.normal(loc<span class="op">=</span><span class="fl">0.0</span>, scale<span class="op">=</span><span class="fl">0.1</span>, size<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">1</span>))</span></code></pre></div>
 <div class="figure">
 <div id="noisy-sine-figure" class="figure-frame">
 <object class="svgplot " data="../slides/diagrams/gp/noisy-sine.svg" width="80%" style=" ">
@@ -924,11 +938,11 @@ $$</span><br /> with the noise being Gaussian distributed, <span class="math inl
 </div>
 </div>
 <p>A GP regression model based on an exponentiated quadratic covariance function can be defined by first defining a covariance function.</p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1"></a>kern <span class="op">=</span> GPy.kern.RBF(input_dim<span class="op">=</span><span class="dv">1</span>, variance<span class="op">=</span><span class="fl">1.</span>, lengthscale<span class="op">=</span><span class="fl">1.</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1"></a>kern <span class="op">=</span> GPy.kern.RBF(input_dim<span class="op">=</span><span class="dv">1</span>, variance<span class="op">=</span><span class="fl">1.</span>, lengthscale<span class="op">=</span><span class="fl">1.</span>)</span></code></pre></div>
 <p>And then combining it with the data to form a Gaussian process model.</p>
-<div class="sourceCode" id="cb43"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1"></a>model <span class="op">=</span> GPy.models.GPRegression(X,Y,kern)</span></code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1"></a>model <span class="op">=</span> GPy.models.GPRegression(X,Y,kern)</span></code></pre></div>
 <p>Just as for the covariance function object, we can find out about the model using the command <code>display(model)</code>.</p>
-<div class="sourceCode" id="cb44"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1"></a>display(model)</span></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1"></a>display(model)</span></code></pre></div>
 <p>Note that by default the model includes some observation noise with variance 1. We can see the posterior mean prediction and visualize the marginal posterior variances using <code>model.plot()</code>.</p>
 <div class="figure">
 <div id="noisy-sine-gp-fit-figure" class="figure-frame">
@@ -943,18 +957,18 @@ $$</span><br /> with the noise being Gaussian distributed, <span class="math inl
 </div>
 </div>
 <p>You can also look directly at the predictions for the model using.</p>
-<div class="sourceCode" id="cb45"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1"></a>Xstar <span class="op">=</span> np.linspace(<span class="dv">0</span>, <span class="dv">10</span>, <span class="dv">100</span>)[:, np.newaxis]</span>
-<span id="cb45-2"><a href="#cb45-2"></a>Ystar, Vstar <span class="op">=</span> model.predict(Xstar)</span></code></pre></div>
+<div class="sourceCode" id="cb44"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1"></a>Xstar <span class="op">=</span> np.linspace(<span class="dv">0</span>, <span class="dv">10</span>, <span class="dv">100</span>)[:, np.newaxis]</span>
+<span id="cb44-2"><a href="#cb44-2"></a>Ystar, Vstar <span class="op">=</span> model.predict(Xstar)</span></code></pre></div>
 <p>Which gives you the mean (<code>Ystar</code>), the variance (<code>Vstar</code>) at the locations given by <code>Xstar</code>.</p>
 <h2 id="covariance-function-parameter-estimation">Covariance Function Parameter Estimation</h2>
 <p>As we have seen during the lectures, the parameters values can be estimated by maximizing the likelihood of the observations. Since we don’t want one of the variance to become negative during the optimization, we can constrain all parameters to be positive before running the optimisation.</p>
-<div class="sourceCode" id="cb46"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1"></a>model.constrain_positive()</span></code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1"></a>model.constrain_positive()</span></code></pre></div>
 <p>The warnings are because the parameters are already constrained by default, the software is warning us that they are being reconstrained.</p>
 <p>Now we can optimize the model using the <code>model.optimize()</code> method. Here we switch messages on, which allows us to see the progession of the optimization.</p>
-<div class="sourceCode" id="cb47"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1"></a>model.optimize(messages<span class="op">=</span><span class="va">True</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb46"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1"></a>model.optimize(messages<span class="op">=</span><span class="va">True</span>)</span></code></pre></div>
 <p>By default the optimization is using a limited memory BFGS optimizer <span class="citation" data-cites="Byrd:lbfgsb95">(Byrd, Lu, and Nocedal 1995)</span>.</p>
 <p>Once again we can display the model, now to see how the parameters have changed.</p>
-<div class="sourceCode" id="cb48"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1"></a>display(model)</span></code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1"></a>display(model)</span></code></pre></div>
 <p>The lengthscale is much smaller, as well as the noise level. The variance of the exponentiated quadratic has also reduced.</p>
 <div class="figure">
 <div id="noisy-sine-gp-optimized-fit-figure" class="figure-frame">
