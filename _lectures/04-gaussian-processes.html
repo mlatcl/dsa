@@ -102,18 +102,18 @@ $$</span><br /> where we are still in the one dimensional input setting so <span
 <span id="cb8-4"><a href="#cb8-4"></a>    <span class="cf">return</span> np.hstack([np.ones((x.shape[<span class="dv">0</span>], <span class="dv">1</span>)), x, x<span class="op">**</span><span class="dv">2</span>])</span></code></pre></div>
 <h2 id="functions-derived-from-quadratic-basis">Functions Derived from Quadratic Basis</h2>
 <p><br /><span class="math display">$$
-\mappingFunction(\inputScalar) = {\color{red}\mappingScalar_0}   + {\color{magenta}\mappingScalar_1 \inputScalar} + {\color{blue}\mappingScalar_2 \inputScalar^2}
+\mappingFunction(\inputScalar) = \color{red}{\mappingScalar_0}   + \color{magenta}{\mappingScalar_1 \inputScalar} + \color{blue}{\mappingScalar_2 \inputScalar^2}
 $$</span><br /></p>
 <div class="figure">
-<div id="-figure" class="figure-frame">
-<object class="svgplot quadratic-basis-2" data="../slides/diagrams/ml/quadratic_basis002.svg" width="The set of functions which are combined to form a *quadratic* basis." style=" ">
+<div id="quadratic-basis-2-figure" class="figure-frame">
+<object class="svgplot " data="../slides/diagrams/ml/quadratic_basis002.svg" width="80%" style=" ">
 </object>
 </div>
-<div id="-magnify" class="magnify" onclick="magnifyFigure(&#39;&#39;)">
+<div id="quadratic-basis-2-magnify" class="magnify" onclick="magnifyFigure(&#39;quadratic-basis-2&#39;)">
 <img class="img-button" src="{{ '/assets/images/Magnify_Large.svg' | relative_url }}" style="width:1.5ex">
 </div>
-<div id="-caption" class="caption-frame">
-<p>Figure:</p>
+<div id="quadratic-basis-2-caption" class="caption-frame">
+<p>Figure: The set of functions which are combined to form a <em>quadratic</em> basis.</p>
 </div>
 </div>
 <p>This function takes in an <span class="math inline">$\numData \times 1$</span> dimensional vector and returns an <span class="math inline">$\numData \times 3$</span> dimensional <em>design matrix</em> containing the basis functions. We can plot those basis functions against there input as follows.</p>
