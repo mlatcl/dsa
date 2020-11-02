@@ -79,7 +79,9 @@ $$</span><br /> where the conditioning is on the inputs <span class="math inline
 <p>If we assume that a variable, <span class="math inline">$\dataScalar_i$</span>, is sampled from a Gaussian density,</p>
 <p><br /><span class="math display">$$\dataScalar_i \sim \gaussianSamp{\meanScalar_i}{\sigma_i^2}$$</span><br /></p>
 <p>Then we can show that the sum of a set of variables, each drawn independently from such a density is also distributed as Gaussian. The mean of the resulting density is the sum of the means, and the variance is the sum of the variances,</p>
-<p><br /><span class="math display">$$\sum_{i=1}^{\numData} \dataScalar_i \sim \gaussianSamp{\sum_{i=1}^\numData \meanScalar_i}{\sum_{i=1}^\numData \sigma_i^2}$$</span><br /></p>
+<p><br /><span class="math display">$$
+\sum_{i=1}^{\numData} \dataScalar_i \sim \gaussianSamp{\sum_{i=1}^\numData \meanScalar_i}{\sum_{i=1}^\numData \sigma_i^2}
+$$</span><br /></p>
 <p>Since we are very familiar with the Gaussian density and its properties, it is not immediately apparent how unusual this is. Most random variables, when you add them together, change the family of density they are drawn from. For example, the Gaussian is exceptional in this regard. Indeed, other random variables, if they are independently drawn and summed together tend to a Gaussian density. That is the <a href="https://en.wikipedia.org/wiki/Central_limit_theorem"><em>central limit theorem</em></a> which is a major justification for the use of a Gaussian density.</p>
 <h2 id="scaling-a-gaussian">Scaling a Gaussian</h2>
 <p>Less unusual is the <em>scaling</em> property of a Gaussian density. If a variable, <span class="math inline">$\dataScalar$</span>, is sampled from a Gaussian density,</p>
@@ -176,7 +178,7 @@ $$</span><br /> where <span class="math inline">$\dataVector$</span>, <span clas
 $$</span><br /> then we know that <span class="math inline">$\dataVector$</span> is also drawn from a multivariate Gaussian with, <br /><span class="math display">$$
 \dataVector \sim \gaussianSamp{\mappingMatrix\meanVector}{\mappingMatrix\covarianceMatrix\mappingMatrix^\top + \covarianceMatrixTwo}.
 $$</span><br /></p>
-<p>With apprioriately defined covariance, <span class="math inline">$\covarianceMatrixTwo$</span>, this is actually the marginal likelihood for Factor Analysis, or Probabilistic Principal Component Analysis <span class="citation" data-cites="Tipping:probpca99">(Tipping and Bishop 1999)</span>, because we integrated out the inputs (or <em>latent</em> variables they would be called in that case).</p>
+<p>With appropriately defined covariance, <span class="math inline">$\covarianceMatrixTwo$</span>, this is actually the marginal likelihood for Factor Analysis, or Probabilistic Principal Component Analysis <span class="citation" data-cites="Tipping:probpca99">(Tipping and Bishop 1999)</span>, because we integrated out the inputs (or <em>latent</em> variables they would be called in that case).</p>
 <p>However, we are focussing on what happens in models which are non-linear in the inputs, whereas the above would be <em>linear</em> in the inputs. To consider these, we introduce a matrix, called the design matrix. We set each activation function computed at each data point to be <br /><span class="math display">$$
 \activationScalar_{i,j} = \activationScalar(\mappingVector^{(1)}_{j}, \inputVector_{i})
 $$</span><br /> and define the matrix of activations (known as the <em>design matrix</em> in statistics) to be, <br /><span class="math display">$$
@@ -292,7 +294,7 @@ $$</span><br /></p>
 <span id="cb14-2"><a href="#cb14-2"></a>scale <span class="op">=</span> <span class="fl">100.</span></span>
 <span id="cb14-3"><a href="#cb14-3"></a>num_data <span class="op">=</span> x.shape[<span class="dv">0</span>]</span>
 <span id="cb14-4"><a href="#cb14-4"></a>num_pred_data <span class="op">=</span> <span class="dv">100</span> <span class="co"># how many points to use for plotting predictions</span></span>
-<span id="cb14-5"><a href="#cb14-5"></a>x_pred <span class="op">=</span> np.linspace(<span class="dv">1880</span>, <span class="dv">2030</span>, num_pred_data)[:, <span class="va">None</span>] <span class="co"># input locations for predictions</span></span>
+<span id="cb14-5"><a href="#cb14-5"></a>x_pred <span class="op">=</span> np.linspace(<span class="dv">1880</span>, <span class="dv">2030</span>, num_pred_data)[:, np.newaxis] <span class="co"># input locations for predictions</span></span>
 <span id="cb14-6"><a href="#cb14-6"></a>Phi_pred <span class="op">=</span> polynomial(x_pred, degree<span class="op">=</span>degree, loc<span class="op">=</span>loc, scale<span class="op">=</span>scale)</span>
 <span id="cb14-7"><a href="#cb14-7"></a>Phi <span class="op">=</span> polynomial(x, degree<span class="op">=</span>degree, loc<span class="op">=</span>loc, scale<span class="op">=</span>scale)</span></code></pre></div>
 <h2 id="weight-space-view">Weight Space View</h2>
