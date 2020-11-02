@@ -455,7 +455,9 @@ p(\mathbf{ y}|\mathbf{X}, \mathbf{ w}) =
 </div>
 <div class="fragment">
 <p><span style="text-align:left">And the sum is distributed as</span></p>
-<p><span class="math display">\[\sum_{i=1}^{n} y_i \sim \mathcal{N}\left(\sum_{i=1}^n\mu_i,\sum_{i=1}^n\sigma_i^2\right)\]</span></p>
+<p><span class="math display">\[
+\sum_{i=1}^{n} y_i \sim \mathcal{N}\left(\sum_{i=1}^n\mu_i,\sum_{i=1}^n\sigma_i^2\right)
+\]</span></p>
 </div>
 <div class="fragment">
 <p><small>(<em>Aside</em>: As sum increases, sum of non-Gaussian, finite variance variables is also Gaussian because of <a href="https://en.wikipedia.org/wiki/Central_limit_theorem">central limit theorem</a>.)</small></p>
@@ -662,89 +664,10 @@ p(\mathbf{ y}) = \frac{1}{\det{2\pi\mathbf{C}}^{\frac{1}{2}}} \exp\left(-\frac{1
 \]</span></p></li>
 <li><p>Then <span class="math display">\[
 \mathbf{ y}\sim \mathcal{N}\left(\mathbf{W}\boldsymbol{ \mu},\mathbf{W}\mathbf{C}\mathbf{W}^\top + \boldsymbol{ \Sigma}\right).
-\]</span> If <span class="math inline">\(\boldsymbol{ \Sigma}=\sigma^2\mathbf{I}\)</span>, this is Probabilistic Principal Component Analysis <span class="citation" data-cites="Tipping:probpca99">(Tipping and Bishop, 1999)</span>, because we integrated out the inputs (or <em>latent</em> variables they would be called in that case).</p></li>
-</ul>
-</section>
-<section id="non-linear-on-inputs" class="slide level2">
-<h2>Non linear on Inputs</h2>
-<ul>
-<li>Set each activation function computed at each data point to be</li>
-</ul>
-<p><span class="math display">\[
-\phi_{i,j} = \phi(\mathbf{ w}^{(1)}_{j}, \mathbf{ x}_{i})
-\]</span> Define <em>design matrix</em> <span class="math display">\[
-\boldsymbol{ \Phi}= 
-\begin{bmatrix}
-\phi_{1, 1} &amp; \phi_{1, 2} &amp; \dots &amp; \phi_{1, h} \\
-\phi_{1, 2} &amp; \phi_{1, 2} &amp; \dots &amp; \phi_{1, n} \\
-\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
-\phi_{n, 1} &amp; \phi_{n, 2} &amp; \dots &amp; \phi_{n, h}
-\end{bmatrix}.
-\]</span></p>
-</section>
-<section id="matrix-representation-of-a-neural-network" class="slide level2">
-<h2>Matrix Representation of a Neural Network</h2>
-<p><span class="math display">\[y\left(\mathbf{ x}\right) = \boldsymbol{ \phi}\left(\mathbf{ x}\right)^\top \mathbf{ w}+ \epsilon\]</span></p>
-<div class="fragment">
-<p><span class="math display">\[\mathbf{ y}= \boldsymbol{ \Phi}\mathbf{ w}+ \boldsymbol{ \epsilon}\]</span></p>
-</div>
-<div class="fragment">
-<p><span class="math display">\[\boldsymbol{ \epsilon}\sim \mathcal{N}\left(\mathbf{0},\sigma^2\mathbf{I}\right)\]</span></p>
-</div>
-</section>
-<section id="prior-density" class="slide level2">
-<h2>Prior Density</h2>
-<ul>
-<li>Define</li>
-</ul>
-<p><span class="math display">\[
-\mathbf{ w}\sim \mathcal{N}\left(\mathbf{0},\alpha\mathbf{I}\right),
-\]</span></p>
-<ul>
-<li>Rules of multivariate Gaussians to see that,</li>
-</ul>
-<p><span class="math display">\[
-\mathbf{ y}\sim \mathcal{N}\left(\mathbf{0},\alpha \boldsymbol{ \Phi}\boldsymbol{ \Phi}^\top + \sigma^2 \mathbf{I}\right).
-\]</span></p>
-<p><span class="math display">\[
-\mathbf{K}= \alpha \boldsymbol{ \Phi}\boldsymbol{ \Phi}^\top + \sigma^2 \mathbf{I}.
-\]</span></p>
-</section>
-<section id="joint-gaussian-density" class="slide level2">
-<h2>Joint Gaussian Density</h2>
-<ul>
-<li>Elements are a function <span class="math inline">\(k_{i,j} = k\left(\mathbf{ x}_i, \mathbf{ x}_j\right)\)</span></li>
-</ul>
-<p><span class="math display">\[
-\mathbf{K}= \alpha \boldsymbol{ \Phi}\boldsymbol{ \Phi}^\top + \sigma^2 \mathbf{I}.
-\]</span></p>
-</section>
-<section id="covariance-function" class="slide level2">
-<h2>Covariance Function</h2>
-<p><span class="math display">\[
-k_f\left(\mathbf{ x}_i, \mathbf{ x}_j\right) = \alpha \boldsymbol{ \phi}\left(\mathbf{W}_1, \mathbf{ x}_i\right)^\top \boldsymbol{ \phi}\left(\mathbf{W}_1, \mathbf{ x}_j\right)
-\]</span></p>
-<ul>
-<li>formed by inner products of the rows of the <em>design matrix</em>.</li>
-</ul>
-</section>
-<section id="gaussian-process" class="slide level2">
-<h2>Gaussian Process</h2>
-<ul>
-<li><p>Instead of making assumptions about our density over each data point, <span class="math inline">\(y_i\)</span> as i.i.d.</p></li>
-<li><p>make a joint Gaussian assumption over our data.</p></li>
-<li><p>covariance matrix is now a function of both the parameters of the activation function, <span class="math inline">\(\mathbf{W}_1\)</span>, and the input variables, <span class="math inline">\(\mathbf{X}\)</span>.</p></li>
-<li><p>Arises from integrating out <span class="math inline">\(\mathbf{ w}^{(2)}\)</span>.</p></li>
+\]</span> If <span class="math inline">\(\boldsymbol{ \Sigma}=\sigma^2\mathbf{I}\)</span>, this is Probabilistic PCA <span class="citation" data-cites="Tipping:probpca99">(Tipping and Bishop, 1999)</span>.</p></li>
 </ul>
 </section>
 <section id="basis-functions" class="slide level2">
-<h2>Basis Functions</h2>
-<ul>
-<li>Can be very complex, such as deep kernels, <span class="citation" data-cites="Cho:deep09">(Cho and Saul, 2009)</span> or could even put a convolutional neural network inside.</li>
-<li>Viewing a neural network in this way is also what allows us to beform sensible <em>batch</em> normalizations <span class="citation" data-cites="Ioffe:batch15">(Ioffe and Szegedy, 2015)</span>.</li>
-</ul>
-</section>
-<section id="basis-functions-1" class="slide level2">
 <h2>Basis Functions</h2>
 </section>
 <section id="quadratic-basis" class="slide level2">
@@ -756,9 +679,9 @@ k_f\left(\mathbf{ x}_i, \mathbf{ x}_j\right) = \alpha \boldsymbol{ \phi}\left(\m
 </ul>
 <p><span class="math display">\[
 \begin{align*}
-\phi_1(x) = 1, \\
-\phi_2(x) = x, \\
-\phi_3(x) = x^2.
+\phi_1(x) &amp; = 1, \\
+\phi_2(x) &amp; = x, \\
+\phi_3(x) &amp; = x^2.
 \end{align*}
 \]</span></p>
 <p><span class="math display">\[
@@ -815,6 +738,142 @@ showDivs(0, 'quadratic_function');
 </div>
 <div class="quadratic_function" style="text-align:center;">
 <object class="svgplot " data="../slides/diagrams/ml/quadratic_function002.svg" width="80%" style=" ">
+</object>
+</div>
+</section>
+<section id="rectified-linear-units" class="slide level2">
+<h2>Rectified Linear Units</h2>
+</section>
+<section id="functions-derived-from-relu-basis" class="slide level2">
+<h2>Functions Derived from Relu Basis</h2>
+<p><span class="math display">\[
+f(x) = {\color{cyan}w_0}   + {\color{green}w_1 xH(x+1.0) } + {\color{yellow}w_2 xH(x+0.33) } + {\color{magenta}w_3 xH(x-0.33)} +  {\color{red}w_4 xH(x-1.0)}
+\]</span></p>
+<script>
+showDivs(0, 'relu_function');
+</script>
+<p><small></small> <input id="range-relu_function" type="range" min="0" max="4" value="0" onchange="setDivs('relu_function')" oninput="setDivs('relu_function')"> <button onclick="plusDivs(-1, 'relu_function')">❮</button> <button onclick="plusDivs(1, 'relu_function')">❯</button></p>
+<div class="relu_function" style="text-align:center;">
+<object class="svgplot " data="../slides/diagrams/ml/relu_function000.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="relu_function" style="text-align:center;">
+<object class="svgplot " data="../slides/diagrams/ml/relu_function001.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="relu_function" style="text-align:center;">
+<object class="svgplot " data="../slides/diagrams/ml/relu_function002.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="relu_function" style="text-align:center;">
+<object class="svgplot " data="../slides/diagrams/ml/relu_function003.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="relu_function" style="text-align:center;">
+<object class="svgplot " data="../slides/diagrams/ml/relu_function004.svg" width="80%" style=" ">
+</object>
+</div>
+</section>
+<section id="linear-model-overview" class="slide level2">
+<h2>Linear Model Overview</h2>
+<ul>
+<li>Set each activation function computed at each data point to be</li>
+</ul>
+<p><span class="math display">\[
+\phi_{i,j} = \phi(\mathbf{ w}^{(1)}_{j}, \mathbf{ x}_{i})
+\]</span> Define <em>design matrix</em> <span class="math display">\[
+\boldsymbol{ \Phi}= 
+\begin{bmatrix}
+\phi_{1, 1} &amp; \phi_{1, 2} &amp; \dots &amp; \phi_{1, h} \\
+\phi_{1, 2} &amp; \phi_{1, 2} &amp; \dots &amp; \phi_{1, n} \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+\phi_{n, 1} &amp; \phi_{n, 2} &amp; \dots &amp; \phi_{n, h}
+\end{bmatrix}.
+\]</span></p>
+</section>
+<section id="matrix-representation-of-a-neural-network" class="slide level2">
+<h2>Matrix Representation of a Neural Network</h2>
+<p><span class="math display">\[y\left(\mathbf{ x}\right) = \boldsymbol{ \phi}\left(\mathbf{ x}\right)^\top \mathbf{ w}+ \epsilon\]</span></p>
+<div class="fragment">
+<p><span class="math display">\[\mathbf{ y}= \boldsymbol{ \Phi}\mathbf{ w}+ \boldsymbol{ \epsilon}\]</span></p>
+</div>
+<div class="fragment">
+<p><span class="math display">\[\boldsymbol{ \epsilon}\sim \mathcal{N}\left(\mathbf{0},\sigma^2\mathbf{I}\right)\]</span></p>
+</div>
+</section>
+<section id="prior-density" class="slide level2">
+<h2>Prior Density</h2>
+<ul>
+<li>Define <span class="math display">\[
+\mathbf{ w}\sim \mathcal{N}\left(\mathbf{0},\alpha\mathbf{I}\right),
+\]</span></li>
+<li>Rules of multivariate Gaussians to see that, <span class="math display">\[
+\mathbf{ y}\sim \mathcal{N}\left(\mathbf{0},\alpha \boldsymbol{ \Phi}\boldsymbol{ \Phi}^\top + \sigma^2 \mathbf{I}\right).
+\]</span></li>
+</ul>
+<p><span class="math display">\[
+\mathbf{K}= \alpha \boldsymbol{ \Phi}\boldsymbol{ \Phi}^\top + \sigma^2 \mathbf{I}.
+\]</span></p>
+</section>
+<section id="joint-gaussian-density" class="slide level2">
+<h2>Joint Gaussian Density</h2>
+<ul>
+<li>Elements are a function <span class="math inline">\(k_{i,j} = k\left(\mathbf{ x}_i, \mathbf{ x}_j\right)\)</span></li>
+</ul>
+<p><span class="math display">\[
+\mathbf{K}= \alpha \boldsymbol{ \Phi}\boldsymbol{ \Phi}^\top + \sigma^2 \mathbf{I}.
+\]</span></p>
+</section>
+<section id="covariance-function" class="slide level2">
+<h2>Covariance Function</h2>
+<p><span class="math display">\[
+k_f\left(\mathbf{ x}_i, \mathbf{ x}_j\right) = \alpha \boldsymbol{ \phi}\left(\mathbf{W}_1, \mathbf{ x}_i\right)^\top \boldsymbol{ \phi}\left(\mathbf{W}_1, \mathbf{ x}_j\right)
+\]</span></p>
+<ul>
+<li>formed by inner products of the rows of the <em>design matrix</em>.</li>
+</ul>
+</section>
+<section id="gaussian-process" class="slide level2">
+<h2>Gaussian Process</h2>
+<ul>
+<li><p>Instead of making assumptions about our density over each data point, <span class="math inline">\(y_i\)</span> as i.i.d.</p></li>
+<li><p>make a joint Gaussian assumption over our data.</p></li>
+<li><p>covariance matrix is now a function of both the parameters of the activation function, <span class="math inline">\(\mathbf{W}_1\)</span>, and the input variables, <span class="math inline">\(\mathbf{X}\)</span>.</p></li>
+<li><p>Arises from integrating out <span class="math inline">\(\mathbf{ w}^{(2)}\)</span>.</p></li>
+</ul>
+</section>
+<section id="basis-functions-1" class="slide level2">
+<h2>Basis Functions</h2>
+<ul>
+<li>Can be very complex, such as deep kernels, <span class="citation" data-cites="Cho:deep09">(Cho and Saul, 2009)</span> or could even put a convolutional neural network inside.</li>
+<li>Viewing a neural network in this way is also what allows us to beform sensible <em>batch</em> normalizations <span class="citation" data-cites="Ioffe:batch15">(Ioffe and Szegedy, 2015)</span>.</li>
+</ul>
+</section>
+<section id="radial-basis-functions" class="slide level2">
+<h2>Radial Basis Functions</h2>
+<ul>
+<li>Basis functions can be local e.g. radial (or Gaussian) basis <span class="math display">\[\phi_j(x) = \exp\left(-\frac{(x-\mu_j)^2}{\ell^2}\right)\]</span></li>
+</ul>
+</section>
+<section id="functions-derived-from-radial-basis" class="slide level2">
+<h2>Functions Derived from Radial Basis</h2>
+<p><span class="math display">\[
+f(x) = {\color{cyan}w_1 e^{-2(x+1)^2}}  + {\color{green}w_2e^{-2x^2}} + {\color{yellow}w_3 e^{-2(x-1)^2}}
+\]</span></p>
+<script>
+showDivs(0, 'radial_function');
+</script>
+<p><small></small> <input id="range-radial_function" type="range" min="0" max="2" value="0" onchange="setDivs('radial_function')" oninput="setDivs('radial_function')"> <button onclick="plusDivs(-1, 'radial_function')">❮</button> <button onclick="plusDivs(1, 'radial_function')">❯</button></p>
+<div class="radial_function" style="text-align:center;">
+<object class="svgplot " data="../slides/diagrams/ml/radial_function000.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="radial_function" style="text-align:center;">
+<object class="svgplot " data="../slides/diagrams/ml/radial_function001.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="radial_function" style="text-align:center;">
+<object class="svgplot " data="../slides/diagrams/ml/radial_function002.svg" width="80%" style=" ">
 </object>
 </div>
 </section>
@@ -970,19 +1029,15 @@ Page 37 of <a href="http://www.cs.toronto.edu/~radford/ftp/thesis.pdf">Radford N
 <section id="roughly-speaking" class="slide level2">
 <h2>Roughly Speaking</h2>
 <ul>
-<li><p>Instead of</p>
-<p><span class="math display">\[
+<li>Instead of <span class="math display">\[
 \begin{align*}
 k_f\left(\mathbf{ x}_i, \mathbf{ x}_j\right) &amp; = \alpha \boldsymbol{ \phi}\left(\mathbf{W}_1, \mathbf{ x}_i\right)^\top \boldsymbol{ \phi}\left(\mathbf{W}_1, \mathbf{ x}_j\right)\\
 &amp; = \alpha \sum_k \phi\left(\mathbf{ w}^{(1)}_k, \mathbf{ x}_i\right) \phi\left(\mathbf{ w}^{(1)}_k, \mathbf{ x}_j\right)
 \end{align*}
-\]</span></p></li>
-<li><p>Sample infinitely many from a prior density, <span class="math inline">\(p(\mathbf{ w}^{(1)})\)</span>,</p></li>
-</ul>
-<p><span class="math display">\[
+\]</span></li>
+<li>Sample infinitely many from a prior density, <span class="math inline">\(p(\mathbf{ w}^{(1)})\)</span>, <span class="math display">\[
 k_f\left(\mathbf{ x}_i, \mathbf{ x}_j\right) = \alpha \int \phi\left(\mathbf{ w}^{(1)}, \mathbf{ x}_i\right) \phi\left(\mathbf{ w}^{(1)}, \mathbf{ x}_j\right) p(\mathbf{ w}^{(1)}) \text{d}\mathbf{ w}^{(1)}
-\]</span></p>
-<ul>
+\]</span></li>
 <li>Also applies for non-Gaussian <span class="math inline">\(p(\mathbf{ w}^{(1)})\)</span> because of the <em>central limit theorem</em>.</li>
 </ul>
 </section>
