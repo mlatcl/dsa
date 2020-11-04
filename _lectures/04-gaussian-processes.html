@@ -618,6 +618,21 @@ $$</span><br /></p>
 <span id="cb29-2"><a href="#cb29-2"></a>np.random.seed(<span class="dv">4949</span>)</span></code></pre></div>
 <div class="sourceCode" id="cb30"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1"></a><span class="im">import</span> teaching_plots <span class="im">as</span> plot</span>
 <span id="cb30-2"><a href="#cb30-2"></a><span class="im">import</span> pods</span></code></pre></div>
+<h3 id="sampling-a-function-from-a-gaussian">Sampling a Function from a Gaussian</h3>
+<p><span style="text-align:right"><span class="editsection-bracket" style="">[</span><span class="editsection" style=""><a href="https://github.com/lawrennd/talks/edit/gh-pages/_gp/includes/gaussian-predict-index-one-and-two.md" target="_blank" onclick="ga('send', 'event', 'Edit Page', 'Edit', 'https://github.com/lawrennd/talks/edit/gh-pages/_gp/includes/gaussian-predict-index-one-and-two.md', 13);">edit</a></span><span class="editsection-bracket" style="">]</span></span></p>
+<div class="figure">
+<div id="two-point-sample-one-two-figure" class="figure-frame">
+<object class="svgplot " data="../slides/diagrams/gp/two_point_sample001.svg" width="80%" style=" ">
+</object>
+</div>
+<div id="two-point-sample-one-two-magnify" class="magnify" onclick="magnifyFigure(&#39;two-point-sample-one-two&#39;)">
+<img class="img-button" src="{{ '/assets/images/Magnify_Large.svg' | relative_url }}" style="width:1.5ex">
+</div>
+<div id="two-point-sample-one-two-caption" class="caption-frame">
+<p>Figure: The joint Gaussian over <span class="math inline">$\mappingFunction_1$</span> and <span class="math inline">$\mappingFunction_2$</span> along with the conditional distribution of <span class="math inline">$\mappingFunction_2$</span> given <span class="math inline">$\mappingFunction_1$</span></p>
+</div>
+</div>
+<h3 id="joint-density-of-f_1-and-f_2">Joint Density of <span class="math inline"><em>f</em><sub>1</sub></span> and <span class="math inline"><em>f</em><sub>2</sub></span></h3>
 <div class="figure">
 <div id="two-point-sample-one-two-figure" class="figure-frame">
 <object class="svgplot " data="../slides/diagrams/gp/two_point_sample012.svg" width="80%" style=" ">
@@ -648,6 +663,9 @@ $$</span><br /> where covariance of joint density is given by <br /><span class=
 \kernelMatrix= \begin{bmatrix} \kernelScalar_{1, 1} &amp; \kernelScalar_{1, 2}\\ \kernelScalar_{2, 1} &amp; \kernelScalar_{2, 2}\end{bmatrix}
 $$</span><br /></p></li>
 </ul>
+</div>
+<h3 id="joint-density-of-f_1-and-f_8">Joint Density of <span class="math inline"><em>f</em><sub>1</sub></span> and <span class="math inline"><em>f</em><sub>8</sub></span></h3>
+<p><span style="text-align:right"><span class="editsection-bracket" style="">[</span><span class="editsection" style=""><a href="https://github.com/lawrennd/talks/edit/gh-pages/_gp/includes/gaussian-predict-index-one-and-eight.md" target="_blank" onclick="ga('send', 'event', 'Edit Page', 'Edit', 'https://github.com/lawrennd/talks/edit/gh-pages/_gp/includes/gaussian-predict-index-one-and-eight.md', 13);">edit</a></span><span class="editsection-bracket" style="">]</span></span></p>
 <div class="figure">
 <div id="two-point-sample-13-figure" class="figure-frame">
 <object class="svgplot " data="../slides/diagrams/gp/two_point_sample013.svg" width="80%" style=" ">
@@ -660,6 +678,7 @@ $$</span><br /></p></li>
 <p>Figure: Sample from the joint Gaussian model, points indexed by 1 and 8 highlighted.</p>
 </div>
 </div>
+<h3 id="prediction-of-mappingfunction_8-from-mappingfunction_1">Prediction of <span class="math inline">$\mappingFunction_{8}$</span> from <span class="math inline">$\mappingFunction_{1}$</span></h3>
 <div class="figure">
 <div id="two-point-sample-one-eight-figure" class="figure-frame">
 <object class="svgplot " data="../slides/diagrams/gp/two_point_sample017.svg" width="80%" style=" ">
@@ -675,7 +694,6 @@ $$</span><br /></p></li>
 <ul>
 <li>The single contour of the Gaussian density represents the <font color="blue">joint distribution, <span class="math inline">$p(\mappingFunction_1, \mappingFunction_8)$</span></font></li>
 </ul>
-</div>
 <div class="incremental">
 <ul>
 <li>We observe a value for <font color="green"><span class="math inline">$\mappingFunction_1=-?$</span></font></li>
