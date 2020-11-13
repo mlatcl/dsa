@@ -574,189 +574,6 @@ p\left(y_i|x_i\right)=\frac{1}{\sqrt{2\pi\sigma^2}}\exp \left(-\frac{\left(y_i-f
 \mathbf{ y}\sim \mathcal{N}\left(\mathbf{W}\boldsymbol{ \mu},\mathbf{W}\mathbf{C}\mathbf{W}^\top + \boldsymbol{ \Sigma}\right).
 \]</span> If <span class="math inline">\(\boldsymbol{ \Sigma}=\sigma^2\mathbf{I}\)</span>, this is Probabilistic PCA <span class="citation" data-cites="Tipping:probpca99">(Tipping and Bishop, 1999)</span>.</p></li>
 </ul>
-</section>
-<section id="laplaces-idea" class="slide level2">
-<h2>Laplace’s Idea</h2>
-</section>
-<section id="a-probabilistic-process-1" class="slide level2">
-<h2>A Probabilistic Process</h2>
-<p>Set the mean of Gaussian to be a function.</p>
-<div class="fragment">
-<p><span class="math display">\[p\left(y_i|x_i\right)=\frac{1}{\sqrt{2\pi\sigma^2}}\exp\left(-\frac{\left(y_i-f\left(x_i\right)\right)^{2}}{2\sigma^2}\right).\]</span></p>
-</div>
-<div class="fragment">
-<p>This gives us a ‘noisy function’.</p>
-</div>
-<div class="fragment">
-<p>This is known as a stochastic process.</p>
-</div>
-</section>
-<section id="height-as-a-function-of-weight" class="slide level2">
-<h2>Height as a Function of Weight</h2>
-<p>In the standard Gaussian, parametized by mean and variance.</p>
-<p>Make the mean a linear function of an <em>input</em>.</p>
-<p>This leads to a regression model. <span class="math display">\[
-\begin{align*}
-  y_i=&amp;f\left(x_i\right)+\epsilon_i,\\
-         \epsilon_i \sim &amp; \mathcal{N}\left(0,\sigma^2\right).
-  \end{align*}
-\]</span></p>
-<p>Assume <span class="math inline">\(y_i\)</span> is height and <span class="math inline">\(x_i\)</span> is weight.</p>
-</section>
-<section id="data-point-likelihood" class="slide level2">
-<h2>Data Point Likelihood</h2>
-<p>Likelihood of an individual data point <span class="math display">\[
-p\left(y_i|x_i,m,c\right)=\frac{1}{\sqrt{2\pi \sigma^2}}\exp\left(-\frac{\left(y_i-mx_i-c\right)^{2}}{2\sigma^2}\right).
-\]</span> Parameters are gradient, <span class="math inline">\(m\)</span>, offset, <span class="math inline">\(c\)</span> of the function and noise variance <span class="math inline">\(\sigma^2\)</span>.</p>
-</section>
-<section id="data-set-likelihood" class="slide level2">
-<h2>Data Set Likelihood</h2>
-<p>If the noise, <span class="math inline">\(\epsilon_i\)</span> is sampled independently for each data point. Each data point is independent (given <span class="math inline">\(m\)</span> and <span class="math inline">\(c\)</span>). For <em>independent</em> variables: <span class="math display">\[
-p(\mathbf{ y}) = \prod_{i=1}^np(y_i)
-\]</span> <span class="math display">\[
-p(\mathbf{ y}|\mathbf{ x}, m, c) = \prod_{i=1}^np(y_i|x_i, m, c)
-\]</span></p>
-</section>
-<section id="for-gaussian" class="slide level2">
-<h2>For Gaussian</h2>
-<p>i.i.d. assumption <span class="math display">\[
-p(\mathbf{ y}|\mathbf{ x}, m, c) = \prod_{i=1}^n\frac{1}{\sqrt{2\pi \sigma^2}}\exp \left(-\frac{\left(y_i- mx_i-c\right)^{2}}{2\sigma^2}\right).
-\]</span> <span class="math display">\[
-p(\mathbf{ y}|\mathbf{ x}, m, c) = \frac{1}{\left(2\pi \sigma^2\right)^{\frac{n}{2}}}\exp\left(-\frac{\sum_{i=1}^n\left(y_i-mx_i-c\right)^{2}}{2\sigma^2}\right).
-\]</span></p>
-</section>
-<section id="log-likelihood-function" class="slide level2">
-<h2>Log Likelihood Function</h2>
-<ul>
-<li>Normally work with the log likelihood: <span class="math display">\[
-L(m,c,\sigma^{2})=-\frac{n}{2}\log 2\pi -\frac{n}{2}\log \sigma^2 -\sum_{i=1}^{n}\frac{\left(y_i-mx_i-c\right)^{2}}{2\sigma^2}.
-\]</span></li>
-</ul>
-</section>
-<section id="consistency-of-maximum-likelihood" class="slide level2">
-<h2>Consistency of Maximum Likelihood</h2>
-<ul>
-<li>If data was really generated according to probability we specified.</li>
-<li>Correct parameters will be recovered in limit as <span class="math inline">\(n\rightarrow \infty\)</span>.</li>
-<li>This can be proven through sample based approximations (law of large numbers) of “KL divergences”.</li>
-<li>Mainstay of classical statistics <span class="citation" data-cites="Wasserman:all03">(Wasserman, 2003)</span>.</li>
-</ul>
-</section>
-<section id="probabilistic-interpretation-of-the-error-function" class="slide level2">
-<h2>Probabilistic Interpretation of the Error Function</h2>
-<ul>
-<li>Probabilistic Interpretation for Error Function is Negative Log Likelihood.</li>
-<li><em>Minimizing</em> error function is equivalent to <em>maximizing</em> log likelihood.</li>
-<li>Maximizing <em>log likelihood</em> is equivalent to maximizing the <em>likelihood</em> because <span class="math inline">\(\log\)</span> is monotonic.</li>
-<li>Probabilistic interpretation: Minimizing error function is equivalent to maximum likelihood with respect to parameters.</li>
-</ul>
-</section>
-<section id="error-function" class="slide level2">
-<h2>Error Function</h2>
-<ul>
-<li>Negative log likelihood is the error function leading to an error function <span class="math display">\[E(m,c,\sigma^{2})=\frac{n}{2}\log \sigma^2+\frac{1}{2\sigma^2}\sum _{i=1}^{n}\left(y_i-mx_i-c\right)^{2}.\]</span></li>
-<li>Learning proceeds by minimizing this error function for the data set provided.</li>
-</ul>
-</section>
-<section id="log-likelihood-for-multivariate-regression" class="slide level2">
-<h2>Log Likelihood for Multivariate Regression</h2>
-<p>The likelihood of a single data point is</p>
-<div class="fragment">
-<p><span class="math display">\[p\left(y_i|x_i\right)=\frac{1}{\sqrt{2\pi\sigma^2}}\exp\left(-\frac{\left(y_i-\mathbf{ w}^{\top}\mathbf{ x}_i\right)^{2}}{2\sigma^2}\right).\]</span></p>
-</div>
-<div class="fragment">
-<p>Leading to a log likelihood for the data set of</p>
-</div>
-<div class="fragment">
-<p><span class="math display">\[L(\mathbf{ w},\sigma^2)= -\frac{n}{2}\log \sigma^2-\frac{n}{2}\log 2\pi -\frac{\sum_{i=1}^{n}\left(y_i-\mathbf{ w}^{\top}\mathbf{ x}_i\right)^{2}}{2\sigma^2}.\]</span></p>
-</div>
-</section>
-<section id="error-function-1" class="slide level2">
-<h2>Error Function</h2>
-<p>And a corresponding error function of <span class="math display">\[E(\mathbf{ w},\sigma^2)=\frac{n}{2}\log\sigma^2 + \frac{\sum_{i=1}^{n}\left(y_i-\mathbf{ w}^{\top}\mathbf{ x}_i\right)^{2}}{2\sigma^2}.\]</span></p>
-</section>
-<section id="expand-the-brackets" class="slide level2">
-<h2>Expand the Brackets</h2>
-<p><span class="math display">\[
-\begin{align*}
-  E(\mathbf{ w},\sigma^2)  = &amp;
-\frac{n}{2}\log \sigma^2 + \frac{1}{2\sigma^2}\sum
-_{i=1}^{n}y_i^{2}-\frac{1}{\sigma^2}\sum
-_{i=1}^{n}y_i\mathbf{ w}^{\top}\mathbf{ x}_i\\&amp;+\frac{1}{2\sigma^2}\sum
-_{i=1}^{n}\mathbf{ w}^{\top}\mathbf{ x}_i\mathbf{ x}_i^{\top}\mathbf{ w}
-+\text{const}.\\
-    = &amp; \frac{n}{2}\log \sigma^2 + \frac{1}{2\sigma^2}\sum
-_{i=1}^{n}y_i^{2}-\frac{1}{\sigma^2}
-\mathbf{ w}^\top\sum_{i=1}^{n}\mathbf{ x}_iy_i\\&amp;+\frac{1}{2\sigma^2}
-\mathbf{ w}^{\top}\left[\sum
-_{i=1}^{n}\mathbf{ x}_i\mathbf{ x}_i^{\top}\right]\mathbf{ w}+\text{const}.
-\end{align*}
-\]</span></p>
-<!-- SECTION Multiple Input Solution with Linear Algebra -->
-</section>
-<section id="multiple-input-solution-with-linear-algebra" class="slide level2">
-<h2>Multiple Input Solution with Linear Algebra</h2>
-<!-- SECTION Design Matrix -->
-</section>
-<section id="design-matrix" class="slide level2">
-<h2>Design Matrix</h2>
-</section>
-<section id="exercise-0" class="slide level2">
-<h2>Exercise 0</h2>
-<p>The prediction for our movie recommender system had the form <span class="math display">\[
-f_{i,j} = \mathbf{u}_i^\top \mathbf{v}_j
-\]</span> and the objective function was then <span class="math display">\[
-E = \sum_{i,j} s_{i,j}(y_{i,j} - f_{i, j})^2
-\]</span> Try writing this down in matrix and vector form. How many of the terms can you do? For each variable and parameter carefully think about whether it should be represented as a matrix or vector. Do as many of the terms as you can. Use <span class="math inline">\(\LaTeX\)</span> to give your answers and give the <em>dimensions</em> of any matrices you create.</p>
-<!-- SECTION Objective Optimisation -->
-</section>
-<section id="objective-optimisation" class="slide level2">
-<h2>Objective Optimisation</h2>
-</section>
-<section id="multivariate-derivatives" class="slide level2">
-<h2>Multivariate Derivatives</h2>
-<ul>
-<li>We will need some multivariate calculus.</li>
-<li>For now some simple multivariate differentiation: <span class="math display">\[\frac{\text{d}{\mathbf{a}^{\top}}{\mathbf{ w}}}{\text{d}\mathbf{ w}}=\mathbf{a}\]</span> and <span class="math display">\[\frac{\mathbf{ w}^{\top}\mathbf{A}\mathbf{ w}}{\text{d}\mathbf{ w}}=\left(\mathbf{A}+\mathbf{A}^{\top}\right)\mathbf{ w}\]</span> or if <span class="math inline">\(\mathbf{A}\)</span> is symmetric (<em>i.e.</em> <span class="math inline">\(\mathbf{A}=\mathbf{A}^{\top}\)</span>) <span class="math display">\[\frac{\text{d}\mathbf{ w}^{\top}\mathbf{A}\mathbf{ w}}{\text{d}\mathbf{ w}}=2\mathbf{A}\mathbf{ w}.\]</span></li>
-</ul>
-</section>
-<section id="differentiate-the-objective" class="slide level2">
-<h2>Differentiate the Objective</h2>
-<p><span style="text-align:left">Differentiating with respect to the vector <span class="math inline">\(\mathbf{ w}\)</span> we obtain</span> <span class="math display">\[
-\frac{\partial L\left(\mathbf{ w},\sigma^2 \right)}{\partial
-\mathbf{ w}}=\frac{1}{\sigma^2} \sum _{i=1}^{n}\mathbf{ x}_i y_i-\frac{1}{\sigma^2}
-\left[\sum _{i=1}^{n}\mathbf{ x}_i\mathbf{ x}_i^{\top}\right]\mathbf{ w}
-\]</span> Leading to <span class="math display">\[
-\mathbf{ w}^{*}=\left[\sum
-_{i=1}^{n}\mathbf{ x}_i\mathbf{ x}_i^{\top}\right]^{-1}\sum
-_{i=1}^{n}\mathbf{ x}_iy_i,
-\]</span></p>
-</section>
-<section id="differentiate-the-objective-1" class="slide level2">
-<h2>Differentiate the Objective</h2>
-<p>Rewrite in matrix notation: <span class="math display">\[
-\sum_{i=1}^{n}\mathbf{ x}_i\mathbf{ x}_i^\top = \mathbf{X}^\top \mathbf{X}
-\]</span> <span class="math display">\[
-\sum_{i=1}^{n}\mathbf{ x}_iy_i = \mathbf{X}^\top \mathbf{ y}
-\]</span></p>
-</section>
-<section id="exercise-0-1" class="slide level2">
-<h2>Exercise 0</h2>
-<p>Use the equivalence between our vector and our matrix formulations of linear regression, alongside our definition of vector derivates, to match the gradients we’ve computed directly for <span class="math inline">\(\frac{\text{d}E(c, m)}{\text{d}c}\)</span> and <span class="math inline">\(\frac{\text{d}E(c, m)}{\text{d}m}\)</span> to those for <span class="math inline">\(\frac{\text{d}E(\mathbf{ w})}{\text{d}\mathbf{ w}}\)</span>.</p>
-<!-- SECTION Update Equation for Global Optimum -->
-</section>
-<section id="update-equation-for-global-optimum" class="slide level2">
-<h2>Update Equation for Global Optimum</h2>
-</section>
-<section id="update-equations" class="slide level2">
-<h2>Update Equations</h2>
-<ul>
-<li>Update for <span class="math inline">\(\mathbf{ w}^{*}\)</span>. <span class="math display">\[\mathbf{ w}^{*} = \left(\mathbf{X}^\top \mathbf{X}\right)^{-1} \mathbf{X}^\top \mathbf{ y}\]</span></li>
-<li>The equation for <span class="math inline">\(\left.\sigma^2\right.^{*}\)</span> may also be found <span class="math display">\[\left.\sigma^2\right.^{{*}}=\frac{\sum_{i=1}^{n}\left(y_i-\left.\mathbf{ w}^{*}\right.^{\top}\mathbf{ x}_i\right)^{2}}{n}.\]</span></li>
-</ul>
-</section>
-<section id="solving-the-multivariate-system" class="slide level2">
-<h2>Solving the Multivariate System</h2>
 <!-- SECTION Underdetermined System -->
 </section>
 <section id="underdetermined-system" class="slide level2">
@@ -1166,6 +983,23 @@ p(\mathbf{ y}|\mathbf{X}, \mathbf{ w}) =
 <div class="fragment">
 <p><span class="math display">\[\boldsymbol{ \epsilon}\sim \mathcal{N}\left(\mathbf{0},\sigma^2\mathbf{I}\right)\]</span></p>
 </div>
+</section>
+<section id="multivariate-gaussian-properties-1" class="slide level2">
+<h2>Multivariate Gaussian Properties</h2>
+<ul>
+<li><p>If <span class="math display">\[
+\mathbf{ y}= \mathbf{W}\mathbf{ x}+ \boldsymbol{ \epsilon},
+\]</span></p></li>
+<li><p>Assume <span class="math display">\[
+\begin{align}
+\mathbf{ x}&amp; \sim \mathcal{N}\left(\boldsymbol{ \mu},\mathbf{C}\right)\\
+\boldsymbol{ \epsilon}&amp; \sim \mathcal{N}\left(\mathbf{0},\boldsymbol{ \Sigma}\right)
+\end{align}
+\]</span></p></li>
+<li><p>Then <span class="math display">\[
+\mathbf{ y}\sim \mathcal{N}\left(\mathbf{W}\boldsymbol{ \mu},\mathbf{W}\mathbf{C}\mathbf{W}^\top + \boldsymbol{ \Sigma}\right).
+\]</span> If <span class="math inline">\(\boldsymbol{ \Sigma}=\sigma^2\mathbf{I}\)</span>, this is Probabilistic PCA <span class="citation" data-cites="Tipping:probpca99">(Tipping and Bishop, 1999)</span>.</p></li>
+</ul>
 </section>
 <section id="prior-density" class="slide level2">
 <h2>Prior Density</h2>
@@ -2310,9 +2144,6 @@ A Gaussian process fit to the noisy sine data with parameters optimized.
 </div>
 <div id="ref-Tipping:probpca99">
 <p>Tipping, M.E., Bishop, C.M., 1999. Probabilistic principal component analysis. Journal of the Royal Statistical Society, B 6, 611–622. <a href="https://doi.org/doi:10.1111/1467-9868.00196">https://doi.org/doi:10.1111/1467-9868.00196</a></p>
-</div>
-<div id="ref-Wasserman:all03">
-<p>Wasserman, L.A., 2003. All of statistics. springer, New York.</p>
 </div>
 </div>
 </section>
