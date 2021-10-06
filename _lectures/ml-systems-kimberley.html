@@ -368,11 +368,6 @@ sns.set_palette('colorblind')}-->
 <p>If we were running our ride hailing service, we would also need information about how many people there were in different areas, so we could understand what the demand for the boda boda rides might be.</p>
 <p>To access the number of people we can get population statistics from the <a href="https://data.humdata.org/">Humanitarian Data Exchange</a>.</p>
 <p>We also want to have population data for each state in Nigeria, so that we can see attributes like whether there are zones of high health facility density but low population density.</p>
-<p>{To acquire this data you need to go to the Humanitarian Data Exchange site for Nigeria - Subnational Population Statistics. To do this</p>
-<ol type="1">
-<li>Click on <a href="https://data.humdata.org/dataset/nigeria-2016-population-data">this link</a></li>
-<li>Scroll down to find the file labelled `nga_admpop</li>
-</ol>
 <div class="sourceCode" id="cb42"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> urllib</span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>pop_url <span class="op">=</span> <span class="st">&#39;https://data.humdata.org/dataset/a7c3de5e-ff27-4746-99cd-05f2ad9b1066/resource/d9fc551a-b5e4-4bed-9d0d-b047b6961817/download/nga_admpop_adm1_2020.csv&#39;</span></span>
@@ -387,8 +382,8 @@ sns.set_palette('colorblind')}-->
 <span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>                       <span class="st">&#39;ADM1_PCODE&#39;</span> : <span class="st">&#39;admin1Pcode&#39;</span>, </span>
 <span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>                       <span class="st">&#39;T_TL&#39;</span> :<span class="st">&#39;population&#39;</span>},</span>
 <span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>            inplace<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>data[<span class="st">&quot;admin0Name_en&quot;</span>] <span class="op">=</span> data[<span class="st">&quot;admin0Name_en&quot;</span>].<span class="bu">str</span>.capitalize()</span>
-<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>data[<span class="st">&quot;admin1Name_en&quot;</span>] <span class="op">=</span> data[<span class="st">&quot;admin1Name_en&quot;</span>].<span class="bu">str</span>.capitalize()</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>data[<span class="st">&quot;admin0Name_en&quot;</span>] <span class="op">=</span> data[<span class="st">&quot;admin0Name_en&quot;</span>].<span class="bu">str</span>.title()</span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>data[<span class="st">&quot;admin1Name_en&quot;</span>] <span class="op">=</span> data[<span class="st">&quot;admin1Name_en&quot;</span>].<span class="bu">str</span>.title()</span>
 <span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> data.set_index(<span class="st">&#39;admin1Name_en&#39;</span>)</span></code></pre></div>
 <div class="sourceCode" id="cb44"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pods.datasets.nigerian_population()[<span class="st">&#39;Y&#39;</span>]</span></code></pre></div>
@@ -409,7 +404,8 @@ sns.set_palette('colorblind')}-->
 <p>In GeoPandas we used an outer join. In an outer join you keep all rows from both tables, even if there is no match on the key. In an inner join, you only keep the rows if the two tables have a matching key.</p>
 <p>This is sometimes where problems can creep in. If in one table Abuja’s state is encoded as ‘FCT’ or ‘FCT-Abuja,’ and in another table it’s encoded as ‘Federal Capital Territory,’ they won’t match, and that data wouldn’t appear in the joined table.</p>
 <p>In simple terms, a JOIN operation takes two tables (or dataframes) and combines them based on some key, in this case the index of the Pandas data frame which is the state name.</p>
-<div class="sourceCode" id="cb47"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>pop_joined <span class="op">=</span> zones_gdf.join(pop_data[<span class="st">&#39;population&#39;</span>], how<span class="op">=</span><span class="st">&#39;inner&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>zones_gdf.set_index(<span class="st">&quot;admin1Name_en&quot;</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>pop_joined <span class="op">=</span> zones_gdf.join(pop_data[<span class="st">&#39;population&#39;</span>], how<span class="op">=</span><span class="st">&#39;inner&#39;</span>)</span></code></pre></div>
 <h2 id="groupby-in-pandas">GroupBy in Pandas</h2>
 <p>Our COVID19 data is in the form of individual cases. But we are interested in total case counts for each state. There is a special data base operation known as <code>GROUP BY</code> for collecting information about the individual states. The type of information you might want could be a sum, the maximum value, an average, the minimum value. We can use a GroupBy operation in <code>pandas</code> and SQL to summarize the counts of covid cases in each state.</p>
 <p>A <code>GROUPBY</code> operation groups rows with the same key (in this case ‘province/state’) into separate objects, that we can operate on further such as to count the rows in each group, or to sum or take the mean over the values in some column (imagine each case row had the age of the patient, and you were interested in the mean age of patients.)</p>
