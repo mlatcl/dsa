@@ -1,0 +1,43 @@
+author:
+- family: Lawrence
+  given: Neil D.
+  gscholar: r3SJcvoAAAAJ
+  institute: University of Cambridge
+  twitter: lawrennd
+  orcid: 0000-0001-9258-1030
+  url: http://inverseprobability.com
+layout: lecture
+room:
+venue: Virtual (Zoom)
+talkcss: https://inverseprobability.com/assets/css/talks.css
+bibdir: $HOME/lawrennd/bibliography
+postsdir: ../_lectures/
+slidesdir: ../slides/
+notesdir: ../_notes/
+notebooksdir: ../_notebooks/
+practicalsdir: ../_practicals/
+snippetsdir: $HOME/lawrennd/snippets
+writediagramsdir: .
+scriptsdir: ./scripts/
+diagramsdir: ./slides/diagrams/
+posts: True
+docx: False
+notespdf: False
+slidesipynb: False
+pptx: True
+pdf: False
+assignment: False
+ipynb: True
+reveal: True
+transition: None
+potx: custom-reference.potx 
+dotx: custom-reference.dotx
+baseurl: "dsa/" # the subpath of your site, e.g. /blog/
+url: "https://mlatcl.github.io/" # the base hostname & protocol for your site
+transition: None
+ghub:
+- organization: mlatcl
+  repository: dsa
+  branch: gh-pages
+  directory: _lamd
+  

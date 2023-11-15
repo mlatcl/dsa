@@ -60,6 +60,11 @@ ghub:
   edit: true
   repository: dsa
 
+
+analytics:
+  google: 
+    tracking_id: UA-184894912-1
+
 future: true
 
 # Build settings

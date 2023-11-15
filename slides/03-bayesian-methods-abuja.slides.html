@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-  <link rel="stylesheet" href="reveal.js/css/reveal.css">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@3.9.2/css/reveal.css">
   <style type="text/css">
       code{white-space: pre-wrap;}
       span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,7 @@
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
@@ -53,7 +54,7 @@ code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
 code span.at { color: #7d9029; } /* Attribute */
 code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
+code span.bu { color: #008000; } /* BuiltIn */
 code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
 code span.ch { color: #4070a0; } /* Char */
 code span.cn { color: #880000; } /* Constant */
@@ -66,7 +67,7 @@ code span.er { color: #ff0000; font-weight: bold; } /* Error */
 code span.ex { } /* Extension */
 code span.fl { color: #40a070; } /* Float */
 code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
+code span.im { color: #008000; font-weight: bold; } /* Import */
 code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 code span.kw { color: #007020; font-weight: bold; } /* Keyword */
 code span.op { color: #666666; } /* Operator */
@@ -79,18 +80,18 @@ code span.va { color: #19177c; } /* Variable */
 code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="reveal.js/css/theme/black.css" id="theme">
-  <link rel="stylesheet" href="talks.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@3.9.2/css/theme/black.css" id="theme">
+  <link rel="stylesheet" href="https://inverseprobability.com/assets/css/talks.css"/>
   <!-- Printing and PDF exports -->
   <script>
     var link = document.createElement( 'link' );
     link.rel = 'stylesheet';
     link.type = 'text/css';
-    link.href = window.location.search.match( /print-pdf/gi ) ? 'reveal.js/css/print/pdf.css' : 'reveal.js/css/print/paper.css';
+    link.href = window.location.search.match( /print-pdf/gi ) ? 'https://unpkg.com/reveal.js@3.9.2/css/print/pdf.css' : 'https://unpkg.com/reveal.js@3.9.2/css/print/paper.css';
     document.getElementsByTagName( 'head' )[0].appendChild( link );
   </script>
   <!--[if lt IE 9]>
-  <script src="reveal.js/lib/js/html5shiv.js"></script>
+  <script src="https://unpkg.com/reveal.js@3.9.2/lib/js/html5shiv.js"></script>
   <![endif]-->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_SVG" type="text/javascript"></script>
   <script type="text/x-mathjax-config">
@@ -100,306 +101,18 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       }
     });
   </script>
-  <script src="http://inverseprobability.com/talks/assets/js/figure-animate.js"></script>
+  <script src="../assets/js/figure-animate.js"></script>
 </head>
 <body>
-\[\newcommand{\tk}[1]{}
-\newcommand{\Amatrix}{\mathbf{A}}
-\newcommand{\KL}[2]{\text{KL}\left( #1\,\|\,#2 \right)}
-\newcommand{\Kaast}{\kernelMatrix_{\mathbf{ \ast}\mathbf{ \ast}}}
-\newcommand{\Kastu}{\kernelMatrix_{\mathbf{ \ast} \inducingVector}}
-\newcommand{\Kff}{\kernelMatrix_{\mappingFunctionVector \mappingFunctionVector}}
-\newcommand{\Kfu}{\kernelMatrix_{\mappingFunctionVector \inducingVector}}
-\newcommand{\Kuast}{\kernelMatrix_{\inducingVector \bf\ast}}
-\newcommand{\Kuf}{\kernelMatrix_{\inducingVector \mappingFunctionVector}}
-\newcommand{\Kuu}{\kernelMatrix_{\inducingVector \inducingVector}}
-\newcommand{\Kuui}{\Kuu^{-1}}
-\newcommand{\Qaast}{\mathbf{Q}_{\bf \ast \ast}}
-\newcommand{\Qastf}{\mathbf{Q}_{\ast \mappingFunction}}
-\newcommand{\Qfast}{\mathbf{Q}_{\mappingFunctionVector \bf \ast}}
-\newcommand{\Qff}{\mathbf{Q}_{\mappingFunctionVector \mappingFunctionVector}}
-\newcommand{\aMatrix}{\mathbf{A}}
-\newcommand{\aScalar}{a}
-\newcommand{\aVector}{\mathbf{a}}
-\newcommand{\acceleration}{a}
-\newcommand{\bMatrix}{\mathbf{B}}
-\newcommand{\bScalar}{b}
-\newcommand{\bVector}{\mathbf{b}}
-\newcommand{\basisFunc}{\phi}
-\newcommand{\basisFuncVector}{\boldsymbol{ \basisFunc}}
-\newcommand{\basisFunction}{\phi}
-\newcommand{\basisLocation}{\mu}
-\newcommand{\basisMatrix}{\boldsymbol{ \Phi}}
-\newcommand{\basisScalar}{\basisFunction}
-\newcommand{\basisVector}{\boldsymbol{ \basisFunction}}
-\newcommand{\activationFunction}{\phi}
-\newcommand{\activationMatrix}{\boldsymbol{ \Phi}}
-\newcommand{\activationScalar}{\basisFunction}
-\newcommand{\activationVector}{\boldsymbol{ \basisFunction}}
-\newcommand{\bigO}{\mathcal{O}}
-\newcommand{\binomProb}{\pi}
-\newcommand{\cMatrix}{\mathbf{C}}
-\newcommand{\cbasisMatrix}{\hat{\boldsymbol{ \Phi}}}
-\newcommand{\cdataMatrix}{\hat{\dataMatrix}}
-\newcommand{\cdataScalar}{\hat{\dataScalar}}
-\newcommand{\cdataVector}{\hat{\dataVector}}
-\newcommand{\centeredKernelMatrix}{\mathbf{ \MakeUppercase{\centeredKernelScalar}}}
-\newcommand{\centeredKernelScalar}{b}
-\newcommand{\centeredKernelVector}{\centeredKernelScalar}
-\newcommand{\centeringMatrix}{\mathbf{H}}
-\newcommand{\chiSquaredDist}[2]{\chi_{#1}^{2}\left(#2\right)}
-\newcommand{\chiSquaredSamp}[1]{\chi_{#1}^{2}}
-\newcommand{\conditionalCovariance}{\boldsymbol{ \Sigma}}
-\newcommand{\coregionalizationMatrix}{\mathbf{B}}
-\newcommand{\coregionalizationScalar}{b}
-\newcommand{\coregionalizationVector}{\mathbf{ \coregionalizationScalar}}
-\newcommand{\covDist}[2]{\text{cov}_{#2}\left(#1\right)}
-\newcommand{\covSamp}[1]{\text{cov}\left(#1\right)}
-\newcommand{\covarianceScalar}{c}
-\newcommand{\covarianceVector}{\mathbf{ \covarianceScalar}}
-\newcommand{\covarianceMatrix}{\mathbf{C}}
-\newcommand{\covarianceMatrixTwo}{\boldsymbol{ \Sigma}}
-\newcommand{\croupierScalar}{s}
-\newcommand{\croupierVector}{\mathbf{ \croupierScalar}}
-\newcommand{\croupierMatrix}{\mathbf{ \MakeUppercase{\croupierScalar}}}
-\newcommand{\dataDim}{p}
-\newcommand{\dataIndex}{i}
-\newcommand{\dataIndexTwo}{j}
-\newcommand{\dataMatrix}{\mathbf{Y}}
-\newcommand{\dataScalar}{y}
-\newcommand{\dataSet}{\mathcal{D}}
-\newcommand{\dataStd}{\sigma}
-\newcommand{\dataVector}{\mathbf{ \dataScalar}}
-\newcommand{\decayRate}{d}
-\newcommand{\degreeMatrix}{\mathbf{ \MakeUppercase{\degreeScalar}}}
-\newcommand{\degreeScalar}{d}
-\newcommand{\degreeVector}{\mathbf{ \degreeScalar}}
-\newcommand{\diag}[1]{\text{diag}\left(#1\right)}
-\newcommand{\diagonalMatrix}{\mathbf{D}}
-\newcommand{\diff}[2]{\frac{\text{d}#1}{\text{d}#2}}
-\newcommand{\diffTwo}[2]{\frac{\text{d}^2#1}{\text{d}#2^2}}
-\newcommand{\displacement}{x}
-\newcommand{\displacementVector}{\textbf{\displacement}}
-\newcommand{\distanceMatrix}{\mathbf{ \MakeUppercase{\distanceScalar}}}
-\newcommand{\distanceScalar}{d}
-\newcommand{\distanceVector}{\mathbf{ \distanceScalar}}
-\newcommand{\eigenvaltwo}{\ell}
-\newcommand{\eigenvaltwoMatrix}{\mathbf{L}}
-\newcommand{\eigenvaltwoVector}{\mathbf{l}}
-\newcommand{\eigenvalue}{\lambda}
-\newcommand{\eigenvalueMatrix}{\boldsymbol{ \Lambda}}
-\newcommand{\eigenvalueVector}{\boldsymbol{ \lambda}}
-\newcommand{\eigenvector}{\mathbf{ \eigenvectorScalar}}
-\newcommand{\eigenvectorMatrix}{\mathbf{U}}
-\newcommand{\eigenvectorScalar}{u}
-\newcommand{\eigenvectwo}{\mathbf{v}}
-\newcommand{\eigenvectwoMatrix}{\mathbf{V}}
-\newcommand{\eigenvectwoScalar}{v}
-\newcommand{\entropy}[1]{\mathcal{H}\left(#1\right)}
-\newcommand{\errorFunction}{E}
-\newcommand{\expDist}[2]{\left<#1\right>_{#2}}
-\newcommand{\expSamp}[1]{\left<#1\right>}
-\newcommand{\expectation}[1]{\left\langle #1 \right\rangle }
-\newcommand{\expectationDist}[2]{\left\langle #1 \right\rangle _{#2}}
-\newcommand{\expectedDistanceMatrix}{\mathcal{D}}
-\newcommand{\eye}{\mathbf{I}}
-\newcommand{\fantasyDim}{r}
-\newcommand{\fantasyMatrix}{\mathbf{ \MakeUppercase{\fantasyScalar}}}
-\newcommand{\fantasyScalar}{z}
-\newcommand{\fantasyVector}{\mathbf{ \fantasyScalar}}
-\newcommand{\featureStd}{\varsigma}
-\newcommand{\gammaCdf}[3]{\mathcal{GAMMA CDF}\left(#1|#2,#3\right)}
-\newcommand{\gammaDist}[3]{\mathcal{G}\left(#1|#2,#3\right)}
-\newcommand{\gammaSamp}[2]{\mathcal{G}\left(#1,#2\right)}
-\newcommand{\gaussianDist}[3]{\mathcal{N}\left(#1|#2,#3\right)}
-\newcommand{\gaussianSamp}[2]{\mathcal{N}\left(#1,#2\right)}
-\newcommand{\given}{|}
-\newcommand{\half}{\frac{1}{2}}
-\newcommand{\heaviside}{H}
-\newcommand{\hiddenMatrix}{\mathbf{ \MakeUppercase{\hiddenScalar}}}
-\newcommand{\hiddenScalar}{h}
-\newcommand{\hiddenVector}{\mathbf{ \hiddenScalar}}
-\newcommand{\identityMatrix}{\eye}
-\newcommand{\inducingInputScalar}{z}
-\newcommand{\inducingInputVector}{\mathbf{ \inducingInputScalar}}
-\newcommand{\inducingInputMatrix}{\mathbf{Z}}
-\newcommand{\inducingScalar}{u}
-\newcommand{\inducingVector}{\mathbf{ \inducingScalar}}
-\newcommand{\inducingMatrix}{\mathbf{U}}
-\newcommand{\inlineDiff}[2]{\text{d}#1/\text{d}#2}
-\newcommand{\inputDim}{q}
-\newcommand{\inputMatrix}{\mathbf{X}}
-\newcommand{\inputScalar}{x}
-\newcommand{\inputSpace}{\mathcal{X}}
-\newcommand{\inputVals}{\inputVector}
-\newcommand{\inputVector}{\mathbf{ \inputScalar}}
-\newcommand{\iterNum}{k}
-\newcommand{\kernel}{\kernelScalar}
-\newcommand{\kernelMatrix}{\mathbf{K}}
-\newcommand{\kernelScalar}{k}
-\newcommand{\kernelVector}{\mathbf{ \kernelScalar}}
-\newcommand{\kff}{\kernelScalar_{\mappingFunction \mappingFunction}}
-\newcommand{\kfu}{\kernelVector_{\mappingFunction \inducingScalar}}
-\newcommand{\kuf}{\kernelVector_{\inducingScalar \mappingFunction}}
-\newcommand{\kuu}{\kernelVector_{\inducingScalar \inducingScalar}}
-\newcommand{\lagrangeMultiplier}{\lambda}
-\newcommand{\lagrangeMultiplierMatrix}{\boldsymbol{ \Lambda}}
-\newcommand{\lagrangian}{L}
-\newcommand{\laplacianFactor}{\mathbf{ \MakeUppercase{\laplacianFactorScalar}}}
-\newcommand{\laplacianFactorScalar}{m}
-\newcommand{\laplacianFactorVector}{\mathbf{ \laplacianFactorScalar}}
-\newcommand{\laplacianMatrix}{\mathbf{L}}
-\newcommand{\laplacianScalar}{\ell}
-\newcommand{\laplacianVector}{\mathbf{ \ell}}
-\newcommand{\latentDim}{q}
-\newcommand{\latentDistanceMatrix}{\boldsymbol{ \Delta}}
-\newcommand{\latentDistanceScalar}{\delta}
-\newcommand{\latentDistanceVector}{\boldsymbol{ \delta}}
-\newcommand{\latentForce}{f}
-\newcommand{\latentFunction}{u}
-\newcommand{\latentFunctionVector}{\mathbf{ \latentFunction}}
-\newcommand{\latentFunctionMatrix}{\mathbf{ \MakeUppercase{\latentFunction}}}
-\newcommand{\latentIndex}{j}
-\newcommand{\latentScalar}{z}
-\newcommand{\latentVector}{\mathbf{ \latentScalar}}
-\newcommand{\latentMatrix}{\mathbf{Z}}
-\newcommand{\learnRate}{\eta}
-\newcommand{\lengthScale}{\ell}
-\newcommand{\rbfWidth}{\ell}
-\newcommand{\likelihoodBound}{\mathcal{L}}
-\newcommand{\likelihoodFunction}{L}
-\newcommand{\locationScalar}{\mu}
-\newcommand{\locationVector}{\boldsymbol{ \locationScalar}}
-\newcommand{\locationMatrix}{\mathbf{M}}
-\newcommand{\variance}[1]{\text{var}\left( #1 \right)}
-\newcommand{\mappingFunction}{f}
-\newcommand{\mappingFunctionMatrix}{\mathbf{F}}
-\newcommand{\mappingFunctionTwo}{g}
-\newcommand{\mappingFunctionTwoMatrix}{\mathbf{G}}
-\newcommand{\mappingFunctionTwoVector}{\mathbf{ \mappingFunctionTwo}}
-\newcommand{\mappingFunctionVector}{\mathbf{ \mappingFunction}}
-\newcommand{\scaleScalar}{s}
-\newcommand{\mappingScalar}{w}
-\newcommand{\mappingVector}{\mathbf{ \mappingScalar}}
-\newcommand{\mappingMatrix}{\mathbf{W}}
-\newcommand{\mappingScalarTwo}{v}
-\newcommand{\mappingVectorTwo}{\mathbf{ \mappingScalarTwo}}
-\newcommand{\mappingMatrixTwo}{\mathbf{V}}
-\newcommand{\maxIters}{K}
-\newcommand{\meanMatrix}{\mathbf{M}}
-\newcommand{\meanScalar}{\mu}
-\newcommand{\meanTwoMatrix}{\mathbf{M}}
-\newcommand{\meanTwoScalar}{m}
-\newcommand{\meanTwoVector}{\mathbf{ \meanTwoScalar}}
-\newcommand{\meanVector}{\boldsymbol{ \meanScalar}}
-\newcommand{\mrnaConcentration}{m}
-\newcommand{\naturalFrequency}{\omega}
-\newcommand{\neighborhood}[1]{\mathcal{N}\left( #1 \right)}
-\newcommand{\neilurl}{http://inverseprobability.com/}
-\newcommand{\noiseMatrix}{\boldsymbol{ E}}
-\newcommand{\noiseScalar}{\epsilon}
-\newcommand{\noiseVector}{\boldsymbol{ \epsilon}}
-\newcommand{\norm}[1]{\left\Vert #1 \right\Vert}
-\newcommand{\normalizedLaplacianMatrix}{\hat{\mathbf{L}}}
-\newcommand{\normalizedLaplacianScalar}{\hat{\ell}}
-\newcommand{\normalizedLaplacianVector}{\hat{\mathbf{ \ell}}}
-\newcommand{\numActive}{m}
-\newcommand{\numBasisFunc}{m}
-\newcommand{\numComponents}{m}
-\newcommand{\numComps}{K}
-\newcommand{\numData}{n}
-\newcommand{\numFeatures}{K}
-\newcommand{\numHidden}{h}
-\newcommand{\numInducing}{m}
-\newcommand{\numLayers}{\ell}
-\newcommand{\numNeighbors}{K}
-\newcommand{\numSequences}{s}
-\newcommand{\numSuccess}{s}
-\newcommand{\numTasks}{m}
-\newcommand{\numTime}{T}
-\newcommand{\numTrials}{S}
-\newcommand{\outputIndex}{j}
-\newcommand{\paramVector}{\boldsymbol{ \theta}}
-\newcommand{\parameterMatrix}{\boldsymbol{ \Theta}}
-\newcommand{\parameterScalar}{\theta}
-\newcommand{\parameterVector}{\boldsymbol{ \parameterScalar}}
-\newcommand{\partDiff}[2]{\frac{\partial#1}{\partial#2}}
-\newcommand{\precisionScalar}{j}
-\newcommand{\precisionVector}{\mathbf{ \precisionScalar}}
-\newcommand{\precisionMatrix}{\mathbf{J}}
-\newcommand{\pseudotargetScalar}{\widetilde{y}}
-\newcommand{\pseudotargetVector}{\mathbf{ \pseudotargetScalar}}
-\newcommand{\pseudotargetMatrix}{\mathbf{ \widetilde{Y}}}
-\newcommand{\rank}[1]{\text{rank}\left(#1\right)}
-\newcommand{\rayleighDist}[2]{\mathcal{R}\left(#1|#2\right)}
-\newcommand{\rayleighSamp}[1]{\mathcal{R}\left(#1\right)}
-\newcommand{\responsibility}{r}
-\newcommand{\rotationScalar}{r}
-\newcommand{\rotationVector}{\mathbf{ \rotationScalar}}
-\newcommand{\rotationMatrix}{\mathbf{R}}
-\newcommand{\sampleCovScalar}{s}
-\newcommand{\sampleCovVector}{\mathbf{ \sampleCovScalar}}
-\newcommand{\sampleCovMatrix}{\mathbf{s}}
-\newcommand{\scalarProduct}[2]{\left\langle{#1},{#2}\right\rangle}
-\newcommand{\sign}[1]{\text{sign}\left(#1\right)}
-\newcommand{\sigmoid}[1]{\sigma\left(#1\right)}
-\newcommand{\singularvalue}{\ell}
-\newcommand{\singularvalueMatrix}{\mathbf{L}}
-\newcommand{\singularvalueVector}{\mathbf{l}}
-\newcommand{\sorth}{\mathbf{u}}
-\newcommand{\spar}{\lambda}
-\newcommand{\trace}[1]{\text{tr}\left(#1\right)}
-\newcommand{\BasalRate}{B}
-\newcommand{\DampingCoefficient}{C}
-\newcommand{\DecayRate}{D}
-\newcommand{\Displacement}{X}
-\newcommand{\LatentForce}{F}
-\newcommand{\Mass}{M}
-\newcommand{\Sensitivity}{S}
-\newcommand{\basalRate}{b}
-\newcommand{\dampingCoefficient}{c}
-\newcommand{\mass}{m}
-\newcommand{\sensitivity}{s}
-\newcommand{\springScalar}{\kappa}
-\newcommand{\springVector}{\boldsymbol{ \kappa}}
-\newcommand{\springMatrix}{\boldsymbol{ \mathcal{K}}}
-\newcommand{\tfConcentration}{p}
-\newcommand{\tfDecayRate}{\delta}
-\newcommand{\tfMrnaConcentration}{f}
-\newcommand{\tfVector}{\mathbf{ \tfConcentration}}
-\newcommand{\velocity}{v}
-\newcommand{\sufficientStatsScalar}{g}
-\newcommand{\sufficientStatsVector}{\mathbf{ \sufficientStatsScalar}}
-\newcommand{\sufficientStatsMatrix}{\mathbf{G}}
-\newcommand{\switchScalar}{s}
-\newcommand{\switchVector}{\mathbf{ \switchScalar}}
-\newcommand{\switchMatrix}{\mathbf{S}}
-\newcommand{\tr}[1]{\text{tr}\left(#1\right)}
-\newcommand{\loneNorm}[1]{\left\Vert #1 \right\Vert_1}
-\newcommand{\ltwoNorm}[1]{\left\Vert #1 \right\Vert_2}
-\newcommand{\onenorm}[1]{\left\vert#1\right\vert_1}
-\newcommand{\twonorm}[1]{\left\Vert #1 \right\Vert}
-\newcommand{\vScalar}{v}
-\newcommand{\vVector}{\mathbf{v}}
-\newcommand{\vMatrix}{\mathbf{V}}
-\newcommand{\varianceDist}[2]{\text{var}_{#2}\left( #1 \right)}
-\newcommand{\vecb}[1]{\left(#1\right):}
-\newcommand{\weightScalar}{w}
-\newcommand{\weightVector}{\mathbf{ \weightScalar}}
-\newcommand{\weightMatrix}{\mathbf{W}}
-\newcommand{\weightedAdjacencyMatrix}{\mathbf{A}}
-\newcommand{\weightedAdjacencyScalar}{a}
-\newcommand{\weightedAdjacencyVector}{\mathbf{ \weightedAdjacencyScalar}}
-\newcommand{\onesVector}{\mathbf{1}}
-\newcommand{\zerosVector}{\mathbf{0}}
-\]
   <div class="reveal">
     <div class="slides">
 
 <section id="title-slide">
   <h1 class="title">Bayesian Methods</h1>
-  <p class="subtitle" style="text-align:center">Probabilistic Machine Learning</p>
-  <p class="author" style="text-align:center"><a href="http://inverseprobability.com">Neil D. Lawrence</a></p>
+  <p class="subtitle" style="text-align:center">Probabilistic Machine
+Learning</p>
+  <p class="author" style="text-align:center"><a href="http://inverseprobability.com">Neil
+D. Lawrence</a></p>
   <p class="author" style="text-align:center"><a href="https://sanmi.cs.illinois.edu/">Oluwasanmi Koyejo</a></p>
   <p class="date" style="text-align:center"><time>2018-11-14</time></p>
   <p class="venue" style="text-align:center">DSA, Abuja</p>
@@ -411,9 +124,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <!---->
 <!-- Do not edit this file locally. -->
 <!-- The last names to be defined. Should be defined entirely in terms of macros from above-->
-<!--
-
--->
 <!-- SECTION What is Machine Learning? -->
 </section>
 <section id="what-is-machine-learning" class="slide level2">
@@ -422,52 +132,75 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="what-is-machine-learning-1" class="slide level2">
 <h2>What is Machine Learning?</h2>
 <div class="fragment">
-<p><span class="math display">\[ \text{data} + \text{model} \stackrel{\text{compute}}{\rightarrow} \text{prediction}\]</span></p>
+<p><span class="math display">\[ \text{data} + \text{model}
+\stackrel{\text{compute}}{\rightarrow} \text{prediction}\]</span></p>
 </div>
 <div class="fragment">
 <ul>
-<li><strong>data</strong> : observations, could be actively or passively acquired (meta-data).</li>
+<li><strong>data</strong> : observations, could be actively or passively
+acquired (meta-data).</li>
 </ul>
 </div>
 <div class="fragment">
 <ul>
-<li><strong>model</strong> : assumptions, based on previous experience (other data! transfer learning etc), or beliefs about the regularities of the universe. Inductive bias.</li>
+<li><strong>model</strong> : assumptions, based on previous experience
+(other data! transfer learning etc), or beliefs about the regularities
+of the universe. Inductive bias.</li>
 </ul>
 </div>
 <div class="fragment">
 <ul>
-<li><strong>prediction</strong> : an action to be taken or a categorization or a quality score.</li>
+<li><strong>prediction</strong> : an action to be taken or a
+categorization or a quality score.</li>
 </ul>
 </div>
 <div class="fragment">
 <ul>
-<li>Royal Society Report: <a href="https://royalsociety.org/~/media/policy/projects/machine-learning/publications/machine-learning-report.pdf">Machine Learning: Power and Promise of Computers that Learn by Example</a></li>
+<li>Royal Society Report: <a
+href="https://royalsociety.org/~/media/policy/projects/machine-learning/publications/machine-learning-report.pdf">Machine
+Learning: Power and Promise of Computers that Learn by Example</a></li>
 </ul>
 </div>
 </section>
 <section id="what-is-machine-learning-2" class="slide level2">
 <h2>What is Machine Learning?</h2>
-<p><span class="math display">\[\text{data} + \text{model} \stackrel{\text{compute}}{\rightarrow} \text{prediction}\]</span></p>
+<p><span class="math display">\[\text{data} + \text{model}
+\stackrel{\text{compute}}{\rightarrow} \text{prediction}\]</span></p>
 <ul>
 <li class="fragment">To combine data with a model need:</li>
-<li class="fragment"><strong>a prediction function</strong> <span class="math inline">\(f(\cdot)\)</span> includes our beliefs about the regularities of the universe</li>
-<li class="fragment"><strong>an objective function</strong> <span class="math inline">\(E(\cdot)\)</span> defines the cost of misprediction.</li>
+<li class="fragment"><strong>a prediction function</strong> <span
+class="math inline">\(f(\cdot)\)</span> includes our beliefs about the
+regularities of the universe</li>
+<li class="fragment"><strong>an objective function</strong> <span
+class="math inline">\(E(\cdot)\)</span> defines the cost of
+misprediction.</li>
 </ul>
-<!-- SECTION Nigerian NMIS Data -->
+<!-- SECTION Nigeria NMIS Data -->
 </section>
-<section id="nigerian-nmis-data" class="slide level2">
-<h2>Nigerian NMIS Data</h2>
+<section id="nigeria-nmis-data" class="slide level2">
+<h2>Nigeria NMIS Data</h2>
 </section>
-<section id="nigerian-nmis-data-notebook" class="slide level2">
-<h2>Nigerian NMIS Data: Notebook</h2>
-</section>
-<section id="exercise-1" class="slide level2">
-<h2>Exercise 1</h2>
-<p>Read on the internet about the following python libraries: <code>numpy</code>, <code>matplotlib</code>, <code>scipy</code> and <code>pandas</code>. What functionality does each provide python?</p>
+<section id="nigeria-nmis-data-notebook" class="slide level2">
+<h2>Nigeria NMIS Data: Notebook</h2>
+<div class="figure">
+<div id="nigerian-health-facilities-figure" class="figure-frame">
+<div class="centered" style="">
+<img class="" src="https://mlatcl.github.io/dsa/./slides/diagrams//ml/nigerian-health-facilities.png" width="60%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+</div>
+</div>
+<aside class="notes">
+Location of the over thirty-four thousand health facilities registered
+in the NMIS data across Nigeria. Each facility plotted according to its
+latitude and longitude.
+</aside>
 <!-- SECTION Probabilities -->
 </section>
 <section id="probabilities" class="slide level2">
 <h2>Probabilities</h2>
+</section>
+<section id="exploring-the-nmis-data" class="slide level2">
+<h2>Exploring the NMIS Data</h2>
 </section>
 <section id="probability-and-the-nmis-data" class="slide level2">
 <h2>Probability and the NMIS Data</h2>
@@ -476,15 +209,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="conditioning" class="slide level2">
 <h2>Conditioning</h2>
 </section>
-<section id="exercise-2" class="slide level2">
-<h2>Exercise 2</h2>
-<p>Write code that prints out the probability of nurses being greater than 2 for different numbers of doctors.</p>
-</section>
 <section id="probability-review" class="slide level2">
 <h2>Probability Review</h2>
 <ul>
-<li>We are interested in trials which result in two random variables, <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>, each of which has an ‘outcome’ denoted by <span class="math inline">\(x\)</span> or <span class="math inline">\(y\)</span>.</li>
-<li>We summarise the notation and terminology for these distributions in the following table.</li>
+<li>We are interested in trials which result in two random variables,
+<span class="math inline">\(X\)</span> and <span
+class="math inline">\(Y\)</span>, each of which has an ‘outcome’ denoted
+by <span class="math inline">\(x\)</span> or <span
+class="math inline">\(y\)</span>.</li>
+<li>We summarise the notation and terminology for these distributions in
+the following table.</li>
 </ul>
 </section>
 <section id="section" class="slide level2">
@@ -519,20 +253,26 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 The different basic probability distributions.
 </center>
 </section>
-<section id="a-pictorial-definition-of-probability" class="slide level2">
+<section id="a-pictorial-definition-of-probability"
+class="slide level2">
 <h2>A Pictorial Definition of Probability</h2>
 <div class="figure">
 <div id="prob-diagram-figure" class="figure-frame">
-<object class="svgplot " data="../slides/diagrams/mlai/prob_diagram.svg" width="60%" style=" ">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/./slides/diagrams//mlai/prob_diagram.svg" width="60%" style=" ">
 </object>
 </div>
 </div>
 <aside class="notes">
-Diagram representing the different probabilities, joint, marginal and conditional. This diagram was inspired by lectures given by Christopher Bishop.
+Diagram representing the different probabilities, joint, marginal and
+conditional. This diagram was inspired by lectures given by Christopher
+Bishop.
 </aside>
-<p><span style="text-align:right">Inspired by lectures from Christopher Bishop</span></p>
+<div style="text-align:right">
+Inspired by lectures from Christopher Bishop
+</div>
 </section>
-<section id="definition-of-probability-distributions" class="slide level2">
+<section id="definition-of-probability-distributions"
+class="slide level2">
 <h2>Definition of probability distributions</h2>
 <table>
 <colgroup>
@@ -550,17 +290,20 @@ Diagram representing the different probabilities, joint, marginal and conditiona
 <tbody>
 <tr class="odd">
 <td>Joint Probability</td>
-<td><span class="math inline">\(\lim_{N\rightarrow\infty}\frac{n_{X=3,Y=4}}{N}\)</span></td>
+<td><span
+class="math inline">\(\lim_{N\rightarrow\infty}\frac{n_{X=3,Y=4}}{N}\)</span></td>
 <td><span class="math inline">\(P\left(X=3,Y=4\right)\)</span></td>
 </tr>
 <tr class="even">
 <td>Marginal Probability</td>
-<td><span class="math inline">\(\lim_{N\rightarrow\infty}\frac{n_{X=5}}{N}\)</span></td>
+<td><span
+class="math inline">\(\lim_{N\rightarrow\infty}\frac{n_{X=5}}{N}\)</span></td>
 <td><span class="math inline">\(P\left(X=5\right)\)</span></td>
 </tr>
 <tr class="odd">
 <td>Conditional Probability</td>
-<td><span class="math inline">\(\lim_{N\rightarrow\infty}\frac{n_{X=3,Y=4}}{n_{Y=4}}\)</span></td>
+<td><span
+class="math inline">\(\lim_{N\rightarrow\infty}\frac{n_{X=3,Y=4}}{n_{Y=4}}\)</span></td>
 <td><span class="math inline">\(P\left(X=3\vert Y=4\right)\)</span></td>
 </tr>
 </tbody>
@@ -569,27 +312,43 @@ Diagram representing the different probabilities, joint, marginal and conditiona
 <section id="notational-details" class="slide level2">
 <h2>Notational Details</h2>
 <ul>
-<li><p>Typically we should write out <span class="math inline">\(P\left(X=x,Y=y\right)\)</span>.</p></li>
-<li><p>In practice, we often use <span class="math inline">\(P\left(x,y\right)\)</span>.</p></li>
-<li><p>This looks very much like we might write a multivariate function, <em>e.g.</em> <span class="math inline">\(f\left(x,y\right)=\frac{x}{y}\)</span>.</p>
+<li><p>Typically we should write out <span
+class="math inline">\(P\left(X=x,Y=y\right)\)</span>.</p></li>
+<li><p>In practice, we often use <span
+class="math inline">\(P\left(x,y\right)\)</span>.</p></li>
+<li><p>This looks very much like we might write a multivariate function,
+<em>e.g.</em> <span
+class="math inline">\(f\left(x,y\right)=\frac{x}{y}\)</span>.</p>
 <ul>
-<li>For a multivariate function though, <span class="math inline">\(f\left(x,y\right)\neq f\left(y,x\right)\)</span>.</li>
-<li>However <span class="math inline">\(P\left(x,y\right)=P\left(y,x\right)\)</span> because <span class="math inline">\(P\left(X=x,Y=y\right)=P\left(Y=y,X=x\right)\)</span>.</li>
+<li>For a multivariate function though, <span
+class="math inline">\(f\left(x,y\right)\neq
+f\left(y,x\right)\)</span>.</li>
+<li>However <span
+class="math inline">\(P\left(x,y\right)=P\left(y,x\right)\)</span>
+because <span
+class="math inline">\(P\left(X=x,Y=y\right)=P\left(Y=y,X=x\right)\)</span>.</li>
 </ul></li>
 <li><p>We now quickly review the ‘rules of probability’.</p></li>
 </ul>
 </section>
 <section id="normalization" class="slide level2">
 <h2>Normalization</h2>
-<p><em>All</em> distributions are normalized. This is clear from the fact that <span class="math inline">\(\sum_{x}n_{x}=N\)</span>, which gives <span class="math display">\[\sum_{x}P\left(x\right)={\lim_{N\rightarrow\infty}}\frac{\sum_{x}n_{x}}{N}={\lim_{N\rightarrow\infty}}\frac{N}{N}=1.\]</span> A similar result can be derived for the marginal and conditional distributions.</p>
+<p><em>All</em> distributions are normalized. This is clear from the
+fact that <span class="math inline">\(\sum_{x}n_{x}=N\)</span>, which
+gives <span
+class="math display">\[\sum_{x}P\left(x\right)={\lim_{N\rightarrow\infty}}\frac{\sum_{x}n_{x}}{N}={\lim_{N\rightarrow\infty}}\frac{N}{N}=1.\]</span>
+A similar result can be derived for the marginal and conditional
+distributions.</p>
 </section>
 <section id="the-product-rule" class="slide level2">
 <h2>The Product Rule</h2>
 <ul>
-<li><span class="math inline">\(P\left(x|y\right)\)</span> is <span class="math display">\[
+<li><span class="math inline">\(P\left(x|y\right)\)</span> is <span
+class="math display">\[
 {\lim_{N\rightarrow\infty}}\frac{n_{x,y}}{n_{y}}.
 \]</span></li>
-<li><span class="math inline">\(P\left(x,y\right)\)</span> is <span class="math display">\[
+<li><span class="math inline">\(P\left(x,y\right)\)</span> is <span
+class="math display">\[
 {\lim_{N\rightarrow\infty}}\frac{n_{x,y}}{N}={\lim_{N\rightarrow\infty}}\frac{n_{x,y}}{n_{y}}\frac{n_{y}}{N}
 \]</span> or in other words <span class="math display">\[
 P\left(x,y\right)=P\left(x|y\right)P\left(y\right).
@@ -600,24 +359,27 @@ P\left(x,y\right)=P\left(x|y\right)P\left(y\right).
 <h2>The Sum Rule</h2>
 <p>Ignoring the limit in our definitions:</p>
 <ul>
-<li><p>The marginal probability <span class="math inline">\(P\left(y\right)\)</span> is <span class="math inline">\({\lim_{N\rightarrow\infty}}\frac{n_{y}}{N}\)</span> .</p></li>
-<li><p>The joint distribution <span class="math inline">\(P\left(x,y\right)\)</span> is <span class="math inline">\({\lim_{N\rightarrow\infty}}\frac{n_{x,y}}{N}\)</span>.</p></li>
-<li><p><span class="math inline">\(n_{y}=\sum_{x}n_{x,y}\)</span> so <span class="math display">\[
+<li><p>The marginal probability <span
+class="math inline">\(P\left(y\right)\)</span> is <span
+class="math inline">\({\lim_{N\rightarrow\infty}}\frac{n_{y}}{N}\)</span>
+.</p></li>
+<li><p>The joint distribution <span
+class="math inline">\(P\left(x,y\right)\)</span> is <span
+class="math inline">\({\lim_{N\rightarrow\infty}}\frac{n_{x,y}}{N}\)</span>.</p></li>
+<li><p><span class="math inline">\(n_{y}=\sum_{x}n_{x,y}\)</span> so
+<span class="math display">\[
 {\lim_{N\rightarrow\infty}}\frac{n_{y}}{N}={\lim_{N\rightarrow\infty}}\sum_{x}\frac{n_{x,y}}{N},
 \]</span> in other words <span class="math display">\[
 P\left(y\right)=\sum_{x}P\left(x,y\right).
 \]</span> This is known as the sum rule of probability.</p></li>
 </ul>
 </section>
-<section id="exercise-3" class="slide level2">
-<h2>Exercise 3</h2>
-<p>Write code that computes <span class="math inline">\(P(y)\)</span> by adding <span class="math inline">\(P(y, x)\)</span> for all values of <span class="math inline">\(x\)</span>.</p>
-</section>
 <section id="bayes-rule" class="slide level2">
 <h2>Bayes’ Rule</h2>
 <ul>
 <li>From the product rule, <span class="math display">\[
-P\left(y,x\right)=P\left(x,y\right)=P\left(x|y\right)P\left(y\right),\]</span> so <span class="math display">\[
+P\left(y,x\right)=P\left(x,y\right)=P\left(x|y\right)P\left(y\right),\]</span>
+so <span class="math display">\[
 P\left(y|x\right)P\left(x\right)=P\left(x|y\right)P\left(y\right)
 \]</span> which leads to Bayes’ rule, <span class="math display">\[
 P\left(y|x\right)=\frac{P\left(x|y\right)P\left(y\right)}{P\left(x\right)}.
@@ -627,7 +389,10 @@ P\left(y|x\right)=\frac{P\left(x|y\right)P\left(y\right)}{P\left(x\right)}.
 <section id="bayes-theorem-example" class="slide level2">
 <h2>Bayes’ Theorem Example</h2>
 <ul>
-<li>There are two barrels in front of you. Barrel One contains 20 apples and 4 oranges. Barrel Two other contains 4 apples and 8 oranges. You choose a barrel randomly and select a fruit. It is an apple. What is the probability that the barrel was Barrel One?</li>
+<li>There are two barrels in front of you. Barrel One contains 20 apples
+and 4 oranges. Barrel Two other contains 4 apples and 8 oranges. You
+choose a barrel randomly and select a fruit. It is an apple. What is the
+probability that the barrel was Barrel One?</li>
 </ul>
 </section>
 <section id="bayes-rule-example-answer-i" class="slide level2">
@@ -644,12 +409,17 @@ P\left(y|x\right)=\frac{P\left(x|y\right)P\left(y\right)}{P\left(x\right)}.
 <section id="bayes-rule-example-answer-ii" class="slide level2">
 <h2>Bayes’ Rule Example: Answer II</h2>
 <ul>
-<li>We use the sum rule to compute: <span class="math display">\[\begin{aligned}
-  P(\text{F}=\text{A}) = &amp; P(\text{F}=\text{A}|\text{B}=1)P(\text{B}=1) \\&amp; + P(\text{F}=\text{A}|\text{B}=2)P(\text{B}=2) \\
+<li>We use the sum rule to compute: <span
+class="math display">\[\begin{aligned}
+  P(\text{F}=\text{A}) = &amp;
+P(\text{F}=\text{A}|\text{B}=1)P(\text{B}=1) \\&amp; +
+P(\text{F}=\text{A}|\text{B}=2)P(\text{B}=2) \\
         = &amp; 20/24\times 0.5 + 4/12 \times 0.5 = 7/12
- \end{aligned}\]</span></li>
-<li>And Bayes’ rule tells us that: <span class="math display">\[\begin{aligned}
-  P(\text{B}=1|\text{F}=\text{A}) = &amp; \frac{P(\text{F} = \text{A}|\text{B}=1)P(\text{B}=1)}{P(\text{F}=\text{A})}\\ 
+\end{aligned}\]</span></li>
+<li>And Bayes’ rule tells us that: <span
+class="math display">\[\begin{aligned}
+  P(\text{B}=1|\text{F}=\text{A}) = &amp; \frac{P(\text{F} =
+\text{A}|\text{B}=1)P(\text{B}=1)}{P(\text{F}=\text{A})}\\
        = &amp; \frac{20/24 \times 0.5}{7/12} = 5/7
 \end{aligned}\]</span></li>
 </ul>
@@ -657,13 +427,15 @@ P\left(y|x\right)=\frac{P\left(x|y\right)P\left(y\right)}{P\left(x\right)}.
 <section id="further-reading" class="slide level2 scrollable">
 <h2 class="scrollable">Further Reading</h2>
 <ul>
-<li>Probability distributions: page 12–17 (Section 1.2) of <span class="citation" data-cites="Bishop:book06">Bishop (2006)</span></li>
+<li>Probability distributions: page 12–17 (Section 1.2) of <span
+class="citation" data-cites="Bishop:book06">Bishop (2006)</span></li>
 </ul>
 </section>
 <section id="exercises" class="slide level2 scrollable">
 <h2 class="scrollable">Exercises</h2>
 <ul>
-<li>Exercise 1.3 of <span class="citation" data-cites="Bishop:book06">Bishop (2006)</span></li>
+<li>Exercise 1.3 of <span class="citation"
+data-cites="Bishop:book06">Bishop (2006)</span></li>
 </ul>
 </section>
 <section id="computing-expectations-example" class="slide level2">
@@ -694,8 +466,10 @@ P\left(y|x\right)=\frac{P\left(x|y\right)P\left(y\right)}{P\left(x\right)}.
 <ul>
 <li>What is the mean of the distribution?</li>
 <li>What is the standard deviation of the distribution?</li>
-<li>Are the mean and standard deviation representative of the distribution form?</li>
-<li>What is the expected value of <span class="math inline">\(-\log P(y)\)</span>?</li>
+<li>Are the mean and standard deviation representative of the
+distribution form?</li>
+<li>What is the expected value of <span class="math inline">\(-\log
+P(y)\)</span>?</li>
 </ul>
 </section>
 <section id="expectations-example-answer" class="slide level2">
@@ -738,10 +512,14 @@ P\left(y|x\right)=\frac{P\left(x|y\right)P\left(y\right)}{P\left(x\right)}.
 </tbody>
 </table>
 <ul>
-<li>Mean: <span class="math inline">\(1\times 0.3 + 2\times 0.2 + 3 \times 0.1 + 4 \times 0.4 = 2.6\)</span></li>
-<li>Second moment: <span class="math inline">\(1 \times 0.3 + 4 \times 0.2 + 9 \times 0.1 + 16 \times 0.4 = 8.4\)</span></li>
-<li>Variance: <span class="math inline">\(8.4 - 2.6\times 2.6 = 1.64\)</span></li>
-<li>Standard deviation: <span class="math inline">\(\sqrt{1.64} = 1.2806\)</span></li>
+<li>Mean: <span class="math inline">\(1\times 0.3 + 2\times 0.2 + 3
+\times 0.1 + 4 \times 0.4 = 2.6\)</span></li>
+<li>Second moment: <span class="math inline">\(1 \times 0.3 + 4 \times
+0.2 + 9 \times 0.1 + 16 \times 0.4 = 8.4\)</span></li>
+<li>Variance: <span class="math inline">\(8.4 - 2.6\times 2.6 =
+1.64\)</span></li>
+<li>Standard deviation: <span class="math inline">\(\sqrt{1.64} =
+1.2806\)</span></li>
 </ul>
 </section>
 <section id="expectations-example-answer-ii" class="slide level2">
@@ -784,13 +562,16 @@ P\left(y|x\right)=\frac{P\left(x|y\right)P\left(y\right)}{P\left(x\right)}.
 </tbody>
 </table>
 <ul>
-<li>Expectation <span class="math inline">\(-\log(P(y))\)</span>: <span class="math inline">\(0.3\times 1.204 + 0.2\times 1.609 + 0.1\times 2.302 +0.4\times 0.916 = 1.280\)</span></li>
+<li>Expectation <span class="math inline">\(-\log(P(y))\)</span>: <span
+class="math inline">\(0.3\times 1.204 + 0.2\times 1.609 + 0.1\times
+2.302 +0.4\times 0.916 = 1.280\)</span></li>
 </ul>
 </section>
 <section id="sample-based-approximation-example" class="slide level2">
 <h2>Sample Based Approximation Example</h2>
 <ul>
-<li><p>You are given the following values samples of heights of students,</p>
+<li><p>You are given the following values samples of heights of
+students,</p>
 <table>
 <thead>
 <tr class="header">
@@ -817,10 +598,12 @@ P\left(y|x\right)=\frac{P\left(x|y\right)P\left(y\right)}{P\left(x\right)}.
 </table></li>
 <li><p>What is the sample mean?</p></li>
 <li><p>What is the sample variance?</p></li>
-<li><p>Can you compute sample approximation expected value of <span class="math inline">\(-\log P(y)\)</span>?</p></li>
+<li><p>Can you compute sample approximation expected value of <span
+class="math inline">\(-\log P(y)\)</span>?</p></li>
 </ul>
 </section>
-<section id="sample-based-approximation-example-answer" class="slide level2">
+<section id="sample-based-approximation-example-answer"
+class="slide level2">
 <h2>Sample Based Approximation Example: Answer</h2>
 <ul>
 <li>We can compute:</li>
@@ -859,17 +642,21 @@ P\left(y|x\right)=\frac{P\left(x|y\right)P\left(y\right)}{P\left(x\right)}.
 </tbody>
 </table>
 <ul>
-<li>Mean: <span class="math inline">\(\frac{1.76 + 1.73 + 1.79 + 1.81 + 1.85 + 1.80}{6} = 1.79\)</span></li>
-<li>Second moment: $  = 3.2055$</li>
-<li>Variance: <span class="math inline">\(3.2055 - 1.79\times1.79 = 1.43\times 10^{-3}\)</span></li>
+<li>Mean: <span class="math inline">\(\frac{1.76 + 1.73 + 1.79 + 1.81 +
+1.85 + 1.80}{6} = 1.79\)</span></li>
+<li>Second moment: $ = 3.2055$</li>
+<li>Variance: <span class="math inline">\(3.2055 - 1.79\times1.79 =
+1.43\times 10^{-3}\)</span></li>
 <li>Standard deviation: <span class="math inline">\(0.0379\)</span></li>
-<li>No, you can’t compute it. You don’t have access to <span class="math inline">\(P(y)\)</span> directly.</li>
+<li>No, you can’t compute it. You don’t have access to <span
+class="math inline">\(P(y)\)</span> directly.</li>
 </ul>
 </section>
 <section id="sample-based-approximation-example-1" class="slide level2">
 <h2>Sample Based Approximation Example</h2>
 <ul>
-<li><p>You are given the following values samples of heights of students,</p>
+<li><p>You are given the following values samples of heights of
+students,</p>
 <table>
 <thead>
 <tr class="header">
@@ -894,51 +681,65 @@ P\left(y|x\right)=\frac{P\left(x|y\right)P\left(y\right)}{P\left(x\right)}.
 </tr>
 </tbody>
 </table></li>
-<li><p>Actually these “data” were sampled from a Gaussian with mean 1.7 and standard deviation 0.15. Are your estimates close to the real values? If not why not?</p></li>
+<li><p>Actually these “data” were sampled from a Gaussian with mean 1.7
+and standard deviation 0.15. Are your estimates close to the real
+values? If not why not?</p></li>
 </ul>
-</section>
-<section id="exercise-1-1" class="slide level2">
-<h2>Exercise 1</h2>
-<p>Now we see we have several additional features. Let’s assume we want to predict <code>maternal_health_delivery_services</code>. How would we go about doing it?</p>
-<p>Using what you’ve learnt about joint, conditional and marginal probabilities, as well as the sum and product rule, how would you formulate the question you want to answer in terms of probabilities? Should you be using a joint or a conditional distribution? If it’s conditional, what should the distribution be over, and what should it be conditioned on?</p>
 </section>
 <section id="probabilistic-modelling" class="slide level2">
 <h2>Probabilistic Modelling</h2>
 <ul>
 <li>Probabilistically we want, <span class="math display">\[
 p(y_*|\mathbf{ y}, \mathbf{X}, \mathbf{ x}_*),
-\]</span> <span class="math inline">\(y_*\)</span> is a test output <span class="math inline">\(\mathbf{ x}_*\)</span> is a test input <span class="math inline">\(\mathbf{X}\)</span> is a training input matrix <span class="math inline">\(\mathbf{ y}\)</span> is training outputs</li>
+\]</span> <span class="math inline">\(y_*\)</span> is a test output
+<span class="math inline">\(\mathbf{ x}_*\)</span> is a test input <span
+class="math inline">\(\mathbf{X}\)</span> is a training input matrix
+<span class="math inline">\(\mathbf{ y}\)</span> is training
+outputs</li>
 </ul>
 </section>
 <section id="joint-model-of-world" class="slide level2">
 <h2>Joint Model of World</h2>
 <p><span class="math display">\[
-p(y_*|\mathbf{ y}, \mathbf{X}, \mathbf{ x}_*) = \int p(y_*|\mathbf{ x}_*, \mathbf{W}) p(\mathbf{W}| \mathbf{ y}, \mathbf{X}) \text{d} \mathbf{W}
+p(y_*|\mathbf{ y}, \mathbf{X}, \mathbf{ x}_*) = \int p(y_*|\mathbf{
+x}_*, \mathbf{W}) p(\mathbf{W}| \mathbf{ y}, \mathbf{X}) \text{d}
+\mathbf{W}
 \]</span></p>
 <div class="fragment">
-<p><span class="math inline">\(\mathbf{W}\)</span> contains <span class="math inline">\(\mathbf{W}_1\)</span> and <span class="math inline">\(\mathbf{W}_2\)</span></p>
-<p><span class="math inline">\(p(\mathbf{W}| \mathbf{ y}, \mathbf{X})\)</span> is posterior density</p>
+<p><span class="math inline">\(\mathbf{W}\)</span> contains <span
+class="math inline">\(\mathbf{W}_1\)</span> and <span
+class="math inline">\(\mathbf{W}_2\)</span></p>
+<p><span class="math inline">\(p(\mathbf{W}| \mathbf{ y},
+\mathbf{X})\)</span> is posterior density</p>
 </div>
 </section>
 <section id="likelihood" class="slide level2">
 <h2>Likelihood</h2>
-<p><span class="math inline">\(p(y|\mathbf{ x}, \mathbf{W})\)</span> is the <em>likelihood</em> of data point</p>
+<p><span class="math inline">\(p(y|\mathbf{ x}, \mathbf{W})\)</span> is
+the <em>likelihood</em> of data point</p>
 <div class="fragment">
 <p>Normally assume independence: <span class="math display">\[
-p(\mathbf{ y}|\mathbf{X}, \mathbf{W}) = \prod_{i=1}^np(y_i|\mathbf{ x}_i, \mathbf{W}),\]</span></p>
+p(\mathbf{ y}|\mathbf{X}, \mathbf{W}) = \prod_{i=1}^np(y_i|\mathbf{
+x}_i, \mathbf{W}),\]</span></p>
 </div>
 </section>
 <section id="likelihood-and-prediction-function" class="slide level2">
 <h2>Likelihood and Prediction Function</h2>
 <p><span class="math display">\[
-p(y_i | f(\mathbf{ x}_i)) = \frac{1}{\sqrt{2\pi \sigma^2}} \exp\left(-\frac{\left(y_i - f(\mathbf{ x}_i)\right)^2}{2\sigma^2}\right)
+p(y_i | f(\mathbf{ x}_i)) = \frac{1}{\sqrt{2\pi \sigma^2}}
+\exp\left(-\frac{\left(y_i - f(\mathbf{
+x}_i)\right)^2}{2\sigma^2}\right)
 \]</span></p>
 </section>
 <section id="unsupervised-learning" class="slide level2">
 <h2>Unsupervised Learning</h2>
 <ul>
-<li><p>Can also consider priors over latents <span class="math display">\[
-p(\mathbf{ y}_*|\mathbf{ y}) = \int p(\mathbf{ y}_*|\mathbf{X}_*, \mathbf{W}) p(\mathbf{W}| \mathbf{ y}, \mathbf{X}) p(\mathbf{X}) p(\mathbf{X}_*) \text{d} \mathbf{W}\text{d} \mathbf{X}\text{d}\mathbf{X}_*
+<li><p>Can also consider priors over latents <span
+class="math display">\[
+p(\mathbf{ y}_*|\mathbf{ y}) = \int p(\mathbf{ y}_*|\mathbf{X}_*,
+\mathbf{W}) p(\mathbf{W}| \mathbf{ y}, \mathbf{X}) p(\mathbf{X})
+p(\mathbf{X}_*) \text{d} \mathbf{W}\text{d}
+\mathbf{X}\text{d}\mathbf{X}_*
 \]</span></p></li>
 <li><p>This gives <em>unsupervised learning</em>.</p></li>
 </ul>
@@ -947,39 +748,50 @@ p(\mathbf{ y}_*|\mathbf{ y}) = \int p(\mathbf{ y}_*|\mathbf{X}_*, \mathbf{W}) p(
 <h2>Probabilistic Inference</h2>
 <ul>
 <li><p>Data: <span class="math inline">\(\mathbf{ y}\)</span></p></li>
-<li><p>Model: <span class="math inline">\(p(\mathbf{ y}, \mathbf{ y}^*)\)</span></p></li>
-<li><p>Prediction: <span class="math inline">\(p(\mathbf{ y}^*| \mathbf{ y})\)</span></p></li>
+<li><p>Model: <span class="math inline">\(p(\mathbf{ y}, \mathbf{
+y}^*)\)</span></p></li>
+<li><p>Prediction: <span class="math inline">\(p(\mathbf{ y}^*| \mathbf{
+y})\)</span></p></li>
 </ul>
 </section>
 <section id="graphical-models" class="slide level2">
 <h2>Graphical Models</h2>
 <ul>
-<li>Represent joint distribution through <em>conditional dependencies</em>.</li>
+<li>Represent joint distribution through <em>conditional
+dependencies</em>.</li>
 <li>E.g. Markov chain</li>
 </ul>
-<p><span class="math display">\[p(\mathbf{ y}) = p(y_n| y_{n-1}) p(y_{n-1}|y_{n-2}) \dots p(y_{2} | y_{1})\]</span></p>
+<p><span class="math display">\[p(\mathbf{ y}) = p(y_n| y_{n-1})
+p(y_{n-1}|y_{n-2}) \dots p(y_{2} | y_{1})\]</span></p>
 <div class="figure">
 <div id="markov-chain-figure" class="figure-frame">
-<object class="svgplot " data="../slides/diagrams/ml/markov.svg" width="50%" style=" ">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/./slides/diagrams//ml/markov.svg" width="50%" style=" ">
 </object>
 </div>
 </div>
 <aside class="notes">
-A Markov chain is a simple form of probabilistic graphical model providing a particular decomposition of the joint density.
+A Markov chain is a simple form of probabilistic graphical model
+providing a particular decomposition of the joint density.
 </aside>
 </section>
 <section id="section-1" class="slide level2">
 <h2></h2>
-<p>Predict Perioperative Risk of Clostridium Difficile Infection Following Colon Surgery <span class="citation" data-cites="Steele:predictive12">(Steele et al., 2012)</span></p>
+<p>Predict Perioperative Risk of Clostridium Difficile Infection
+Following Colon Surgery <span class="citation"
+data-cites="Steele:predictive12">(Steele et al., 2012)</span></p>
 <div class="figure">
 <div id="c-difficile-bayes-net-diagnosis-figure" class="figure-frame">
 <div class="centered" style="">
-<img class="negate" src="../slides/diagrams/bayes-net-diagnosis.png" width="60%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+<img class="negate" src="https://mlatcl.github.io/dsa/./slides/diagrams//bayes-net-diagnosis.png" width="60%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
 </div>
 </div>
 </div>
 <aside class="notes">
-A probabilistic directed graph used to predict the perioperative risk of <em>C Difficile</em> infection following colon surgery. When these models have good predictive performance they are often difficult to interpret. This may be due to the limited representation capability of the conditional densities in the model.
+A probabilistic directed graph used to predict the perioperative risk of
+<em>C Difficile</em> infection following colon surgery. When these
+models have good predictive performance they are often difficult to
+interpret. This may be due to the limited representation capability of
+the conditional densities in the model.
 </aside>
 </section>
 <section id="introduction-to-classification" class="slide level2">
@@ -988,39 +800,64 @@ A probabilistic directed graph used to predict the perioperative risk of <em>C D
 <section id="classification" class="slide level2">
 <h2>Classification</h2>
 <ul>
-<li><p><em>Wake word</em> classification (<a href="https://radio.unglobalpulse.net/uganda/">Global Pulse Project</a>).</p></li>
-<li><p>Breakthrough in 2012 with ImageNet result of <a href="http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-">Alex Krizhevsky, Ilya Sutskever and Geoff Hinton</a></p></li>
-<li><p>We are given a data set containing ‘inputs’, <span class="math inline">\(\mathbf{X}\)</span> and ‘targets’, <span class="math inline">\(\mathbf{ y}\)</span>.</p></li>
-<li><p>Each data point consists of an input vector <span class="math inline">\(\mathbf{ x}_i\)</span> and a class label, <span class="math inline">\(y_i\)</span>.</p></li>
-<li><p>For binary classification assume <span class="math inline">\(y_i\)</span> should be either <span class="math inline">\(1\)</span> (yes) or <span class="math inline">\(-1\)</span> (no).</p></li>
+<li><p><em>Wake word</em> classification (<a
+href="https://radio.unglobalpulse.net/uganda/">Global Pulse
+Project</a>).</p></li>
+<li><p>Breakthrough in 2012 with ImageNet result of <a
+href="http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-">Alex
+Krizhevsky, Ilya Sutskever and Geoff Hinton</a></p></li>
+<li><p>We are given a data set containing ‘inputs’, <span
+class="math inline">\(\mathbf{X}\)</span> and ‘targets’, <span
+class="math inline">\(\mathbf{ y}\)</span>.</p></li>
+<li><p>Each data point consists of an input vector <span
+class="math inline">\(\mathbf{ x}_i\)</span> and a class label, <span
+class="math inline">\(y_i\)</span>.</p></li>
+<li><p>For binary classification assume <span
+class="math inline">\(y_i\)</span> should be either <span
+class="math inline">\(1\)</span> (yes) or <span
+class="math inline">\(-1\)</span> (no).</p></li>
 <li><p>Input vector can be thought of as features.</p></li>
 </ul>
 </section>
 <section id="discrete-probability" class="slide level2">
 <h2>Discrete Probability</h2>
 <ul>
-<li>Algorithms based on <em>prediction</em> function and <em>objective</em> function.</li>
-<li>For regression the <em>codomain</em> of the functions, <span class="math inline">\(f(\mathbf{X})\)</span> was the real numbers or sometimes real vectors.</li>
-<li>In classification we are given an input vector, <span class="math inline">\(\mathbf{ x}\)</span>, and an associated label, <span class="math inline">\(y\)</span> which either takes the value <span class="math inline">\(-1\)</span> or <span class="math inline">\(1\)</span>.</li>
+<li>Algorithms based on <em>prediction</em> function and
+<em>objective</em> function.</li>
+<li>For regression the <em>codomain</em> of the functions, <span
+class="math inline">\(f(\mathbf{X})\)</span> was the real numbers or
+sometimes real vectors.</li>
+<li>In classification we are given an input vector, <span
+class="math inline">\(\mathbf{ x}\)</span>, and an associated label,
+<span class="math inline">\(y\)</span> which either takes the value
+<span class="math inline">\(-1\)</span> or <span
+class="math inline">\(1\)</span>.</li>
 </ul>
 </section>
 <section id="classification-1" class="slide level2">
 <h2>Classification</h2>
 <ul>
-<li>Inputs, <span class="math inline">\(\mathbf{ x}\)</span>, mapped to a label, <span class="math inline">\(y\)</span>, through a function <span class="math inline">\(f(\cdot)\)</span> dependent on parameters, <span class="math inline">\(\mathbf{ w}\)</span>, <span class="math display">\[
+<li>Inputs, <span class="math inline">\(\mathbf{ x}\)</span>, mapped to
+a label, <span class="math inline">\(y\)</span>, through a function
+<span class="math inline">\(f(\cdot)\)</span> dependent on parameters,
+<span class="math inline">\(\mathbf{ w}\)</span>, <span
+class="math display">\[
 y= f(\mathbf{ x}; \mathbf{ w}).
 \]</span></li>
-<li><span class="math inline">\(f(\cdot)\)</span> is known as the <em>prediction function</em>.</li>
+<li><span class="math inline">\(f(\cdot)\)</span> is known as the
+<em>prediction function</em>.</li>
 </ul>
 </section>
 <section id="classification-examples" class="slide level2">
 <h2>Classification Examples</h2>
 <ul>
-<li>Classifiying hand written digits from binary images (automatic zip code reading)</li>
+<li>Classifiying hand written digits from binary images (automatic zip
+code reading)</li>
 <li>Detecting faces in images (e.g. digital cameras).</li>
 <li>Who a detected face belongs to (e.g. Facebook, DeepFace)</li>
 <li>Classifying type of cancer given gene expression data.</li>
-<li>Categorization of document types (different types of news article on the internet)</li>
+<li>Categorization of document types (different types of news article on
+the internet)</li>
 </ul>
 </section>
 <section id="reminder-on-the-term-bayesian" class="slide level2">
@@ -1029,16 +866,22 @@ y= f(\mathbf{ x}; \mathbf{ w}).
 <li>We use Bayes’ rule to invert probabilities in the Bayesian approach.
 <ul>
 <li>Bayesian is not named after Bayes’ rule (v. common confusion).</li>
-<li>The term Bayesian refers to the treatment of the parameters as stochastic variables.</li>
-<li>Proposed by <span class="citation" data-cites="Laplace:memoire74">Laplace (1774)</span> and <span class="citation" data-cites="Bayes:doctrine63">Bayes (1763)</span> independently.</li>
-<li>For early statisticians this was very controversial (Fisher et al).</li>
+<li>The term Bayesian refers to the treatment of the parameters as
+stochastic variables.</li>
+<li>Proposed by <span class="citation"
+data-cites="Laplace:memoire74">Laplace (1774)</span> and <span
+class="citation" data-cites="Bayes:doctrine63">Bayes (1763)</span>
+independently.</li>
+<li>For early statisticians this was very controversial (Fisher et
+al).</li>
 </ul></li>
 </ul>
 </section>
 <section id="reminder-on-the-term-bayesian-1" class="slide level2">
 <h2>Reminder on the Term “Bayesian”</h2>
 <ul>
-<li>The use of Bayes’ rule does <em>not</em> imply you are being Bayesian.
+<li>The use of Bayes’ rule does <em>not</em> imply you are being
+Bayesian.
 <ul>
 <li>It is just an application of the product rule of probability.</li>
 </ul></li>
@@ -1047,27 +890,37 @@ y= f(\mathbf{ x}; \mathbf{ w}).
 <section id="bernoulli-distribution" class="slide level2">
 <h2>Bernoulli Distribution</h2>
 <ul>
-<li>Binary classification: need a probability distribution for discrete variables.</li>
-<li>Discrete probability is in some ways easier: <span class="math inline">\(P(y=1) = \pi\)</span> &amp; specify distribution as a table.</li>
-<li>Instead of <span class="math inline">\(y=-1\)</span> for negative class we take <span class="math inline">\(y=0\)</span>.</li>
+<li>Binary classification: need a probability distribution for discrete
+variables.</li>
+<li>Discrete probability is in some ways easier: <span
+class="math inline">\(P(y=1) = \pi\)</span> &amp; specify distribution
+as a table.</li>
+<li>Instead of <span class="math inline">\(y=-1\)</span> for negative
+class we take <span class="math inline">\(y=0\)</span>.</li>
 </ul>
 <table>
 <thead>
 <tr class="header">
-<th style="text-align: center;"><span class="math inline">\(y\)</span></th>
+<th style="text-align: center;"><span
+class="math inline">\(y\)</span></th>
 <th style="text-align: center;">0</th>
 <th style="text-align: center;">1</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: center;"><span class="math inline">\(P(y)\)</span></td>
-<td style="text-align: center;"><span class="math inline">\((1-\pi)\)</span></td>
-<td style="text-align: center;"><span class="math inline">\(\pi\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(P(y)\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\((1-\pi)\)</span></td>
+<td style="text-align: center;"><span
+class="math inline">\(\pi\)</span></td>
 </tr>
 </tbody>
 </table>
-<p>This is the <a href="http://en.wikipedia.org/wiki/Bernoulli_distribution">Bernoulli distribution</a>.</p>
+<p>This is the <a
+href="http://en.wikipedia.org/wiki/Bernoulli_distribution">Bernoulli
+distribution</a>.</p>
 </section>
 <section id="mathematical-switch" class="slide level2">
 <h2>Mathematical Switch</h2>
@@ -1075,47 +928,63 @@ y= f(\mathbf{ x}; \mathbf{ w}).
 <li><p>The Bernoulli distribution <span class="math display">\[
 P(y) = \pi^y(1-\pi)^{(1-y)}
 \]</span></p></li>
-<li><p>Is a clever trick for switching probabilities, as code it would be</p></li>
+<li><p>Is a clever trick for switching probabilities, as code it would
+be</p></li>
 </ul>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">def</span> bernoulli(y_i, pi):</span>
-<span id="cb1-2"><a href="#cb1-2"></a>    <span class="cf">if</span> y_i <span class="op">==</span> <span class="dv">1</span>:</span>
-<span id="cb1-3"><a href="#cb1-3"></a>        <span class="cf">return</span> pi</span>
-<span id="cb1-4"><a href="#cb1-4"></a>    <span class="cf">else</span>:</span>
-<span id="cb1-5"><a href="#cb1-5"></a>        <span class="cf">return</span> <span class="dv">1</span><span class="op">-</span>pi</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> bernoulli(y_i, pi):</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> y_i <span class="op">==</span> <span class="dv">1</span>:</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> pi</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dv">1</span><span class="op">-</span>pi</span></code></pre></div>
 </section>
 <section id="jacob-bernoullis-bernoulli" class="slide level2">
 <h2>Jacob Bernoulli’s Bernoulli</h2>
 <ul>
-<li>Bernoulli described the Bernoulli distribution in terms of an ‘urn’ filled with balls.</li>
-<li>There are red and black balls. There is a fixed number of balls in the urn.</li>
-<li>The portion of red balls is given by <span class="math inline">\(\pi\)</span>.</li>
-<li>For this reason in Bernoulli’s distribution there is <em>epistemic</em> uncertainty about the distribution parameter.</li>
+<li>Bernoulli described the Bernoulli distribution in terms of an ‘urn’
+filled with balls.</li>
+<li>There are red and black balls. There is a fixed number of balls in
+the urn.</li>
+<li>The portion of red balls is given by <span
+class="math inline">\(\pi\)</span>.</li>
+<li>For this reason in Bernoulli’s distribution there is
+<em>epistemic</em> uncertainty about the distribution parameter.</li>
 </ul>
 </section>
 <section id="section-2" class="slide level2">
 <h2></h2>
-<p><a href="https://play.google.com/books/reader?id=CF4UAAAAQAAJ&amp;pg=PA87"><img data-src="../slides/diagrams/books/CF4UAAAAQAAJ-PA87.png" /></a></p>
+<div class="centered" style="">
+<a
+href="https://play.google.com/books/reader?id=CF4UAAAAQAAJ&amp;pg=PA87"><img
+data-src="https://mlatcl.github.io/dsa/./slides/diagrams//books/CF4UAAAAQAAJ-PA87.png" /></a>
+</div>
 </section>
 <section id="jacob-bernoullis-bernoulli-1" class="slide level2">
 <h2>Jacob Bernoulli’s Bernoulli</h2>
 <div class="figure">
 <div id="bernoulli-urn-figure" class="figure-frame">
-<object class="svgplot " data="../slides/diagrams/ml/bernoulli-urn.svg" width="40%" style=" ">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/./slides/diagrams//ml/bernoulli-urn.svg" width="40%" style=" ">
 </object>
 </div>
 </div>
 <aside class="notes">
-Jacob Bernoulli described the Bernoulli distribution through an urn in which there are black and red balls.
+Jacob Bernoulli described the Bernoulli distribution through an urn in
+which there are black and red balls.
 </aside>
 </section>
 <section id="thomas-bayess-bernoulli" class="slide level2">
 <h2>Thomas Bayes’s Bernoulli</h2>
 <ul>
-<li>Bayes described the Bernoulli distribution (he didn’t call it that!) in terms of a table and two balls.</li>
-<li>Each ball is rolled so it comes to rest at a uniform distribution across the table.</li>
-<li>The first ball comes to rest at a position that is a <span class="math inline">\(\pi\)</span> times the width of table.</li>
-<li>After placing the first ball you consider whether a second would land to the left or the right.</li>
-<li>For this reason in Bayes’s distribution there is considered to be <em>aleatoric</em> uncertainty about the distribution parameter.</li>
+<li>Bayes described the Bernoulli distribution (he didn’t call it that!)
+in terms of a table and two balls.</li>
+<li>Each ball is rolled so it comes to rest at a uniform distribution
+across the table.</li>
+<li>The first ball comes to rest at a position that is a <span
+class="math inline">\(\pi\)</span> times the width of table.</li>
+<li>After placing the first ball you consider whether a second would
+land to the left or the right.</li>
+<li>For this reason in Bayes’s distribution there is considered to be
+<em>aleatoric</em> uncertainty about the distribution parameter.</li>
 </ul>
 </section>
 <section id="thomas-bayes-bernoulli" class="slide level2">
@@ -1123,83 +992,59 @@ Jacob Bernoulli described the Bernoulli distribution through an urn in which the
 <script>
 showDivs(1, 'bayes_billiard');
 </script>
-<p><small></small> <input id="range-bayes_billiard" type="range" min="1" max="10" value="1" onchange="setDivs('bayes_billiard')" oninput="setDivs('bayes_billiard')"> <button onclick="plusDivs(-1, 'bayes_billiard')">❮</button> <button onclick="plusDivs(1, 'bayes_billiard')">❯</button></p>
-</section>
-<section id="section-3" class="slide level2">
-<h2></h2>
+<p><small></small>
+<input id="range-bayes_billiard" type="range" min="1" max="10" value="1" onchange="setDivs('bayes_billiard')" oninput="setDivs('bayes_billiard')">
+<button onclick="plusDivs(-1, 'bayes_billiard')">❮</button>
+<button onclick="plusDivs(1, 'bayes_billiard')">❯</button></p>
 <div class="bayes_billiard" style="text-align:center;">
-<object class="svgplot " data="../slides/diagrams/ml/bayes-billiard000.svg" width="40%" style=" ">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/./slides/diagrams//ml/bayes-billiard000.svg" width="40%" style=" ">
 </object>
 </div>
-</section>
-<section id="section-4" class="slide level2">
-<h2></h2>
 <div class="bayes_billiard" style="text-align:center;">
-<object class="svgplot " data="../slides/diagrams/ml/bayes-billiard001.svg" width="40%" style=" ">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/./slides/diagrams//ml/bayes-billiard001.svg" width="40%" style=" ">
 </object>
 </div>
-</section>
-<section id="section-5" class="slide level2">
-<h2></h2>
 <div class="bayes_billiard" style="text-align:center;">
-<object class="svgplot " data="../slides/diagrams/ml/bayes-billiard002.svg" width="40%" style=" ">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/./slides/diagrams//ml/bayes-billiard002.svg" width="40%" style=" ">
 </object>
 </div>
-</section>
-<section id="section-6" class="slide level2">
-<h2></h2>
 <div class="bayes_billiard" style="text-align:center;">
-<object class="svgplot " data="../slides/diagrams/ml/bayes-billiard003.svg" width="40%" style=" ">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/./slides/diagrams//ml/bayes-billiard003.svg" width="40%" style=" ">
 </object>
 </div>
-</section>
-<section id="section-7" class="slide level2">
-<h2></h2>
 <div class="bayes_billiard" style="text-align:center;">
-<object class="svgplot " data="../slides/diagrams/ml/bayes-billiard004.svg" width="40%" style=" ">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/./slides/diagrams//ml/bayes-billiard004.svg" width="40%" style=" ">
 </object>
 </div>
-</section>
-<section id="section-8" class="slide level2">
-<h2></h2>
 <div class="bayes_billiard" style="text-align:center;">
-<object class="svgplot " data="../slides/diagrams/ml/bayes-billiard005.svg" width="40%" style=" ">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/./slides/diagrams//ml/bayes-billiard005.svg" width="40%" style=" ">
 </object>
 </div>
-</section>
-<section id="section-9" class="slide level2">
-<h2></h2>
 <div class="bayes_billiard" style="text-align:center;">
-<object class="svgplot " data="../slides/diagrams/ml/bayes-billiard006.svg" width="40%" style=" ">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/./slides/diagrams//ml/bayes-billiard006.svg" width="40%" style=" ">
 </object>
 </div>
-</section>
-<section id="section-10" class="slide level2">
-<h2></h2>
 <div class="bayes_billiard" style="text-align:center;">
-<object class="svgplot " data="../slides/diagrams/ml/bayes-billiard007.svg" width="40%" style=" ">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/./slides/diagrams//ml/bayes-billiard007.svg" width="40%" style=" ">
 </object>
 </div>
-</section>
-<section id="section-11" class="slide level2">
-<h2></h2>
 <div class="bayes_billiard" style="text-align:center;">
-<object class="svgplot " data="../slides/diagrams/ml/bayes-billiard008.svg" width="40%" style=" ">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/./slides/diagrams//ml/bayes-billiard008.svg" width="40%" style=" ">
 </object>
 </div>
-</section>
-<section id="section-12" class="slide level2">
-<h2></h2>
 <div class="bayes_billiard" style="text-align:center;">
-<object class="svgplot " data="../slides/diagrams/ml/bayes-billiard009.svg" width="40%" style=" ">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/./slides/diagrams//ml/bayes-billiard009.svg" width="40%" style=" ">
 </object>
 </div>
 </section>
 <section id="maximum-likelihood-in-the-bernoulli" class="slide level2">
 <h2>Maximum Likelihood in the Bernoulli</h2>
 <ul>
-<li>Assume data, <span class="math inline">\(\mathbf{ y}\)</span> is binary vector length <span class="math inline">\(n\)</span>.</li>
-<li>Assume each value was sampled independently from the Bernoulli distribution, given probability <span class="math inline">\(\pi\)</span> <span class="math display">\[
+<li>Assume data, <span class="math inline">\(\mathbf{ y}\)</span> is
+binary vector length <span class="math inline">\(n\)</span>.</li>
+<li>Assume each value was sampled independently from the Bernoulli
+distribution, given probability <span class="math inline">\(\pi\)</span>
+<span class="math display">\[
 p(\mathbf{ y}|\pi) = \prod_{i=1}^{n} \pi^{y_i} (1-\pi)^{1-y_i}.
 \]</span></li>
 </ul>
@@ -1207,33 +1052,47 @@ p(\mathbf{ y}|\pi) = \prod_{i=1}^{n} \pi^{y_i} (1-\pi)^{1-y_i}.
 <section id="negative-log-likelihood" class="slide level2">
 <h2>Negative Log Likelihood</h2>
 <ul>
-<li>Minimize the negative log likelihood <span class="math display">\[\begin{align*}
-E(\pi)&amp; = -\log p(\mathbf{ y}|\pi)\\ 
-                   &amp; = -\sum_{i=1}^{n} y_i \log \pi - \sum_{i=1}^{n} (1-y_i) \log(1-\pi),
+<li>Minimize the negative log likelihood <span
+class="math display">\[\begin{align*}
+E(\pi)&amp; = -\log p(\mathbf{ y}|\pi)\\
+                   &amp; = -\sum_{i=1}^{n} y_i \log \pi - \sum_{i=1}^{n}
+(1-y_i) \log(1-\pi),
 \end{align*}\]</span></li>
-<li>Take gradient with respect to the parameter <span class="math inline">\(\pi\)</span>. <span class="math display">\[\frac{\text{d}E(\pi)}{\text{d}\pi} = -\frac{\sum_{i=1}^{n} y_i}{\pi}  + \frac{\sum_{i=1}^{n} (1-y_i)}{1-\pi},\]</span></li>
+<li>Take gradient with respect to the parameter <span
+class="math inline">\(\pi\)</span>. <span
+class="math display">\[\frac{\text{d}E(\pi)}{\text{d}\pi} =
+-\frac{\sum_{i=1}^{n} y_i}{\pi}  + \frac{\sum_{i=1}^{n}
+(1-y_i)}{1-\pi},\]</span></li>
 </ul>
 </section>
 <section id="fixed-point" class="slide level2">
 <h2>Fixed Point</h2>
 <ul>
-<li><p>Stationary point: set derivative to zero <span class="math display">\[0 = -\frac{\sum_{i=1}^{n} y_i}{\pi}  + \frac{\sum_{i=1}^{n} (1-y_i)}{1-\pi},\]</span></p></li>
-<li><p>Rearrange to form <span class="math display">\[(1-\pi)\sum_{i=1}^{n} y_i =   \pi\sum_{i=1}^{n} (1-y_i),\]</span></p></li>
-<li><p>Giving <span class="math display">\[\sum_{i=1}^{n} y_i =   \pi\left(\sum_{i=1}^{n} (1-y_i) + \sum_{i=1}^{n} y_i\right),\]</span></p></li>
+<li><p>Stationary point: set derivative to zero <span
+class="math display">\[0 = -\frac{\sum_{i=1}^{n} y_i}{\pi}  +
+\frac{\sum_{i=1}^{n} (1-y_i)}{1-\pi},\]</span></p></li>
+<li><p>Rearrange to form <span
+class="math display">\[(1-\pi)\sum_{i=1}^{n} y_i =   \pi\sum_{i=1}^{n}
+(1-y_i),\]</span></p></li>
+<li><p>Giving <span class="math display">\[\sum_{i=1}^{n} y_i
+=   \pi\left(\sum_{i=1}^{n} (1-y_i) + \sum_{i=1}^{n}
+y_i\right),\]</span></p></li>
 </ul>
 </section>
 <section id="solution" class="slide level2">
 <h2>Solution</h2>
 <ul>
-<li><p>Recognise that <span class="math inline">\(\sum_{i=1}^{n} (1-y_i) + \sum_{i=1}^{n} y_i = n\)</span> so we have <span class="math display">\[\pi = \frac{\sum_{i=1}^{n} y_i}{n}\]</span></p></li>
-<li><p>Estimate the probability associated with the Bernoulli by setting it to the number of observed positives, divided by the total length of <span class="math inline">\(y\)</span>.</p></li>
+<li><p>Recognise that <span class="math inline">\(\sum_{i=1}^{n} (1-y_i)
++ \sum_{i=1}^{n} y_i = n\)</span> so we have <span
+class="math display">\[\pi = \frac{\sum_{i=1}^{n}
+y_i}{n}\]</span></p></li>
+<li><p>Estimate the probability associated with the Bernoulli by setting
+it to the number of observed positives, divided by the total length of
+<span class="math inline">\(y\)</span>.</p></li>
 <li><p>Makes intiutive sense.</p></li>
-<li><p>What’s your best guess of probability for coin toss is heads when you get 47 heads from 100 tosses?</p></li>
+<li><p>What’s your best guess of probability for coin toss is heads when
+you get 47 heads from 100 tosses?</p></li>
 </ul>
-</section>
-<section id="exercise-4" class="slide level2">
-<h2>Exercise 4</h2>
-<p>Show that the maximum likelihood solution we have found is a <em>minimum</em> for our objective.</p>
 </section>
 <section id="bayes-rule-reminder" class="slide level2">
 <h2>Bayes’ Rule Reminder</h2>
@@ -1252,19 +1111,30 @@ E(\pi)&amp; = -\log p(\mathbf{ y}|\pi)\\
 <section id="naive-bayes-classifiers" class="slide level2">
 <h2>Naive Bayes Classifiers</h2>
 <ul>
-<li><p>Probabilistic Machine Learning: place probability distributions (or densities) over all the variables of interest.</p></li>
+<li><p>Probabilistic Machine Learning: place probability distributions
+(or densities) over all the variables of interest.</p></li>
 <li><p>In <em>naive Bayes</em> this is exactly what we do.</p></li>
-<li><p>Form a classification algorithm by modelling the <em>joint</em> density of our observations.</p></li>
+<li><p>Form a classification algorithm by modelling the <em>joint</em>
+density of our observations.</p></li>
 <li><p>Need to make assumption about joint density.</p></li>
 </ul>
 </section>
 <section id="assumptions-about-density" class="slide level2">
 <h2>Assumptions about Density</h2>
 <ul>
-<li>Make assumptions to reduce the number of parameters we need to optimise.</li>
-<li>Given label data <span class="math inline">\(\mathbf{ y}\)</span> and the inputs <span class="math inline">\(\mathbf{X}\)</span> could specify joint density of all potential values of <span class="math inline">\(\mathbf{ y}\)</span> and <span class="math inline">\(\mathbf{X}\)</span>, <span class="math inline">\(p(\mathbf{ y}, \mathbf{X})\)</span>.</li>
-<li>If <span class="math inline">\(\mathbf{X}\)</span> and <span class="math inline">\(\mathbf{ y}\)</span> are training data.</li>
-<li>If <span class="math inline">\(\mathbf{ x}^*\)</span> is a test input and <span class="math inline">\(y^*\)</span> a test location we want <span class="math display">\[
+<li>Make assumptions to reduce the number of parameters we need to
+optimise.</li>
+<li>Given label data <span class="math inline">\(\mathbf{ y}\)</span>
+and the inputs <span class="math inline">\(\mathbf{X}\)</span> could
+specify joint density of all potential values of <span
+class="math inline">\(\mathbf{ y}\)</span> and <span
+class="math inline">\(\mathbf{X}\)</span>, <span
+class="math inline">\(p(\mathbf{ y}, \mathbf{X})\)</span>.</li>
+<li>If <span class="math inline">\(\mathbf{X}\)</span> and <span
+class="math inline">\(\mathbf{ y}\)</span> are training data.</li>
+<li>If <span class="math inline">\(\mathbf{ x}^*\)</span> is a test
+input and <span class="math inline">\(y^*\)</span> a test location we
+want <span class="math display">\[
 p(y^*|\mathbf{X}, \mathbf{ y}, \mathbf{ x}^*),
 \]</span></li>
 </ul>
@@ -1273,16 +1143,24 @@ p(y^*|\mathbf{X}, \mathbf{ y}, \mathbf{ x}^*),
 <h2>Answer from Rules of Probability</h2>
 <ul>
 <li>Compute this distribution using the product and sum rules.</li>
-<li>Need the probability associated with all possible combinations of <span class="math inline">\(\mathbf{ y}\)</span> and <span class="math inline">\(\mathbf{X}\)</span>.</li>
-<li>There are <span class="math inline">\(2^{n}\)</span> possible combinations for the vector <span class="math inline">\(\mathbf{ y}\)</span></li>
-<li>Probability for each of these combinations must be jointly specified along with the joint density of the matrix <span class="math inline">\(\mathbf{X}\)</span>,</li>
-<li>Also need to <em>extend</em> the density for any chosen test location <span class="math inline">\(\mathbf{ x}^*\)</span>.</li>
+<li>Need the probability associated with all possible combinations of
+<span class="math inline">\(\mathbf{ y}\)</span> and <span
+class="math inline">\(\mathbf{X}\)</span>.</li>
+<li>There are <span class="math inline">\(2^{n}\)</span> possible
+combinations for the vector <span class="math inline">\(\mathbf{
+y}\)</span></li>
+<li>Probability for each of these combinations must be jointly specified
+along with the joint density of the matrix <span
+class="math inline">\(\mathbf{X}\)</span>,</li>
+<li>Also need to <em>extend</em> the density for any chosen test
+location <span class="math inline">\(\mathbf{ x}^*\)</span>.</li>
 </ul>
 </section>
 <section id="naive-bayes-assumptions" class="slide level2">
 <h2>Naive Bayes Assumptions</h2>
 <ul>
-<li>In <em>naive Bayes</em> we make certain simplifying assumptions that allow us to perform all of the above in practice.</li>
+<li>In <em>naive Bayes</em> we make certain simplifying assumptions that
+allow us to perform all of the above in practice.</li>
 </ul>
 <ol type="1">
 <li>Data Conditional Independence</li>
@@ -1293,22 +1171,37 @@ p(y^*|\mathbf{X}, \mathbf{ y}, \mathbf{ x}^*),
 <section id="data-conditional-independence" class="slide level2">
 <h2>Data Conditional Independence</h2>
 <ul>
-<li><p>Given model parameters <span class="math inline">\(\boldsymbol{ \theta}\)</span> we assume that all data points in the model are independent. <span class="math display">\[
-p(y^*, \mathbf{ x}^*, \mathbf{ y}, \mathbf{X}|\boldsymbol{ \theta}) = p(y^*, \mathbf{ x}^*|\boldsymbol{ \theta})\prod_{i=1}^{n} p(y_i, \mathbf{ x}_i | \boldsymbol{ \theta}).
+<li><p>Given model parameters <span class="math inline">\(\boldsymbol{
+\theta}\)</span> we assume that all data points in the model are
+independent. <span class="math display">\[
+p(y^*, \mathbf{ x}^*, \mathbf{ y}, \mathbf{X}|\boldsymbol{ \theta}) =
+p(y^*, \mathbf{ x}^*|\boldsymbol{ \theta})\prod_{i=1}^{n} p(y_i,
+\mathbf{ x}_i | \boldsymbol{ \theta}).
 \]</span></p></li>
 <li><p>This is a conditional independence assumption.</p></li>
-<li><p>We also make similar assumptions for regression (where <span class="math inline">\(\boldsymbol{ \theta}= \left\{\mathbf{ w},\sigma^2\right\}\)</span>).</p></li>
-<li><p>Here we assume <em>joint</em> density of <span class="math inline">\(\mathbf{ y}\)</span> and <span class="math inline">\(\mathbf{X}\)</span> is independent across the data given the parameters.</p></li>
+<li><p>We also make similar assumptions for regression (where <span
+class="math inline">\(\boldsymbol{ \theta}= \left\{\mathbf{
+w},\sigma^2\right\}\)</span>).</p></li>
+<li><p>Here we assume <em>joint</em> density of <span
+class="math inline">\(\mathbf{ y}\)</span> and <span
+class="math inline">\(\mathbf{X}\)</span> is independent across the data
+given the parameters.</p></li>
 </ul>
 </section>
 <section id="bayes-classifier" class="slide level2">
 <h2>Bayes Classifier</h2>
-<p>Computing posterior distribution in this case becomes easier, this is known as the ‘Bayes classifier’.</p>
+<p>Computing posterior distribution in this case becomes easier, this is
+known as the ‘Bayes classifier’.</p>
 </section>
 <section id="feature-conditional-independence" class="slide level2">
 <h2>Feature Conditional Independence</h2>
 <ul>
-<li>Particular to naive Bayes: assume <em>features</em> are also conditionally independent, given param <em>and</em> the label. <span class="math display">\[p(\mathbf{ x}_i | y_i, \boldsymbol{ \theta}) = \prod_{j=1}^{p} p(x_{i,j}|y_i,\boldsymbol{ \theta})\]</span> where <span class="math inline">\(p\)</span> is the dimensionality of our inputs.</li>
+<li>Particular to naive Bayes: assume <em>features</em> are also
+conditionally independent, given param <em>and</em> the label. <span
+class="math display">\[p(\mathbf{ x}_i | y_i, \boldsymbol{ \theta}) =
+\prod_{j=1}^{p} p(x_{i,j}|y_i,\boldsymbol{ \theta})\]</span> where <span
+class="math inline">\(p\)</span> is the dimensionality of our
+inputs.</li>
 <li>This is known as the <em>naive Bayes</em> assumption.</li>
 <li>Bayes classifier + feature conditional independence.</li>
 </ul>
@@ -1316,22 +1209,36 @@ p(y^*, \mathbf{ x}^*, \mathbf{ y}, \mathbf{X}|\boldsymbol{ \theta}) = p(y^*, \ma
 <section id="marginal-density-for-y_i" class="slide level2">
 <h2>Marginal Density for <span class="math inline">\(y_i\)</span></h2>
 <ul>
-<li><p>To specify the joint distribution we also need the marginal for <span class="math inline">\(p(y_i)\)</span> <span class="math display">\[p(x_{i,j},y_i| \boldsymbol{ \theta}) = p(x_{i,j}|y_i, \boldsymbol{ \theta})p(y_i).\]</span></p></li>
-<li><p>Because <span class="math inline">\(y_i\)</span> is binary the <em>Bernoulli</em> density makes a suitable choice for our prior over <span class="math inline">\(y_i\)</span>, <span class="math display">\[p(y_i|\pi) = \pi^{y_i} (1-\pi)^{1-y_i}\]</span> where <span class="math inline">\(\pi\)</span> now has the interpretation as being the <em>prior</em> probability that the classification should be positive.</p></li>
+<li><p>To specify the joint distribution we also need the marginal for
+<span class="math inline">\(p(y_i)\)</span> <span
+class="math display">\[p(x_{i,j},y_i| \boldsymbol{ \theta}) =
+p(x_{i,j}|y_i, \boldsymbol{ \theta})p(y_i).\]</span></p></li>
+<li><p>Because <span class="math inline">\(y_i\)</span> is binary the
+<em>Bernoulli</em> density makes a suitable choice for our prior over
+<span class="math inline">\(y_i\)</span>, <span
+class="math display">\[p(y_i|\pi) = \pi^{y_i} (1-\pi)^{1-y_i}\]</span>
+where <span class="math inline">\(\pi\)</span> now has the
+interpretation as being the <em>prior</em> probability that the
+classification should be positive.</p></li>
 </ul>
 </section>
 <section id="joint-density-for-naive-bayes" class="slide level2">
 <h2>Joint Density for Naive Bayes</h2>
 <ul>
-<li>This allows us to write down the full joint density of the training data, <span class="math display">\[
-p(\mathbf{ y}, \mathbf{X}|\boldsymbol{ \theta}, \pi) = \prod_{i=1}^{n} \prod_{j=1}^{p} p(x_{i,j}|y_i, \boldsymbol{ \theta})p(y_i|\pi)
+<li>This allows us to write down the full joint density of the training
+data, <span class="math display">\[
+p(\mathbf{ y}, \mathbf{X}|\boldsymbol{ \theta}, \pi) = \prod_{i=1}^{n}
+\prod_{j=1}^{p} p(x_{i,j}|y_i, \boldsymbol{ \theta})p(y_i|\pi)
 \]</span> which can now be fit by maximum likelihood.</li>
 </ul>
 </section>
 <section id="objective-function" class="slide level2">
 <h2>Objective Function</h2>
 <p><span class="math display">\[\begin{align*}
-E(\boldsymbol{ \theta}, \pi)&amp; =  -\log p(\mathbf{ y}, \mathbf{X}|\boldsymbol{ \theta}, \pi) \\ &amp;= -\sum_{i=1}^{n} \sum_{j=1}^{p} \log p(x_{i, j}|y_i, \boldsymbol{ \theta}) -  \sum_{i=1}^{n} \log p(y_i|\pi),
+E(\boldsymbol{ \theta}, \pi)&amp; =  -\log p(\mathbf{ y},
+\mathbf{X}|\boldsymbol{ \theta}, \pi) \\ &amp;= -\sum_{i=1}^{n}
+\sum_{j=1}^{p} \log p(x_{i, j}|y_i, \boldsymbol{ \theta})
+-  \sum_{i=1}^{n} \log p(y_i|\pi),
 \end{align*}\]</span></p>
 </section>
 <section id="maximum-likelihood" class="slide level2">
@@ -1340,8 +1247,10 @@ E(\boldsymbol{ \theta}, \pi)&amp; =  -\log p(\mathbf{ y}, \mathbf{X}|\boldsymbol
 <section id="fit-prior" class="slide level2">
 <h2>Fit Prior</h2>
 <ul>
-<li>We can minimize prior. For Bernoulli likelihood over the labels we have, <span class="math display">\[\begin{align*}
-E(\pi) &amp; = - \sum_{i=1}^{n}\log p(y_i|\pi)\\ &amp; = -\sum_{i=1}^{n} y_i \log \pi - \sum_{i=1}^{n} (1-y_i) \log (1-\pi)
+<li>We can minimize prior. For Bernoulli likelihood over the labels we
+have, <span class="math display">\[\begin{align*}
+E(\pi) &amp; = - \sum_{i=1}^{n}\log p(y_i|\pi)\\ &amp; = -\sum_{i=1}^{n}
+y_i \log \pi - \sum_{i=1}^{n} (1-y_i) \log (1-\pi)
 \end{align*}\]</span></li>
 <li>Solution from above is <span class="math display">\[
 \pi = \frac{\sum_{i=1}^{n} y_i}{n}.
@@ -1352,42 +1261,85 @@ E(\pi) &amp; = - \sum_{i=1}^{n}\log p(y_i|\pi)\\ &amp; = -\sum_{i=1}^{n} y_i \lo
 <h2>Fit Conditional</h2>
 <ul>
 <li>Minimize conditional distribution: <span class="math display">\[
-E(\boldsymbol{ \theta}) = -\sum_{i=1}^{n} \sum_{j=1}^{p} \log p(x_{i, j} |y_i, \boldsymbol{ \theta}),
+E(\boldsymbol{ \theta}) = -\sum_{i=1}^{n} \sum_{j=1}^{p} \log p(x_{i, j}
+|y_i, \boldsymbol{ \theta}),
 \]</span></li>
 <li>Implies making an assumption about it’s form.</li>
 <li>The right assumption will depend on the data.</li>
-<li>E.g. for real valued data, use a Gaussian <span class="math display">\[
+<li>E.g. for real valued data, use a Gaussian <span
+class="math display">\[
 p(x_{i, j} | y_i,\boldsymbol{ \theta}) =
-\frac{1}{\sqrt{2\pi \sigma_{y_i,j}^2}} \exp \left(-\frac{(x_{i,j} - \mu_{y_i,
+\frac{1}{\sqrt{2\pi \sigma_{y_i,j}^2}} \exp \left(-\frac{(x_{i,j} -
+\mu_{y_i,
 j})^2}{\sigma_{y_i,j}^2}\right),
 \]</span></li>
 </ul>
-<p>The distributions show the parameters of the <em>independent</em> class conditional probabilities for no maternity services. It is a Bernoulli distribution with the parameter, <span class="math inline">\(\pi\)</span>, given by (<code>theta_0</code>) for the facilities without maternity services and <code>theta_1</code> for the facilities with maternity services. The parameters whow that, facilities with maternity services also are more likely to have other services such as grid electricity, emergency transport, immunization programs etc.</p>
-<p>The naive Bayes assumption says that the joint probability for these services is given by the product of each of these Bernoulli distributions.</p>
-<p>We have modelled the numbers in our table with a Gaussian density. Since several of these numbers are counts, a more appropriate distribution might be the Poisson distribution. But here we can see that the average number of nurses, healthworkers and doctors is <em>higher</em> in the facilities with maternal services (<code>mu_1</code>) than those without maternal services (<code>mu_0</code>). There is also a small difference between the mean latitude and longitudes. However, the <em>standard deviation</em> which would be given by the square root of the variance parameters (<code>sigma_0</code> and <code>sigma_1</code>) is large, implying that a difference in latitude and longitude may be due to sampling error. To be sure more analysis would be required.</p>
 </section>
-<section id="compute-posterior-for-test-point-label" class="slide level2">
+<section id="nigeria-nmis-data-classification" class="slide level2">
+<h2>Nigeria NMIS Data Classification</h2>
+<p>The distributions show the parameters of the <em>independent</em>
+class conditional probabilities for no maternity services. It is a
+Bernoulli distribution with the parameter, <span
+class="math inline">\(\pi\)</span>, given by (<code>theta_0</code>) for
+the facilities without maternity services and <code>theta_1</code> for
+the facilities with maternity services. The parameters whow that,
+facilities with maternity services also are more likely to have other
+services such as grid electricity, emergency transport, immunization
+programs etc.</p>
+<p>The naive Bayes assumption says that the joint probability for these
+services is given by the product of each of these Bernoulli
+distributions.</p>
+<p>We have modelled the numbers in our table with a Gaussian density.
+Since several of these numbers are counts, a more appropriate
+distribution might be the Poisson distribution. But here we can see that
+the average number of nurses, healthworkers and doctors is
+<em>higher</em> in the facilities with maternal services
+(<code>mu_1</code>) than those without maternal services
+(<code>mu_0</code>). There is also a small difference between the mean
+latitude and longitudes. However, the <em>standard deviation</em> which
+would be given by the square root of the variance parameters
+(<code>sigma_0</code> and <code>sigma_1</code>) is large, implying that
+a difference in latitude and longitude may be due to sampling error. To
+be sure more analysis would be required.</p>
+</section>
+<section id="compute-posterior-for-test-point-label"
+class="slide level2">
 <h2>Compute Posterior for Test Point Label</h2>
 <ul>
 <li>We know that <span class="math display">\[
-P(y^*| \mathbf{ y}, \mathbf{X}, \mathbf{ x}^*, \boldsymbol{ \theta})p(\mathbf{ y},\mathbf{X}, \mathbf{ x}^*|\boldsymbol{ \theta}) = p(y*, \mathbf{ y}, \mathbf{X},\mathbf{ x}^*| \boldsymbol{ \theta})
+P(y^*| \mathbf{ y}, \mathbf{X}, \mathbf{ x}^*, \boldsymbol{
+\theta})p(\mathbf{ y},\mathbf{X}, \mathbf{ x}^*|\boldsymbol{ \theta}) =
+p(y*, \mathbf{ y}, \mathbf{X},\mathbf{ x}^*| \boldsymbol{ \theta})
 \]</span></li>
 <li>This implies <span class="math display">\[
-P(y^*| \mathbf{ y}, \mathbf{X}, \mathbf{ x}^*, \boldsymbol{ \theta}) = \frac{p(y*, \mathbf{ y}, \mathbf{X}, \mathbf{ x}^*| \boldsymbol{ \theta})}{p(\mathbf{ y}, \mathbf{X}, \mathbf{ x}^*|\boldsymbol{ \theta})}
+P(y^*| \mathbf{ y}, \mathbf{X}, \mathbf{ x}^*, \boldsymbol{ \theta}) =
+\frac{p(y*, \mathbf{ y}, \mathbf{X}, \mathbf{ x}^*| \boldsymbol{
+\theta})}{p(\mathbf{ y}, \mathbf{X}, \mathbf{ x}^*|\boldsymbol{
+\theta})}
 \]</span></li>
 </ul>
 </section>
-<section id="compute-posterior-for-test-point-label-1" class="slide level2">
+<section id="compute-posterior-for-test-point-label-1"
+class="slide level2">
 <h2>Compute Posterior for Test Point Label</h2>
 <ul>
-<li>From conditional independence assumptions <span class="math display">\[
-p(y^*, \mathbf{ y}, \mathbf{X}, \mathbf{ x}^*| \boldsymbol{ \theta}) = \prod_{j=1}^{p} p(x^*_{j}|y^*, \boldsymbol{ \theta})p(y^*|\pi)\prod_{i=1}^{n} \prod_{j=1}^{p} p(x_{i,j}|y_i, \boldsymbol{ \theta})p(y_i|\pi)
+<li>From conditional independence assumptions <span
+class="math display">\[
+p(y^*, \mathbf{ y}, \mathbf{X}, \mathbf{ x}^*| \boldsymbol{ \theta}) =
+\prod_{j=1}^{p} p(x^*_{j}|y^*, \boldsymbol{
+\theta})p(y^*|\pi)\prod_{i=1}^{n} \prod_{j=1}^{p} p(x_{i,j}|y_i,
+\boldsymbol{ \theta})p(y_i|\pi)
 \]</span></li>
 <li>We also need <span class="math display">\[
-p(\mathbf{ y}, \mathbf{X}, \mathbf{ x}^*|\boldsymbol{ \theta})\]</span> which can be found from <span class="math display">\[p(y^*, \mathbf{ y}, \mathbf{X}, \mathbf{ x}^*| \boldsymbol{ \theta})
+p(\mathbf{ y}, \mathbf{X}, \mathbf{ x}^*|\boldsymbol{ \theta})\]</span>
+which can be found from <span class="math display">\[p(y^*, \mathbf{ y},
+\mathbf{X}, \mathbf{ x}^*| \boldsymbol{ \theta})
 \]</span></li>
-<li>Using the <em>sum rule</em> of probability, <span class="math display">\[
-p(\mathbf{ y}, \mathbf{X}, \mathbf{ x}^*|\boldsymbol{ \theta}) = \sum_{y^*=0}^1 p(y^*, \mathbf{ y}, \mathbf{X}, \mathbf{ x}^*| \boldsymbol{ \theta}).
+<li>Using the <em>sum rule</em> of probability, <span
+class="math display">\[
+p(\mathbf{ y}, \mathbf{X}, \mathbf{ x}^*|\boldsymbol{ \theta}) =
+\sum_{y^*=0}^1 p(y^*, \mathbf{ y}, \mathbf{X}, \mathbf{ x}^*|
+\boldsymbol{ \theta}).
 \]</span></li>
 </ul>
 </section>
@@ -1395,10 +1347,18 @@ p(\mathbf{ y}, \mathbf{X}, \mathbf{ x}^*|\boldsymbol{ \theta}) = \sum_{y^*=0}^1 
 <h2>Independence Assumptions</h2>
 <ul>
 <li>From independence assumptions <span class="math display">\[
-p(\mathbf{ y}, \mathbf{X}, \mathbf{ x}^*| \boldsymbol{ \theta}) = \sum_{y^*=0}^1 \prod_{j=1}^{p} p(x^*_{j}|y^*_i, \boldsymbol{ \theta})p(y^*|\pi)\prod_{i=1}^{n} \prod_{j=1}^{p} p(x_{i,j}|y_i, \boldsymbol{ \theta})p(y_i|\pi).
+p(\mathbf{ y}, \mathbf{X}, \mathbf{ x}^*| \boldsymbol{ \theta}) =
+\sum_{y^*=0}^1 \prod_{j=1}^{p} p(x^*_{j}|y^*_i, \boldsymbol{
+\theta})p(y^*|\pi)\prod_{i=1}^{n} \prod_{j=1}^{p} p(x_{i,j}|y_i,
+\boldsymbol{ \theta})p(y_i|\pi).
 \]</span></li>
 <li>Substitute both forms to recover, <span class="math display">\[
-P(y^*| \mathbf{ y}, \mathbf{X}, \mathbf{ x}^*, \boldsymbol{ \theta})  = \frac{\prod_{j=1}^{p} p(x^*_{j}|y^*_i, \boldsymbol{ \theta})p(y^*|\pi)\prod_{i=1}^{n} \prod_{j=1}^{p} p(x_{i,j}|y_i, \boldsymbol{ \theta})p(y_i|\pi)}{\sum_{y^*=0}^1 \prod_{j=1}^{p} p(x^*_{j}|y^*_i, \boldsymbol{ \theta})p(y^*|\pi)\prod_{i=1}^{n} \prod_{j=1}^{p} p(x_{i,j}|y_i, \boldsymbol{ \theta})p(y_i|\pi)}
+P(y^*| \mathbf{ y}, \mathbf{X}, \mathbf{ x}^*, \boldsymbol{ \theta})  =
+\frac{\prod_{j=1}^{p} p(x^*_{j}|y^*_i, \boldsymbol{
+\theta})p(y^*|\pi)\prod_{i=1}^{n} \prod_{j=1}^{p} p(x_{i,j}|y_i,
+\boldsymbol{ \theta})p(y_i|\pi)}{\sum_{y^*=0}^1 \prod_{j=1}^{p}
+p(x^*_{j}|y^*_i, \boldsymbol{ \theta})p(y^*|\pi)\prod_{i=1}^{n}
+\prod_{j=1}^{p} p(x_{i,j}|y_i, \boldsymbol{ \theta})p(y_i|\pi)}
 \]</span></li>
 </ul>
 </section>
@@ -1406,14 +1366,21 @@ P(y^*| \mathbf{ y}, \mathbf{X}, \mathbf{ x}^*, \boldsymbol{ \theta})  = \frac{\p
 <h2>Cancelation</h2>
 <ul>
 <li>Note training data terms cancel. <span class="math display">\[
-p(y^*| \mathbf{ x}^*, \boldsymbol{ \theta}) = \frac{\prod_{j=1}^{p} p(x^*_{j}|y^*_i, \boldsymbol{ \theta})p(y^*|\pi)}{\sum_{y^*=0}^1 \prod_{j=1}^{p} p(x^*_{j}|y^*_i, \boldsymbol{ \theta})p(y^*|\pi)}
+p(y^*| \mathbf{ x}^*, \boldsymbol{ \theta}) = \frac{\prod_{j=1}^{p}
+p(x^*_{j}|y^*_i, \boldsymbol{ \theta})p(y^*|\pi)}{\sum_{y^*=0}^1
+\prod_{j=1}^{p} p(x^*_{j}|y^*_i, \boldsymbol{ \theta})p(y^*|\pi)}
 \]</span></li>
-<li>This formula is also fairly straightforward to implement for different class conditional distributions.</li>
+<li>This formula is also fairly straightforward to implement for
+different class conditional distributions.</li>
 </ul>
 </section>
 <section id="laplace-smoothing" class="slide level2">
 <h2>Laplace Smoothing</h2>
-<p><a href="https://play.google.com/books/reader?id=1YQPAAAAQAAJ&amp;pg=PA16"><img data-src="../slides/diagrams/books/1YQPAAAAQAAJ-PA16.png" /></a></p>
+<div class="centered" style="">
+<a
+href="https://play.google.com/books/reader?id=1YQPAAAAQAAJ&amp;pg=PA16"><img
+data-src="https://mlatcl.github.io/dsa/./slides/diagrams//books/1YQPAAAAQAAJ-PA16.png" /></a>
+</div>
 </section>
 <section id="pseudo-counts" class="slide level2">
 <h2>Pseudo Counts</h2>
@@ -1421,18 +1388,12 @@ p(y^*| \mathbf{ x}^*, \boldsymbol{ \theta}) = \frac{\prod_{j=1}^{p} p(x^*_{j}|y^
 \pi = \frac{\sum_{i=1}^{n} y_i + 1}{n+ 2}
 \]</span></p>
 </section>
-<section id="exercise-5" class="slide level2">
-<h2>Exercise 5</h2>
-<p>How can you improve your classification, are all the features equally valid? Are some features more helpful than others? What happens if you remove features that appear to be less helpful. How might you select such features?</p>
-</section>
-<section id="exercise-6" class="slide level2">
-<h2>Exercise 6</h2>
-<p>We have decided to classify positive if probability of maternity is greater than 0.5. This has led us to accidentally classify some facilities as havien’t facilities for maternity when in fact they don’t. Imagine you wish to ensure that a facility handles maternity. With your test set how low do you have to set the threshold to avoid all the false negatives (i.e. facilities where you predicted there was no maternity, but in actuality there were?</p>
-</section>
 <section id="naive-bayes-summary" class="slide level2">
 <h2>Naive Bayes Summary</h2>
 <ul>
-<li>Model <em>full</em> joint distribution of data, <span class="math inline">\(p(\mathbf{ y}, \mathbf{X}| \boldsymbol{ \theta}, \pi)\)</span></li>
+<li>Model <em>full</em> joint distribution of data, <span
+class="math inline">\(p(\mathbf{ y}, \mathbf{X}| \boldsymbol{ \theta},
+\pi)\)</span></li>
 <li>Make conditional independence assumptions about the data.
 <ul>
 <li>feature conditional independence</li>
@@ -1445,7 +1406,9 @@ p(y^*| \mathbf{ x}^*, \boldsymbol{ \theta}) = \frac{\prod_{j=1}^{p} p(x^*_{j}|y^
 <section id="other-reading" class="slide level2">
 <h2>Other Reading</h2>
 <ul>
-<li>Chapter 5 of <span class="citation" data-cites="Rogers:book11">Rogers and Girolami (2011)</span> up to pg 179 (Section 5.1, and 5.2 up to 5.2.2).</li>
+<li>Chapter 5 of <span class="citation"
+data-cites="Rogers:book11">Rogers and Girolami (2011)</span> up to pg
+179 (Section 5.1, and 5.2 up to 5.2.2).</li>
 </ul>
 </section>
 <section id="references" class="slide level2 scrollable">
@@ -1454,45 +1417,95 @@ p(y^*| \mathbf{ x}^*, \boldsymbol{ \theta}) = \frac{\prod_{j=1}^{p} p(x^*_{j}|y^
 <section id="thanks" class="slide level2 scrollable">
 <h2 class="scrollable">Thanks!</h2>
 <ul>
-<li><p>twitter: <a href="https://twitter.com/lawrennd">@lawrennd</a></p></li>
-<li><p>podcast: <a href="http://thetalkingmachines.com">The Talking Machines</a></p></li>
-<li><p>newspaper: <a href="http://www.theguardian.com/profile/neil-lawrence">Guardian Profile Page</a></p></li>
+<li><p>twitter: <a
+href="https://twitter.com/lawrennd">@lawrennd</a></p></li>
+<li><p>podcast: <a href="http://thetalkingmachines.com">The Talking
+Machines</a></p></li>
+<li><p>newspaper: <a
+href="http://www.theguardian.com/profile/neil-lawrence">Guardian Profile
+Page</a></p></li>
 <li><p>blog posts:</p>
-<p><a href="http://inverseprobability.com/2017/07/17/what-is-machine-learning">What is Machine Learning?</a></p></li>
+<p><a
+href="http://inverseprobability.com/2017/07/17/what-is-machine-learning">What
+is Machine Learning?</a></p>
+<p><a
+href="http://inverseprobability.com/2014/07/01/open-data-science">Open
+Data Science</a></p></li>
 </ul>
-<div id="refs" class="references hanging-indent" role="doc-bibliography">
-<div id="ref-Bayes:doctrine63">
-<p>Bayes, T., 1763. An essay towards solving a problem in the doctrine of chances. Philosophical Transactions of the Royal Society 53, 370–418. <a href="https://doi.org/10.1098/rstl.1763.0053">https://doi.org/10.1098/rstl.1763.0053</a></p>
+<div id="refs" class="references csl-bib-body hanging-indent"
+role="list">
+<div id="ref-Bayes:doctrine63" class="csl-entry" role="listitem">
+Bayes, T., 1763. An essay towards solving a problem in the doctrine of
+chances. Philosophical Transactions of the Royal Society 53, 370–418. <a
+href="https://doi.org/10.1098/rstl.1763.0053">https://doi.org/10.1098/rstl.1763.0053</a>
 </div>
-<div id="ref-Bishop:book06">
-<p>Bishop, C.M., 2006. Pattern recognition and machine learning. springer.</p>
+<div id="ref-Bishop:book06" class="csl-entry" role="listitem">
+Bishop, C.M., 2006. Pattern recognition and machine learning. springer.
 </div>
-<div id="ref-Laplace:memoire74">
-<p>Laplace, P.S., 1774. Mémoire sur la probabilité des causes par les évènemens, in: Mémoires de Mathèmatique et de Physique, Presentés à lAcadémie Royale Des Sciences, Par Divers Savans, &amp; Lù Dans Ses Assemblées 6. pp. 621–656.</p>
+<div id="ref-Laplace:memoire74" class="csl-entry" role="listitem">
+Laplace, P.S., 1774. Mémoire sur la probabilité des causes par les
+évènemens, in: Mémoires de Mathèmatique Et de Physique, Presentés à
+lAcadémie Royale Des Sciences, Par Divers Savans, &amp; Lù Dans Ses
+Assemblées 6. pp. 621–656.
 </div>
-<div id="ref-Rogers:book11">
-<p>Rogers, S., Girolami, M., 2011. A first course in machine learning. CRC Press.</p>
+<div id="ref-Rogers:book11" class="csl-entry" role="listitem">
+Rogers, S., Girolami, M., 2011. A first course in machine learning. CRC
+Press.
 </div>
-<div id="ref-Steele:predictive12">
-<p>Steele, S., Bilchik, A., Eberhardt, J., Kalina, P., Nissan, A., Johnson, E., Avital, I., Stojadinovic, A., 2012. Using machine-learned Bayesian belief networks to predict perioperative risk of clostridium difficile infection following colon surgery. Interact J Med Res 1, e6. <a href="https://doi.org/10.2196/ijmr.2131">https://doi.org/10.2196/ijmr.2131</a></p>
+<div id="ref-Steele:predictive12" class="csl-entry" role="listitem">
+Steele, S., Bilchik, A., Eberhardt, J., Kalina, P., Nissan, A., Johnson,
+E., Avital, I., Stojadinovic, A., 2012. Using machine-learned
+<span>B</span>ayesian belief networks to predict perioperative risk of
+clostridium difficile infection following colon surgery. Interact J Med
+Res 1, e6. <a
+href="https://doi.org/10.2196/ijmr.2131">https://doi.org/10.2196/ijmr.2131</a>
 </div>
 </div>
 </section>
     </div>
   </div>
 
-  <script src="reveal.js/lib/js/head.min.js"></script>
-  <script src="reveal.js/js/reveal.js"></script>
+  <script src="https://unpkg.com/reveal.js@3.9.2/lib/js/head.min.js"></script>
+  <script src="https://unpkg.com/reveal.js@3.9.2/js/reveal.js"></script>
 
   <script>
 
       // Full list of configuration options available at:
       // https://github.com/hakimel/reveal.js#configuration
       Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+        // Display a presentation progress bar
+        progress: true,
         // Push each slide change to the browser history
         history: true,
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+        // Enable the slide overview mode
+        overview: true,
+        // Vertical centering of slides
+        center: true,
+        // Enables touch navigation on devices with touch input
+        touch: true,
+        // Turns fragments on and off globally
+        fragments: true,
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
         // Transition style
         transition: 'None', // none/fade/slide/convex/concave/zoom
+        // Transition speed
+        transitionSpeed: 'default', // default/fast/slow
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'fade', // none/fade/slide/convex/concave/zoom
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
         math: {
           mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js',
           config: 'TeX-AMS_HTML-full',
@@ -1512,10 +1525,10 @@ p(y^*| \mathbf{ x}^*, \boldsymbol{ \theta}) = \frac{\prod_{j=1}^{p} p(x^*_{j}|y^
 
         // Optional reveal.js plugins
         dependencies: [
-          { src: 'reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
-          { src: 'reveal.js/plugin/zoom-js/zoom.js', async: true },
-          { src: 'reveal.js/plugin/math/math.js', async: true },
-          { src: 'reveal.js/plugin/notes/notes.js', async: true }
+          { src: 'https://unpkg.com/reveal.js@3.9.2/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'https://unpkg.com/reveal.js@3.9.2/plugin/zoom-js/zoom.js', async: true },
+          { src: 'https://unpkg.com/reveal.js@3.9.2/plugin/math/math.js', async: true },
+          { src: 'https://unpkg.com/reveal.js@3.9.2/plugin/notes/notes.js', async: true }
         ]
       });
     </script>

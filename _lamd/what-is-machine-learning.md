@@ -20,8 +20,6 @@ papersize: a4paper
 transition: None
 ---
 
-\include{../talk-macros.gpp}
-
 \section{Introduction}
 
 \include{_data-science/includes/data-science-africa.md}
@@ -54,7 +52,7 @@ $$
 \notes{Stephen Kiprotich, the 2012 gold medal winner from the London Olympics, comes from Kapchorwa district, in eastern Uganda, near the border with Kenya.}
 
 \include{_ml/includes/olympic-marathon-polynomial.md}
-\include{../_ml/includes/what-does-machine-learning-do.md}
+\include{_ml/includes/what-does-machine-learning-do.md}
 
 \include{_ml/includes/what-is-ml-2.md}
 \include{_ai/includes/ai-vs-data-science-2.md}

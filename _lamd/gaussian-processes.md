@@ -11,7 +11,6 @@ time: "15:00 (West Africa Standard Time)"
 transition: None
 ---
 
-\include{talk-macros.tex}
 \include{_mlai/includes/mlai-notebook-setup.md}
 
 \include{_gp/includes/gp-book.md}
@@ -78,7 +77,7 @@ $$
 \include{_gp/includes/gp-optimize.md}
 \include{_kern/includes/eq-covariance.md}
 \include{_gp/includes/gp-summer-school.md}
-\include{_gp/includes/gpy-software.md}
+\include{_software/includes/gpy-software.md}
 \include{_gp/includes/gpy-tutorial.md}
 
 \subsection{Review}
