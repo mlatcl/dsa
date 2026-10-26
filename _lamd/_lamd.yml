@@ -9,7 +9,9 @@ author:
 layout: lecture
 room:
 venue: Virtual (Zoom)
-talkcss: https://inverseprobability.com/assets/css/talks.css
+talktheme: white
+talkcss: mlatcl.css
+talkfontsize: xs
 bibdir: $HOME/lawrennd/bibliography
 postsdir: ../_lectures/
 slidesdir: ../slides/
