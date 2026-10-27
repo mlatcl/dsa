@@ -72,7 +72,19 @@ plugins:
 - jekyll-feed
 - jekyll-seo-tag
 - jekyll-remote-theme
-remote_theme: lawrennd/proceedings
+- jekyll-paginate-v2
+sass:
+  sass_dir: _sass
+pagination:
+  enabled: true
+  per_page: 5
+  permalink: '/page/:num/'
+  title: ':title'
+  limit: 0
+  sort_field: 'date'
+  sort_reverse: true
+
+remote_theme: mlatcl/jekyll-theme
 
 twitter_svg: ./assets/images/social-tw.svg
 facebook_svg: ./assets/images/social-fb.svg

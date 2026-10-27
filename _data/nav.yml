@@ -1,30 +1,30 @@
 main_nav:
+  - label: Overview
+    link: /dsa/
   - label: Lectures
-    link: /
+    link: /dsa/lectures/
   - label: ML@CL Group
-    link: https://mlatcl.github.io/
+    link: /
     submenu_item:
       - label: Overview
-        link: https://mlatcl.github.io/about/
+        link: /about/
       - label: Team
-        link: https://mlatcl.github.io/people/
+        link: /people/
       - label: Research
-        link: https://mlatcl.github.io/research/
-  - label: Data Science Africa
-    link: https://www.datascienceafrica.org/
+        link: /research/
   - label: Contact Us
-    link: https://mlatcl.github.io/contact-us/
+    link: /contact-us/
 footer_nav:
   - label: ML@CL Group
-    link: https://mlatcl.github.io/
+    link: /
   - label: Research
-    link: https://mlatcl.github.io/research/
+    link: /research/
   - label: Team
-    link: https://mlatcl.github.io/people/
+    link: /people/
   - label: Privacy
-    link: https://mlatcl.github.io/privacy-policy/
+    link: /privacy-policy/
   - label: Terms of Service
-    link: https://mlatcl.github.io/terms-of-service/
+    link: /terms-of-service/
 top_bar:
   image: /assets/images/cambridge-university.png
   link: https://www.cam.ac.uk/
