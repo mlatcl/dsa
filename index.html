@@ -1,0 +1,26 @@
+---
+layout: lecture-home
+title: Data Science in Africa
+---
+
+<p>This site collects lectures on data science in the African context, given at Data Science Africa and Data Science Nigeria meetings.</p>
+
+<h3>Lectures</h3>
+
+<p>Notes, slides, and notebooks for each lecture are on the <a href="{{ "/lectures/" | relative_url }}">lectures</a> page.</p>
+
+<table>
+<thead>
+<tr><th>Date</th><th>Venue</th><th>Lecture</th></tr>
+</thead>
+<tbody>
+{% assign lectures_by_date = site.lectures | sort: "date" %}
+{% for lecture in lectures_by_date %}
+<tr>
+  <td>{{ lecture.date | date: "%-d %b %Y" }}</td>
+  <td>{{ lecture.venue }}</td>
+  <td><a href="{{ lecture.url | relative_url }}">{{ lecture.title }}</a></td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
