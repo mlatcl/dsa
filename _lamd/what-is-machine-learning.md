@@ -17,7 +17,7 @@ categories:
 - notes
 geometry: ["a4paper", "margin=2cm"]
 papersize: a4paper
-transition: None
+transition: "none"
 ---
 
 \section{Introduction}

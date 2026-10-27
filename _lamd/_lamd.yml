@@ -10,7 +10,7 @@ layout: lecture
 room:
 venue: Virtual (Zoom)
 talktheme: white
-talkcss: mlatcl.css
+talkcss: dsa.css
 talkfontsize: xs
 bibdir: $HOME/lawrennd/bibliography
 postsdir: ../_lectures/
@@ -35,12 +35,11 @@ pdf: False
 assignment: False
 ipynb: True
 reveal: True
-transition: None
+transition: "none"
 potx: custom-reference.potx 
 dotx: custom-reference.dotx
 baseurl: "dsa/" # the subpath of your site, e.g. /blog/
 url: "https://mlatcl.github.io/" # the base hostname & protocol for your site
-transition: None
 ghub:
 - organization: mlatcl
   repository: dsa

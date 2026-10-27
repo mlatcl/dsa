@@ -8,7 +8,7 @@ abstract: >
 date: 2020-11-13
 venue: Virtual Data Science Nigeria
 time: "15:00 (West Africa Standard Time)"
-transition: None
+transition: "none"
 ---
 
 \include{_mlai/includes/mlai-notebook-setup.md}

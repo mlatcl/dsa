@@ -22,7 +22,7 @@ author:
   url: http://inverseprobability.com
 date: 2018-11-16
 venue: DSA, Abuja
-transition: None
+transition: "none"
 ---
 
 %%%%%%%%%%%% LOCAL DATA %%%%%%%%%%%%%%%%%%%%

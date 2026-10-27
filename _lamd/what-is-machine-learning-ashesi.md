@@ -18,10 +18,8 @@ categories:
 layout: talk
 geometry: ["a4paper", "margin=2cm"]
 papersize: a4paper
-transition: None
+transition: "none"
 ---
-
-\include{../talk-macros.tex}
 
 \section{Introduction}
 
@@ -47,7 +45,7 @@ $$
 
 \include{_supply-chain/includes/supply-chain-africa.md}
 \include{_ml/includes/process-emulation.md}
-\include{_ml/includes/nigeria-nmis-data.md}
+\include{_datasets/includes/nigeria-nmis-data.md}
 \include{_ml/includes/what-does-machine-learning-do.md}
 \include{_ml/includes/what-is-ml-2.md}
 \include{_ai/includes/ai-vs-data-science-2.md}

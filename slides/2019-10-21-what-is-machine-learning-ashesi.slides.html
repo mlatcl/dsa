@@ -1,0 +1,2934 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="dcterms.date" content="2019-10-21">
+  <title>What is Machine Learning?</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@3.9.2/css/reveal.css">
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+      /* scrollable slides: start content at top, left-align text */
+      .reveal section.scrollable {
+          overflow-y: auto !important;
+          height: 100% !important;
+          top: 0 !important;
+          text-align: left;
+      }
+      .reveal section.scrollable > h2:first-child,
+      .reveal section.scrollable > h2.scrollable:first-child {
+          margin-top: 0.2em;
+      }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@3.9.2/css/theme/white.css" id="theme">
+  <link rel="stylesheet" href="dsa.css"/>
+  <link rel="stylesheet" href="slide-fonts.css"/>
+  <link rel="stylesheet" href="slide-fontsize-xs.css"/>
+  <!-- Printing and PDF exports -->
+  <script>
+    var link = document.createElement( 'link' );
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = window.location.search.match( /print-pdf/gi ) ? 'https://unpkg.com/reveal.js@3.9.2/css/print/pdf.css' : 'https://unpkg.com/reveal.js@3.9.2/css/print/paper.css';
+    document.getElementsByTagName( 'head' )[0].appendChild( link );
+  </script>
+  <!--[if lt IE 9]>
+  <script src="https://unpkg.com/reveal.js@3.9.2/lib/js/html5shiv.js"></script>
+  <![endif]-->
+   <!-- Mermaid -->
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.6.1/mermaid.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_SVG" type="text/javascript"></script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    TeX: {
+         extensions: ["color.js"]
+      }
+    });
+  </script>
+  <script src="https://inverseprobability.com/assets/js/figure-animate.js"></script>
+  <script>
+  /* Map range slider values (min..max, often 0-based in LaMD content) to the
+     1-based frame index expected by figure-animate.js showDivs(). */
+  function lamdFrameIndex(group) {
+    var range = document.getElementById("range-" + group);
+    var val = parseInt(range.value, 10);
+    var min = parseInt(range.min, 10);
+    return val - min + 1;
+  }
+  function lamdSetDivs(group) {
+    if (typeof showDivs !== "function") return;
+    slideIndex = lamdFrameIndex(group);
+    showDivs(slideIndex, group);
+  }
+  function lamdPlusDivs(n, group) {
+    if (typeof showDivs !== "function") return;
+    var range = document.getElementById("range-" + group);
+    var min = parseInt(range.min, 10);
+    var max = parseInt(range.max, 10);
+    var val = parseInt(range.value, 10) + n;
+    if (val < min) val = max;
+    if (val > max) val = min;
+    range.value = val;
+    range.setAttribute("aria-valuenow", val);
+    slideIndex = val - min + 1;
+    showDivs(slideIndex, group);
+  }
+  </script>
+  <script>
+  /* Theme chrome (logos) sits on Reveal's full-viewport .slide-background,
+     which does not receive the deck transform. Sync --slide-scale so CSS can
+     size that chrome with the slides (see ai-cam.css / mlatcl.css / trent.css). */
+  (function () {
+    var bound = false;
+    function syncSlideScale() {
+      if (typeof Reveal === "undefined" || typeof Reveal.getScale !== "function") return false;
+      try {
+        var s = Reveal.getScale();
+        if (!s || !isFinite(s)) return false;
+        document.documentElement.style.setProperty("--slide-scale", String(s));
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+    function bind() {
+      if (bound) return typeof Reveal !== "undefined";
+      if (typeof Reveal === "undefined" || typeof Reveal.addEventListener !== "function") return false;
+      Reveal.addEventListener("ready", syncSlideScale);
+      window.addEventListener("resize", function () {
+        setTimeout(syncSlideScale, 0);
+        setTimeout(syncSlideScale, 50);
+      });
+      bound = true;
+      return true;
+    }
+    var n = 0;
+    var t = setInterval(function () {
+      bind();
+      /* Keep polling until getScale() works — Reveal exists before initialize. */
+      if (syncSlideScale() || ++n > 200) clearInterval(t);
+    }, 50);
+  })();
+  </script>
+      
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide">
+  <h1 class="title">What is Machine Learning?</h1>
+  <p class="author" style="text-align:center"><a href="http://inverseprobability.com">Neil
+D. Lawrence</a></p>
+  <p class="date" style="text-align:center"><time>2019-10-21</time></p>
+  <p class="venue" style="text-align:center">Data Science Africa Summer
+School, Ashesi, Ghana</p>
+</section>
+
+<section class="slide level2">
+
+<!-- CIP-0012 Track A: no-op outside HTML (overridden in talk-macros-html.gpp). -->
+<!-- Class-test timer: no-op outside slides HTML (overridden in talk-macros-slides-html.gpp). -->
+<!-- CIP-0016: mdpp expands \diagramcredit before gpp; leftover calls are empty. -->
+<!-- Do not edit this file locally. -->
+<!---->
+<!-- CIP-0012 Track A: content script load. Once-guard with alphanumeric
+     names stays in the surrounding ifndef wrapper (GPP ifndef limitation). -->
+<!-- Do not edit this file locally. -->
+<!-- The last names to be defined. Should be defined entirely in terms of macros from above-->
+<!-- SECTION Introduction -->
+</section>
+<section id="introduction" class="slide level2">
+<h2>Introduction</h2>
+</section>
+<section id="section" class="slide level2">
+<h2></h2>
+<div class="figure">
+<div id="data-science-africa-figure" class="figure-frame">
+<div class="centered" style="">
+<img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/data-science-africa-logo.png" width="30%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+</div>
+</div>
+<aside class="notes">
+Data Science Africa <a
+href="https://www.datascienceafrica.org/">https://datascienceafrica.org</a>
+is a ground up initiative for capacity building around data science,
+machine learning and artificial intelligence on the African continent.
+</aside>
+<p>Data Science Africa is a bottom up initiative for capacity building
+in data science, machine learning and AI on the African continent</p>
+</section>
+<section id="section-1" class="slide level2">
+<h2></h2>
+<div class="figure">
+<div id="dsa-events-october-2021-figure" class="figure-frame">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/dsa/dsa-events-october-2021.svg" width="60%" style=" ">
+</object>
+</div>
+</div>
+<aside class="notes">
+Data Science Africa meetings held up to October 2021.
+</aside>
+</section>
+<section id="section-2" class="slide level2">
+<h2></h2>
+<div class="figure">
+<div id="africa-benefit-data-revolution-figure" class="figure-frame">
+<div class="centered" style="">
+<img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/data-science/africa-benefit-data-revolution-2024.png" width="70%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+</div>
+</div>
+<aside class="notes">
+The lack of existing physical infrastructure on the African continent
+makes it a particularly interesting environment for deploying solutions
+based on the <em>information infrastructure</em>. The idea is explored
+more in this Guardian op-ed on .
+</aside>
+</section>
+<section id="example-prediction-of-malaria-incidence-in-uganda"
+class="slide level2">
+<h2>Example: Prediction of Malaria Incidence in Uganda</h2>
+<div class="centered" style="">
+\martinMubangiziPicture{15%}\ricardoAndradePachecoPicture{15%}\johnQuinnPicture{15%}
+</div>
+<ul>
+<li>Work with Ricardo Andrade Pacheco, John Quinn and Martin Mubangizi
+(Makerere University, Uganda)</li>
+<li>See <a href="http://air.ug/research.html">AI-DEV Group</a>.</li>
+<li>See <a href="https://diseaseoutbreaks.unglobalpulse.net/uganda/">UN
+Global Pulse Disease Outbreaks Site</a></li>
+</ul>
+</section>
+<section id="malaria-prediction-in-uganda" class="slide level2">
+<h2>Malaria Prediction in Uganda</h2>
+<div class="figure">
+<div id="uganda-districts-2006-figure" class="figure-frame">
+<div class="centered" style="">
+<img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/health/uganda-districts-2006.png" width="50%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+</div>
+</div>
+<aside class="notes">
+Ugandan districts. Data SRTM/NASA from <a
+href="https://dds.cr.usgs.gov/srtm/version2_1"
+class="uri">https://dds.cr.usgs.gov/srtm/version2_1</a>.
+</aside>
+<div style="text-align:right">
+<span class="citation"
+data-cites="Andrade:consistent14 Mubangizi:malaria14">(Andrade-Pacheco
+et al., 2014; Mubangizi et al., 2014)</span>
+</div>
+</section>
+<section id="tororo-district" class="slide level2">
+<h2>Tororo District</h2>
+<div class="figure">
+<div id="tororo-district-in-uganda-figure" class="figure-frame">
+<object class data="https://mlatcl.github.io/dsa/slides/diagrams/health/Tororo_District_in_Uganda.svg" width="50%" style=" ">
+</object>
+</div>
+</div>
+<aside class="notes">
+The Tororo district, where the sentinel site, Nagongera, is located.
+</aside>
+</section>
+<section id="malaria-prediction-in-nagongera-sentinel-site"
+class="slide level2">
+<h2>Malaria Prediction in Nagongera (Sentinel Site)</h2>
+<div class="figure">
+<div id="sentinel-nagongera-figure" class="figure-frame">
+<div class="centered" style="">
+<img class="negate" src="https://mlatcl.github.io/dsa/slides/diagrams/health/sentinel_nagongera.png" width="100%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+</div>
+</div>
+<aside class="notes">
+Sentinel and HMIS data along with rainfall and temperature for the
+Nagongera sentinel station in the Tororo district.
+</aside>
+</section>
+<section id="mubende-district" class="slide level2">
+<h2>Mubende District</h2>
+<div class="figure">
+<div id="mubende-district-in-uganda-figure" class="figure-frame">
+<object class data="https://mlatcl.github.io/dsa/slides/diagrams/health/Mubende_District_in_Uganda.svg" width="50%" style=" ">
+</object>
+</div>
+</div>
+<aside class="notes">
+The Mubende District.
+</aside>
+</section>
+<section id="malaria-prediction-in-uganda-1" class="slide level2">
+<h2>Malaria Prediction in Uganda</h2>
+<div class="figure">
+<div id="malaria-prediction-mubende-figure" class="figure-frame">
+<div class="centered" style="">
+<img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/health/mubende.png" width="80%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+</div>
+</div>
+<aside class="notes">
+Prediction of malaria incidence in Mubende.
+</aside>
+</section>
+<section id="gp-school-at-makerere" class="slide level2">
+<h2>GP School at Makerere</h2>
+<div class="figure">
+<div id="-figure" class="figure-frame">
+<div class="centered" style="">
+<img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/gpss/1157497_513423392066576_1845599035_n.jpg" width="80%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+</div>
+</div>
+<aside class="notes">
+The project arose out of the Gaussian process summer school held at
+Makerere in Kampala in 2013. The school led, in turn, to the Data
+Science Africa initiative.
+</aside>
+</section>
+<section id="kabarole-district" class="slide level2">
+<h2>Kabarole District</h2>
+<div class="figure">
+<div id="kabarole-district-in-uganda-figure" class="figure-frame">
+<object class data="https://mlatcl.github.io/dsa/slides/diagrams/health/Kabarole_District_in_Uganda.svg" width="50%" style=" ">
+</object>
+</div>
+</div>
+<aside class="notes">
+The Kabarole district in Uganda.
+</aside>
+</section>
+<section id="early-warning-system" class="slide level2">
+<h2>Early Warning System</h2>
+<div class="figure">
+<div id="kabarole-disease-over-time-figure" class="figure-frame">
+<div class="centered" style="">
+<img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/health/kabarole.gif" width="100%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+</div>
+</div>
+<aside class="notes">
+Estimate of the current disease situation in the Kabarole district over
+time. Estimate is constructed with a Gaussian process with an additive
+covariance funciton.
+</aside>
+</section>
+<section id="early-warning-systems" class="slide level2">
+<h2>Early Warning Systems</h2>
+<div class="figure">
+<div id="early-warning-system-map-figure" class="figure-frame">
+<div class="centered" style="">
+<img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/health/monitor.gif" width="50%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+</div>
+</div>
+<aside class="notes">
+The map of Ugandan districts with an overview of the Malaria situation
+in each district.
+</aside>
+</section>
+<section id="machine-learning" class="slide level2">
+<h2>Machine Learning</h2>
+</section>
+<section id="rise-of-machine-learning" class="slide level2">
+<h2>Rise of Machine Learning</h2>
+<ul>
+<li>Driven by data and computation</li>
+<li>Fundamentally dependent on models</li>
+</ul>
+<p><span class="math display">\[
+\text{data} + \text{model} \stackrel{\text{compute}}{\rightarrow}
+\text{prediction}
+\]</span></p>
+</section>
+<section id="data-revolution" class="slide level2">
+<h2>Data Revolution</h2>
+<div class="figure">
+<div id="data-science-information-flow-figure" class="figure-frame">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/data-science/new-flow-of-information.svg" width="60%" style=" ">
+</object>
+</div>
+</div>
+<aside class="notes">
+Large amounts of data and high interconnection bandwidth mean that we
+receive much of our information about the world around us through
+computers.
+</aside>
+</section>
+<section id="supply-chain" class="slide level2">
+<h2>Supply Chain</h2>
+</section>
+<section id="burbage-bridge" class="slide level2">
+<h2>Burbage Bridge</h2>
+<div class="figure">
+<div id="packhorse-bridge-burbage-brook-figure" class="figure-frame">
+<div class="centered" style="">
+<img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/supply-chain/packhorse-bridge-burbage-brook.jpg" width="80%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+</div>
+</div>
+<aside class="notes">
+Packhorse Bridge under Burbage Edge. This packhorse route climbs steeply
+out of Hathersage and heads towards Sheffield. Packhorses were the main
+route for transporting goods across the Peak District. The high cost of
+transport is one driver of the ‘smith’ model, where there is a local
+skilled person responsible for assembling or creating goods (e.g. a
+blacksmith).
+</aside>
+</section>
+<section id="cromford" class="slide level2">
+<h2>Cromford</h2>
+<div class="figure">
+<div id="cromford-mill-figure" class="figure-frame">
+<div class="centered" style="">
+<img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/supply-chain/cromford-mill.jpg" width="80%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+</div>
+</div>
+<aside class="notes">
+Richard Arkwright is regarded of the founder of the modern factory
+system. Factories exploit distribution networks to centralize production
+of goods. Arkwright located his factory in Cromford due to proximity to
+Nottingham Weavers (his market) and availability of water power from the
+tributaries of the Derwent river. When he first arrived there was almost
+no transportation network. Over the following 200 years The Cromford
+Canal (1790s), a Turnpike (now the A6, 1816-18) and the High Peak
+Railway (now closed, 1820s) were all constructed to improve
+transportation access as the factory blossomed.
+</aside>
+</section>
+<section id="section-3" class="slide level2">
+<h2></h2>
+<div class="figure">
+<div id="container-2539942_1920-figure" class="figure-frame">
+<div class="centered" style="">
+<img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/supply-chain/container-2539942_1920.jpg" width="80%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+</div>
+</div>
+<aside class="notes">
+The container is one of the major drivers of globalization, and arguably
+the largest agent of social change in the last 100 years. It reduces the
+cost of transportation, significantly changing the appropriate topology
+of distribution networks. The container makes it possible to ship goods
+halfway around the world for cheaper than it costs to process those
+goods, leading to an extended distribution topology.
+</aside>
+</section>
+<section id="deep-freeze" class="slide level2">
+<h2>Deep Freeze</h2>
+<div class="figure">
+<div id="wild-alaskan-cod-figure" class="figure-frame">
+<div class="centered" style="">
+<img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/supply-chain/wild-alaskan-cod.jpg" width="30%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+</div>
+</div>
+<aside class="notes">
+Wild Alaskan Cod, being solid in the Pacific Northwest.
+</aside>
+</section>
+<section id="deep-freeze-1" class="slide level2">
+<h2>Deep Freeze</h2>
+<div class="figure">
+<div id="wild-alaskan-cod-made-in-china-figure" class="figure-frame">
+<div class="centered" style="">
+<img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/supply-chain/wild-alaskan-cod-made-in-china.jpg" width="30%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+</div>
+</div>
+<aside class="notes">
+Wild Alaskan Cod that is a product of China. It is cheaper to ship the
+deep-frozen fish thousands of kilometers for processing than to process
+locally.
+</aside>
+</section>
+<section id="section-4" class="slide level2">
+<h2></h2>
+<div class="figure">
+<div id="environmental-impact-of-food-by-life-cycle-figure"
+class="figure-frame">
+<div class="centered" style="">
+<img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/supply-chain/environmental-impact-of-food-by-life-cycle.png" width="70%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+</div>
+</div>
+<aside class="notes">
+The transport cost of most foods is a very small portion of the total
+cost. The exception is if foods are air freighted. Source: <a
+href="https://ourworldindata.org/food-choice-vs-eating-local"
+class="uri">https://ourworldindata.org/food-choice-vs-eating-local</a>
+by Hannah Ritche CC-BY
+</aside>
+</section>
+<section id="machine-learning-in-supply-chain" class="slide level2">
+<h2>Machine Learning in Supply Chain</h2>
+<ul>
+<li><em>Supply chain</em>: Large Automated Decision Making Network</li>
+<li>Major Challenge:
+<ul>
+<li>We have a <em>mechanistic</em> understanding of supply chain.</li>
+<li>Machine learning is a <em>data driven</em> technology.</li>
+</ul></li>
+</ul>
+</section>
+<section id="for-africa" class="slide level2">
+<h2>For Africa</h2>
+<ul>
+<li>Infrastructure dominated by information.</li>
+</ul>
+</section>
+<section id="data-driven" class="slide level2">
+<h2>Data Driven</h2>
+<ul>
+<li>Machine Learning: Replicate Processes through <em>direct use of
+data</em>.</li>
+<li>Aim to emulate cognitive processes through the use of data.</li>
+<li>Use data to provide new approaches in control and optimization that
+should allow for emulation of human motor skills.</li>
+</ul>
+</section>
+<section id="process-emulation" class="slide level2">
+<h2>Process Emulation</h2>
+<ul>
+<li>Key idea: emulate the process as a mathematical function.</li>
+<li>Each function has a set of <em>parameters</em> which control its
+behaviour.</li>
+<li><em>Learning</em> is the process of changing these parameters to
+change the shape of the function</li>
+<li>Choice of which class of mathematical functions we use is a vital
+component of our <em>model</em>.</li>
+</ul>
+<!-- SECTION Nigeria NMIS Data -->
+</section>
+<section id="nigeria-nmis-data" class="slide level2">
+<h2>Nigeria NMIS Data</h2>
+</section>
+<section id="nigeria-nmis-data-notebook" class="slide level2">
+<h2>Nigeria NMIS Data: Notebook</h2>
+<div class="figure">
+<div id="nigerian-health-facilities-figure" class="figure-frame">
+<div class="centered" style="">
+<img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/ml/nigerian-health-facilities.png" width="60%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+</div>
+</div>
+<aside class="notes">
+Location of the over thirty-four thousand health facilities registered
+in the NMIS data across Nigeria. Each facility plotted according to its
+latitude and longitude.
+</aside>
+</section>
+<section id="what-does-machine-learning-do" class="slide level2">
+<h2>What does Machine Learning do?</h2>
+<ul>
+<li>Automation scales by codifying processes and automating them.</li>
+<li>Need:
+<ul>
+<li>Interconnected components</li>
+<li>Compatible components</li>
+</ul></li>
+<li>Early examples:
+<ul>
+<li>cf Colt 45, Ford Model T</li>
+</ul></li>
+</ul>
+</section>
+<section id="codify-through-mathematical-functions"
+class="slide level2">
+<h2>Codify Through Mathematical Functions</h2>
+<ul>
+<li>How does machine learning work?</li>
+<li>Jumper (jersey/sweater) purchase with logistic regression</li>
+</ul>
+<p><span class="math display">\[ \text{odds} =
+\frac{p(\text{bought})}{p(\text{not bought})} \]</span></p>
+<p><span class="math display">\[ \log \text{odds}  = w_0 + w_1
+\text{age} + w_2 \text{latitude}.\]</span></p>
+</section>
+<section id="sigmoid-function" class="slide level2">
+<h2>Sigmoid Function</h2>
+<div class="figure">
+<div id="the-logistic-function-figure" class="figure-frame">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/logistic.svg" width="80%" style=" ">
+</object>
+</div>
+</div>
+<aside class="notes">
+The logistic function.
+</aside>
+</section>
+<section id="codify-through-mathematical-functions-1"
+class="slide level2">
+<h2>Codify Through Mathematical Functions</h2>
+<ul>
+<li>How does machine learning work?</li>
+<li>Jumper (jersey/sweater) purchase with logistic regression</li>
+</ul>
+<p><span class="math display">\[ p(\text{bought}) =  \sigma\left(w_0 +
+w_1 \text{age} + w_2 \text{latitude}\right).\]</span></p>
+</section>
+<section id="codify-through-mathematical-functions-2"
+class="slide level2">
+<h2>Codify Through Mathematical Functions</h2>
+<ul>
+<li>How does machine learning work?</li>
+<li>Jumper (jersey/sweater) purchase with logistic regression</li>
+</ul>
+<p><span class="math display">\[ p(\text{bought})
+=  \sigma\left(\mathbf{ w}^\top \mathbf{ x}\right).\]</span></p>
+</section>
+<section id="codify-through-mathematical-functions-3"
+class="slide level2">
+<h2>Codify Through Mathematical Functions</h2>
+<ul>
+<li>How does machine learning work?</li>
+<li>Jumper (jersey/sweater) purchase with logistic regression</li>
+</ul>
+<p><span class="math display">\[ y=  f\left(\mathbf{ x}, \mathbf{
+w}\right).\]</span></p>
+<div class="fragment">
+<p>We call <span class="math inline">\(f(\cdot)\)</span> the
+<em>prediction function</em>.</p>
+</div>
+</section>
+<section id="fit-to-data" class="slide level2">
+<h2>Fit to Data</h2>
+<ul>
+<li>Use an objective function</li>
+</ul>
+<p><span class="math display">\[E(\mathbf{ w}, \mathbf{Y},
+\mathbf{X})\]</span></p>
+<div class="fragment">
+<ul>
+<li>E.g. least squares <span class="math display">\[E(\mathbf{ w},
+\mathbf{Y}, \mathbf{X}) = \sum_{i=1}^n\left(y_i - f(\mathbf{ x}_i,
+\mathbf{ w})\right)^2.\]</span></li>
+</ul>
+</div>
+</section>
+<section id="two-components" class="slide level2">
+<h2>Two Components</h2>
+<ul>
+<li>Prediction function, <span
+class="math inline">\(f(\cdot)\)</span></li>
+<li>Objective function, <span
+class="math inline">\(E(\cdot)\)</span></li>
+</ul>
+</section>
+<section id="prediction-vs-interpretation" class="slide level2">
+<h2>Prediction vs Interpretation</h2>
+<p><span class="math display">\[ p(\text{bought}) =  \sigma\left(w_0 +
+w_1 \text{age} + w_2 \text{latitude}\right).\]</span></p>
+<p><span class="math display">\[ p(\text{bought}) =  \sigma\left(\beta_0
++ \beta_1 \text{age} + \beta_2 \text{latitude}\right).\]</span></p>
+</section>
+<section id="section-5" class="slide level2">
+<h2></h2>
+<p><span class="math display">\[\text{data} + \text{model}
+\stackrel{\text{compute}}{\rightarrow} \text{prediction}\]</span></p>
+</section>
+<section id="from-model-to-decision" class="slide level2">
+<h2>From Model to Decision</h2>
+</section>
+<section id="section-6" class="slide level2">
+<h2></h2>
+<div class="lamd-columns"
+style="display:flex; width:100%; justify-content:center; align-items:center; column-gap:1em;">
+<div style="flex:0 0 35%; max-width:35%;">
+<div class="centered" style="">
+<img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/earth_PNG37.png" width="100%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+</div>
+<div style="flex:0 0 45%; max-width:45%;">
+<span class="math display">\[\text{data} + \text{model}
+\stackrel{\text{compute}}{\rightarrow} \text{prediction}\]</span>
+</div>
+<div style="flex:0 0 20%; max-width:20%;">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ai/1969018.svg" width="100%" style="center ">
+</object>
+</div>
+</div>
+</section>
+<section id="artificial-intelligence-and-data-science"
+class="slide level2">
+<h2>Artificial Intelligence and Data Science</h2>
+<ul>
+<li>AI aims to equip computers with human capabilities
+<ul>
+<li>Image understanding</li>
+<li>Computer vision</li>
+<li>Speech recognition</li>
+<li>Natural language understanding</li>
+<li>Machine translation</li>
+</ul></li>
+</ul>
+</section>
+<section id="supervised-learning-for-ai" class="slide level2">
+<h2>Supervised Learning for AI</h2>
+<ul>
+<li>Dominant approach today:
+<ul>
+<li>Generate large labelled data set from humans.</li>
+<li>Use <em>supervised learning</em> to emulate that data.
+<ul>
+<li><em>E.g.</em> <a href="www.image-net.org">ImageNet</a> <span
+class="citation" data-cites="Russakovsky-imagenet15">Russakovsky et al.
+(2015)</span></li>
+</ul></li>
+</ul></li>
+<li>Significant advances due to <em>deep learning</em>
+<ul>
+<li><em>E.g.</em> Alexa, Amazon Go</li>
+</ul></li>
+</ul>
+</section>
+<section id="data-science" class="slide level2">
+<h2>Data Science</h2>
+<ul>
+<li>Arises from <em>happenstance data</em>.</li>
+<li>Differs from statistics in that the question comes <em>after</em>
+data collection.</li>
+</ul>
+</section>
+<section id="neural-networks-and-prediction-functions"
+class="slide level2">
+<h2>Neural Networks and Prediction Functions</h2>
+<ul>
+<li>adaptive non-linear function models inspired by simple neuron models
+<span class="citation" data-cites="McCulloch-neuron43">(McCulloch and
+Pitts, 1943)</span></li>
+<li>have become popular because of their ability to model data.</li>
+<li>can be composed to form highly complex functions</li>
+<li>start by focussing on one hidden layer</li>
+</ul>
+</section>
+<section id="prediction-function-of-one-hidden-layer"
+class="slide level2">
+<h2>Prediction Function of One Hidden Layer</h2>
+<p><span class="math display">\[
+f(\mathbf{ x}) = \left.\mathbf{ w}^{(2)}\right.^\top \boldsymbol{
+\phi}(\mathbf{W}_{1}, \mathbf{ x})
+\]</span></p>
+<p><span class="math inline">\(f(\cdot)\)</span> is a scalar function
+with vector inputs,</p>
+<p><span class="math inline">\(\boldsymbol{ \phi}(\cdot)\)</span> is a
+vector function with vector inputs.</p>
+<ul>
+<li><p>dimensionality of the vector function is known as the number of
+hidden units, or the number of neurons.</p></li>
+<li><p>elements of <span class="math inline">\(\boldsymbol{
+\phi}(\cdot)\)</span> are the <em>activation</em> function of the neural
+network</p></li>
+<li><p>elements of <span class="math inline">\(\mathbf{W}_{1}\)</span>
+are the parameters of the activation functions.</p></li>
+</ul>
+</section>
+<section id="relations-with-classical-statistics" class="slide level2">
+<h2>Relations with Classical Statistics</h2>
+<ul>
+<li><p>In statistics activation functions are known as <em>basis
+functions</em>.</p></li>
+<li><p>would think of this as a <em>linear model</em>: not linear
+predictions, linear in the parameters</p></li>
+<li><p><span class="math inline">\(\mathbf{ w}_{1}\)</span> are
+<em>static</em> parameters.</p></li>
+</ul>
+</section>
+<section id="adaptive-basis-functions" class="slide level2">
+<h2>Adaptive Basis Functions</h2>
+<ul>
+<li>In machine learning we optimize <span
+class="math inline">\(\mathbf{W}_{1}\)</span> as well as <span
+class="math inline">\(\mathbf{W}_{2}\)</span> (which would normally be
+denoted in statistics by <span
+class="math inline">\(\boldsymbol{\beta}\)</span>).</li>
+</ul>
+</section>
+<section id="machine-learning-1" class="slide level2">
+<h2>Machine Learning</h2>
+<ol type="1">
+<li>observe a system in practice</li>
+<li>emulate its behavior with mathematics.</li>
+</ol>
+<ul>
+<li>Design challenge: where to put mathematical function.</li>
+<li>Where it’s placed leads to different ML domains.</li>
+</ul>
+</section>
+<section id="types-of-machine-learning" class="slide level2">
+<h2>Types of Machine Learning</h2>
+<ol type="1">
+<li>Supervised learning</li>
+<li>Unsupervised learning</li>
+<li>Reinforcement learning</li>
+</ol>
+</section>
+<section id="types-of-machine-learning-1" class="slide level2">
+<h2>Types of Machine Learning</h2>
+<ol type="1">
+<li>Supervised learning</li>
+<li><s>Unsupervised learning</s></li>
+<li><s>Reinforcement learning</s></li>
+</ol>
+</section>
+<section id="supervised-learning" class="slide level2">
+<h2>Supervised Learning</h2>
+<ul>
+<li>Widley deployed
+<ul>
+<li>Particularly in <em>classification</em>.</li>
+</ul></li>
+<li>Input is e.g. image</li>
+<li>Output is class label (e.g. dog or cat).</li>
+</ul>
+</section>
+<section id="introduction-to-classification" class="slide level2">
+<h2>Introduction to Classification</h2>
+</section>
+<section id="classification" class="slide level2">
+<h2>Classification</h2>
+<ul>
+<li><em>Wake word</em> classification (<a
+href="https://radio.unglobalpulse.net/uganda/">Global Pulse
+Project</a>).</li>
+<li>Breakthrough in 2012 with ImageNet result of <a
+href="http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-">Alex
+Krizhevsky, Ilya Sutskever and Geoff Hinton</a></li>
+</ul>
+</section>
+<section id="classification-1" class="slide level2">
+<h2>Classification</h2>
+<ul>
+<li>We are given a data set containing ‘inputs’, <span
+class="math inline">\(\mathbf{X}\)</span> and ‘targets’, <span
+class="math inline">\(\mathbf{ y}\)</span>.</li>
+<li>Each data point consists of an input vector <span
+class="math inline">\(\mathbf{ x}_i\)</span> and a class label, <span
+class="math inline">\(y_i\)</span>.</li>
+<li>For binary classification assume <span
+class="math inline">\(y_i\)</span> should be either <span
+class="math inline">\(1\)</span> (yes) or <span
+class="math inline">\(-1\)</span> (no).</li>
+<li>Input vector can be thought of as features.</li>
+</ul>
+</section>
+<section id="discrete-probability" class="slide level2">
+<h2>Discrete Probability</h2>
+<ul>
+<li>Algorithms based on <em>prediction</em> function and
+<em>objective</em> function.</li>
+<li>For regression the <em>codomain</em> of the functions, <span
+class="math inline">\(f(\mathbf{X})\)</span> was the real numbers or
+sometimes real vectors.</li>
+<li>In classification we are given an input vector, <span
+class="math inline">\(\mathbf{ x}\)</span>, and an associated label,
+<span class="math inline">\(y\)</span> which either takes the value
+<span class="math inline">\(-1\)</span> or <span
+class="math inline">\(1\)</span>.</li>
+</ul>
+</section>
+<section id="classification-2" class="slide level2">
+<h2>Classification</h2>
+<ul>
+<li>Inputs, <span class="math inline">\(\mathbf{ x}\)</span>, mapped to
+a label, <span class="math inline">\(y\)</span>, through a function
+<span class="math inline">\(f(\cdot)\)</span> dependent on parameters,
+<span class="math inline">\(\mathbf{ w}\)</span>, <span
+class="math display">\[
+y= f(\mathbf{ x}; \mathbf{ w}).
+\]</span></li>
+<li><span class="math inline">\(f(\cdot)\)</span> is known as the
+<em>prediction function</em>.</li>
+</ul>
+</section>
+<section id="classification-examples" class="slide level2">
+<h2>Classification Examples</h2>
+<ul>
+<li>Classifiying hand written digits from binary images (automatic zip
+code reading)</li>
+<li>Detecting faces in images (e.g. digital cameras).</li>
+<li>Who a detected face belongs to (e.g. Facebook, DeepFace)</li>
+</ul>
+</section>
+<section id="classification-examples-1" class="slide level2">
+<h2>Classification Examples</h2>
+<ul>
+<li>Classifying type of cancer given gene expression data.</li>
+<li>Categorization of document types (different types of news article on
+the internet)</li>
+</ul>
+<div id="animation-perceptron-algorithm" class="lamd-animation"
+role="region" aria-label="" data-animation-group="perceptron-algorithm">
+<noscript>
+<style>#animation-perceptron-algorithm .animation-controls{display:none}#animation-perceptron-algorithm .perceptron-algorithm~.perceptron-algorithm{display:none}</style>
+</noscript>
+<div class="animation-controls">
+<p><small></small>
+<input id="range-perceptron-algorithm" type="range" min="1" max="44" value="1" aria-label="Frame slider for " aria-valuemin="1" aria-valuemax="44" aria-valuenow="1" onchange="typeof lamdSetDivs==='function'&&lamdSetDivs('perceptron-algorithm')" oninput="typeof lamdSetDivs==='function'&&lamdSetDivs('perceptron-algorithm')">
+<button type="button" onclick="typeof lamdPlusDivs==='function'&&lamdPlusDivs(-1,'perceptron-algorithm');" aria-label="Previous frame">❮</button>
+<button type="button" onclick="typeof lamdPlusDivs==='function'&&lamdPlusDivs(1,'perceptron-algorithm');" aria-label="Next frame">❯</button></p>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+try{
+if(typeof showDivs==='function'){showDivs(1,'perceptron-algorithm');}
+else{
+console.warn('[lamd] figure-animate.js not loaded; animation "'+'perceptron-algorithm'+'" degraded to static first frame.');
+var c=document.getElementById('animation-perceptron-algorithm');
+if(c){var ctrl=c.querySelector('.animation-controls');if(ctrl){ctrl.style.display='none';}}
+var f=document.getElementsByClassName('perceptron-algorithm');
+for(var i=1;i<f.length;i++){f[i].style.display='none';}
+if(f.length>0){f[0].style.display='block';}
+}
+}catch(e){console.warn('[lamd] Animation "'+'perceptron-algorithm'+'" failed to initialize:',e);}
+});
+</script>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron001.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron002.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron003.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron004.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron005.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron006.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron007.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron008.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron009.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron010.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron011.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron012.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron013.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron014.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron015.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron016.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron017.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron018.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron019.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron020.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron021.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron022.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron023.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron024.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron025.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron026.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron027.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron028.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron029.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron030.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron031.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron032.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron033.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron034.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron035.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron036.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron037.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron038.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron039.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron040.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron041.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron042.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron043.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="perceptron-algorithm" style="text-align:center;" role="img"
+aria-label="perceptron-algorithm"
+data-animation-frame="perceptron-algorithm">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/perceptron044.svg" width="80%" style=" ">
+</object>
+</div>
+</div>
+<p><em>Simple classification with the perceptron algorithm.</em></p>
+</section>
+<section id="regression" class="slide level2">
+<h2>Regression</h2>
+<ul>
+<li>Classification is discrete output.</li>
+<li>Regression is a continuous output.</li>
+</ul>
+</section>
+<section id="regression-examples" class="slide level2">
+<h2>Regression Examples</h2>
+<ul>
+<li>Predict a real value, <span class="math inline">\(y_i\)</span> given
+some inputs <span class="math inline">\(\mathbf{ x}_i\)</span>.</li>
+<li>Predict quality of meat given spectral measurements (Tecator
+data).</li>
+<li>Radiocarbon dating, the C14 calibration curve: predict age given
+quantity of C14 isotope.</li>
+<li>Predict quality of different Go or Backgammon moves given expert
+rated training data.</li>
+</ul>
+</section>
+<section id="olympic-marathon-data" class="slide level2">
+<h2>Olympic Marathon Data</h2>
+<div class="lamd-columns"
+style="display:flex; width:100%; justify-content:center; align-items:center; column-gap:1em;">
+<div style="flex:0 0 70%; max-width:70%;">
+<ul>
+<li>Gold medal times for Olympic Marathon since 1896.</li>
+<li>Marathons before 1924 didn’t have a standardized distance.</li>
+<li>Present results using pace per km.</li>
+<li>In 1904 Marathon was badly organized leading to very slow
+times.</li>
+</ul>
+</div>
+<div style="flex:0 0 30%; max-width:30%;">
+<div class="centered" style="">
+<img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/datasets/eliud-kipchoge_berlin_2015.jpg" width="100%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+<p><small>Image from <a
+href="https://commons.wikimedia.org/wiki/File:Eliud_Kipchoge_in_Berlin_-_2015_(cropped).jpg">Wikimedia
+Commons</a></small></p>
+</div>
+</div>
+</section>
+<section id="olympic-marathon-data-1" class="slide level2">
+<h2>Olympic Marathon Data</h2>
+<div class="figure">
+<div id="olympic-marathon-figure" class="figure-frame">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/datasets/olympic-marathon.svg" width="80%" style=" ">
+</object>
+</div>
+</div>
+<aside class="notes">
+Olympic marathon pace times since 1896.
+</aside>
+</section>
+<section id="polynomial-fits-to-olympic-marthon-data"
+class="slide level2">
+<h2>Polynomial Fits to Olympic Marthon Data</h2>
+<ul>
+<li>Fit linear model with polynomial basis to marathon data.</li>
+<li>Try different numbers of basis functions (different degress of
+polynomial).</li>
+<li>Check the quality of fit.</li>
+</ul>
+</section>
+<section id="linear-fit" class="slide level2">
+<h2>Linear Fit</h2>
+<p><span class="math display">\[f(x, \mathbf{ w}) = w_0 +
+w_1x\]</span></p>
+<div class="figure">
+<div id="olympic-marathon-polynomial-2-figure" class="figure-frame">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic-marathon-polynomial-2.svg" width="80%" style=" ">
+</object>
+</div>
+</div>
+<aside class="notes">
+Fit of a 1-degree polynomial (a linear model) to the Olympic marathon
+data.
+</aside>
+</section>
+<section id="cubic-fit" class="slide level2">
+<h2>Cubic Fit</h2>
+<p><span class="math display">\[f(x, \mathbf{ w}) = w_0 + w_1 x+ w_2 x^2
++ w_3 x^3\]</span></p>
+<div class="figure">
+<div id="olympic-marathon-polynomial-4-figure" class="figure-frame">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic-marathon-polynomial-4.svg" width="80%" style=" ">
+</object>
+</div>
+</div>
+<aside class="notes">
+Fit of a 3-degree polynomial (a cubic model) to the Olympic marathon
+data.
+</aside>
+</section>
+<section id="th-degree-polynomial-fit" class="slide level2">
+<h2>9th Degree Polynomial Fit</h2>
+<p><span class="math display">\[f(x, \mathbf{ w}) = w_0 + w_1 x+ w_2 x^2
++ \dots + w_9 x^9\]</span></p>
+<div class="figure">
+<div id="olympic-marathon-polynomial-10-figure" class="figure-frame">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic-marathon-polynomial-10.svg" width="80%" style=" ">
+</object>
+</div>
+</div>
+<aside class="notes">
+Fit of a 9-degree polynomial to the Olympic marathon data.
+</aside>
+</section>
+<section id="th-degree-polynomial-fit-1" class="slide level2">
+<h2>16th Degree Polynomial Fit</h2>
+<p><span class="math display">\[f(x, \mathbf{ w}) = w_0 + w_1 x+ w_2 x^2
++ \dots + w_{16} x^{16}\]</span></p>
+<div class="figure">
+<div id="olympic-marathon-polynomial-17-figure" class="figure-frame">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic-marathon-polynomial-17.svg" width="80%" style=" ">
+</object>
+</div>
+</div>
+<aside class="notes">
+Fit of a 16-degree polynomial to the Olympic marathon data.
+</aside>
+</section>
+<section id="th-degree-polynomial-fit-2" class="slide level2">
+<h2>28th Degree Polynomial Fit</h2>
+<p><span class="math display">\[f(x, \mathbf{ w}) = w_0 + w_1 x+ w_2 x^2
++ \dots + w_{28} x^{28}\]</span></p>
+<div class="figure">
+<div id="olympic-marathon-polynomial-29-figure" class="figure-frame">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic-marathon-polynomial-29.svg" width="80%" style=" ">
+</object>
+</div>
+</div>
+<aside class="notes">
+Fit of a 28-degree polynomial to the Olympic marathon data.
+</aside>
+</section>
+<section id="supervised-learning-challenges" class="slide level2">
+<h2>Supervised Learning Challenges</h2>
+<ol type="1">
+<li>choosing which features, <span class="math inline">\(\mathbf{
+x}\)</span>, are relevant in the prediction</li>
+<li>defining the appropriate <em>class of function</em>, <span
+class="math inline">\(f(\cdot)\)</span>.</li>
+<li>selecting the right parameters, <span class="math inline">\(\mathbf{
+w}\)</span>.</li>
+</ol>
+</section>
+<section id="feature-selection" class="slide level2">
+<h2>Feature Selection</h2>
+<ul>
+<li>Olympic prediction example only using year to predict pace.</li>
+<li>What else could we use?</li>
+<li>Can use <em>feature selection algorithms</em></li>
+</ul>
+</section>
+<section id="applications" class="slide level2">
+<h2>Applications</h2>
+<ul>
+<li>rank search results, what adverts to show, newsfeed ranking</li>
+<li>Features: number of likes, image present, friendship
+relationship</li>
+</ul>
+</section>
+<section id="class-of-function-fcdot" class="slide level2">
+<h2>Class of Function, <span
+class="math inline">\(f(\cdot)\)</span></h2>
+<ul>
+<li>Mapping characteristic between <span class="math inline">\(\mathbf{
+x}\)</span> and <span class="math inline">\(y\)</span>?
+<ul>
+<li><em>smooth</em> (similar inputs lead to similar outputs).</li>
+<li>linear function.</li>
+<li>In <em>forecasting</em>, <em>periodic</em></li>
+</ul></li>
+</ul>
+</section>
+<section id="section-7" class="slide level2">
+<h2></h2>
+<div class="centered" style="">
+\akiVehtariPicture{15%}
+</div>
+<div class="figure">
+<div id="bialik-friday-the-13th-figure" class="figure-frame">
+<div class="centered" style="">
+<img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/ml/bialik-fridaythe13th-1.png" width="70%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+</div>
+</div>
+<aside class="notes">
+This is a retrospective analysis of US births by Aki Vehtari. The
+challenges of forecasting. Even with seasonal and weekly effects removed
+there are significant effects on holidays, weekends, etc.
+</aside>
+</section>
+<section id="gelman-book" class="slide level2">
+<h2>Gelman Book</h2>
+<div class="figure">
+<div id="bayesian-data-analysis-figure" class="figure-frame">
+<div class="lamd-columns"
+style="display:flex; width:100%; justify-content:center; align-items:center; column-gap:1em;">
+<div style="flex:0 0 50%; max-width:50%;">
+<div class="centered" style="">
+<img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/ml/bda_cover_1.png" width="80%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+</div>
+<div style="flex:0 0 50%; max-width:50%;">
+<div class="centered" style="">
+<img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/ml/bda_cover.png" width="80%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+</div>
+</div>
+</div>
+</div>
+<aside class="notes">
+Two different editions of Bayesian Data Analysis <span class="citation"
+data-cites="Gelman:bayesian13">(Gelman et al., 2013)</span>.
+</aside>
+<div style="text-align:right">
+<span class="citation" data-cites="Gelman:bayesian13">Gelman et al.
+(2013)</span>
+</div>
+</section>
+<section id="class-of-function-neural-networks" class="slide level2">
+<h2>Class of Function: Neural Networks</h2>
+<ul>
+<li>ImageNet: <em>convolutional neural network</em></li>
+<li>Convolutional neural network introduces <em>invariances</em></li>
+</ul>
+</section>
+<section id="class-of-function-invariances" class="slide level2">
+<h2>Class of Function: Invariances</h2>
+<ul>
+<li>An invariance is a transformation of the input
+<ul>
+<li>e.g. a cat remains a cat regardless of location (translation), size
+(scale) or upside-down (rotation and reflection).</li>
+</ul></li>
+</ul>
+<!-- SECTION Deep Learning -->
+</section>
+<section id="deep-learning" class="slide level2">
+<h2>Deep Learning</h2>
+</section>
+<section id="deep-learning-1" class="slide level2">
+<h2>Deep Learning</h2>
+<ul>
+<li><p>These are interpretable models: vital for disease modeling
+etc.</p></li>
+<li><p>Modern machine learning methods are less interpretable</p></li>
+<li><p>Example: face recognition</p></li>
+</ul>
+<!-- No slide titles in this context -->
+</section>
+<section id="section-8" class="slide level2">
+<h2></h2>
+<p><span class="fragment fade-in"><small>Outline of the DeepFace
+architecture. A front-end of a single convolution-pooling-convolution
+filtering on the rectified input, followed by three locally-connected
+layers and two fully-connected layers. Color illustrates feature maps
+produced at each layer. The net includes more than 120 million
+parameters, where more than 95% come from the local and fully
+connected.</small></span></p>
+<div class="figure">
+<div id="deep-face-figure" class="figure-frame">
+<div class="centered" style="">
+<img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/deepface_neg.png" width="100%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+</div>
+</div>
+<aside class="notes">
+The DeepFace architecture <span class="citation"
+data-cites="Taigman:deepface14">(Taigman et al., 2014)</span>,
+visualized through colors to represent the functional mappings at each
+layer. There are 120 million parameters in the model.
+</aside>
+<div style="text-align:right">
+<small>Source: DeepFace <span class="citation"
+data-cites="Taigman:deepface14">(Taigman et al., 2014)</span></small>
+</div>
+</section>
+<section id="section-9" class="slide level2">
+<h2></h2>
+<div class="figure">
+<div id="early-pinball-figure" class="figure-frame">
+<div class="centered" style="">
+<img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/576px-Early_Pinball.jpg" width="50%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+</div>
+</div>
+<aside class="notes">
+Deep learning models are composition of simple functions. We can think
+of a pinball machine as an analogy. Each layer of pins corresponds to
+one of the layers of functions in the model. Input data is represented
+by the location of the ball from left to right when it is dropped in
+from the top. Output class comes from the position of the ball as it
+leaves the pins at the bottom.
+</aside>
+</section>
+<section id="section-10" class="slide level2">
+<h2></h2>
+<div class="figure">
+<div id="pinball-initialization-figure" class="figure-frame">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/pinball001.svg" width="80%" style=" ">
+</object>
+</div>
+</div>
+<aside class="notes">
+At initialization, the pins, which represent the parameters of the
+function, aren’t in the right place to bring the balls to the correct
+decisions.
+</aside>
+</section>
+<section id="section-11" class="slide level2">
+<h2></h2>
+<div class="figure">
+<div id="pinball-trained-figure" class="figure-frame">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/pinball002.svg" width="80%" style=" ">
+</object>
+</div>
+</div>
+<aside class="notes">
+After learning the pins are now in the right place to bring the balls to
+the correct decisions.
+</aside>
+</section>
+<section id="encoding-knowledge" class="slide level2">
+<h2>Encoding Knowledge</h2>
+<ul>
+<li>Encode invariance is encoding knowledge</li>
+<li>Unspecified invariances must be learned</li>
+<li>Learning may require a <em>lot</em> more data.</li>
+<li>Less <em>data efficient</em></li>
+</ul>
+</section>
+<section id="choosing-prediction-function" class="slide level2">
+<h2>Choosing Prediction Function</h2>
+<ul>
+<li>Any function e.g. polynomials for olympic data <span
+class="math display">\[
+f(x) = w_0 + w_1 x+ w_2 x^2 + w_3 x^3 + w_4 x^4.
+\]</span></li>
+</ul>
+</section>
+<section id="parameter-estimation-objective-functions"
+class="slide level2">
+<h2>Parameter Estimation: Objective Functions</h2>
+<ul>
+<li>After choosing <em>features</em> and <em>function class</em> we need
+<em>parameters</em>.</li>
+<li>Estimate <span class="math inline">\(\mathbf{ w}\)</span> by
+specifying an <em>objective function</em>.</li>
+</ul>
+</section>
+<section id="labels-and-squared-error" class="slide level2">
+<h2>Labels and Squared Error</h2>
+<ul>
+<li><em>Label</em> comes from supervisor or annotator.</li>
+<li>For regression <em>squared error</em>, <span class="math display">\[
+E(\mathbf{ w}) = \sum_{i=1}^n(y_i - f(\mathbf{ x}_i))^2
+\]</span></li>
+</ul>
+</section>
+<section id="data-provision" class="slide level2">
+<h2>Data Provision</h2>
+<ul>
+<li>Given <span class="math inline">\(n\)</span> inputs, <span
+class="math inline">\(\mathbf{ x}_1\)</span>, <span
+class="math inline">\(\mathbf{ x}_2\)</span>, <span
+class="math inline">\(\mathbf{ x}_3\)</span>, <span
+class="math inline">\(\dots\)</span>, <span
+class="math inline">\(\mathbf{ x}_n\)</span></li>
+<li>And labels <span class="math inline">\(y_1\)</span>, <span
+class="math inline">\(y_2\)</span>, <span
+class="math inline">\(y_3\)</span>, <span
+class="math inline">\(\dots\)</span>, <span
+class="math inline">\(y_n\)</span>.</li>
+<li>Sometimes label is cheap e.g. Newsfeed ranking</li>
+<li>Often it is very expensive.
+<ul>
+<li>Manual labour</li>
+</ul></li>
+</ul>
+</section>
+<section id="annotation" class="slide level2">
+<h2>Annotation</h2>
+<ul>
+<li>Human annotators
+<ul>
+<li>E.g. in ImageNet annotated using Amazon’s Mechanical Turk.
+(AI?)</li>
+</ul></li>
+<li>Without humans no AI.</li>
+<li>Not real intelligence, emulated</li>
+</ul>
+</section>
+<section id="annotation-1" class="slide level2">
+<h2>Annotation</h2>
+<ul>
+<li>Some tasks <em>easier</em> to annotate than <em>others</em>.
+<ul>
+<li>Sometimes annotation requires an experiment (Tecator data)</li>
+</ul></li>
+</ul>
+</section>
+<section id="annotation-2" class="slide level2">
+<h2>Annotation</h2>
+<ul>
+<li>Even for <em>easy</em> tasks there will be problems.
+<ul>
+<li>E.g. humans extrapolate the context of an image.</li>
+</ul></li>
+<li>Quality of ML is very sensitive to data.</li>
+<li>Investing in processes and tools is vital.</li>
+</ul>
+</section>
+<section id="misrepresentation-and-bias" class="slide level2">
+<h2>Misrepresentation and Bias</h2>
+<ul>
+<li>Bias can appear in the <em>model</em> and the <em>data</em></li>
+<li>Data needs to be carefully collected</li>
+<li>E.g. face detectors trained on Europeans tested in Africa.</li>
+</ul>
+</section>
+<section id="generalization-and-overfitting" class="slide level2">
+<h2>Generalization and Overfitting</h2>
+<ul>
+<li>How does the model perform on previously unseen data?</li>
+</ul>
+</section>
+<section id="validation-and-model-selection" class="slide level2">
+<h2>Validation and Model Selection</h2>
+<ul>
+<li>Selecting model at the <em>validation</em> step</li>
+</ul>
+</section>
+<section id="difficult-trap" class="slide level2">
+<h2>Difficult Trap</h2>
+<ul>
+<li>Vital that you avoid test data in training.</li>
+<li>Validation data is different from test data.</li>
+</ul>
+</section>
+<section id="hold-out-validation-on-olympic-marathon-data"
+class="slide level2">
+<h2>Hold Out Validation on Olympic Marathon Data</h2>
+</section>
+<section id="overfitting" class="slide level2">
+<h2>Overfitting</h2>
+<ul>
+<li>Increase number of basis functions we obtain a better ‘fit’ to the
+data.</li>
+<li>How will the model perform on previously unseen data?</li>
+<li>Let’s consider predicting the future.</li>
+</ul>
+</section>
+<section id="future-prediction-extrapolation" class="slide level2">
+<h2>Future Prediction: Extrapolation</h2>
+<div id="animation-olympic_val_extra_LM_polynomial_number"
+class="lamd-animation" role="region" aria-label=""
+data-animation-group="olympic_val_extra_LM_polynomial_number">
+<noscript>
+<style>#animation-olympic_val_extra_LM_polynomial_number .animation-controls{display:none}#animation-olympic_val_extra_LM_polynomial_number .olympic_val_extra_LM_polynomial_number~.olympic_val_extra_LM_polynomial_number{display:none}</style>
+</noscript>
+<div class="animation-controls">
+<p><small></small>
+<input id="range-olympic_val_extra_LM_polynomial_number" type="range" min="1" max="11" value="1" aria-label="Frame slider for " aria-valuemin="1" aria-valuemax="11" aria-valuenow="1" onchange="typeof lamdSetDivs==='function'&&lamdSetDivs('olympic_val_extra_LM_polynomial_number')" oninput="typeof lamdSetDivs==='function'&&lamdSetDivs('olympic_val_extra_LM_polynomial_number')">
+<button type="button" onclick="typeof lamdPlusDivs==='function'&&lamdPlusDivs(-1,'olympic_val_extra_LM_polynomial_number');" aria-label="Previous frame">❮</button>
+<button type="button" onclick="typeof lamdPlusDivs==='function'&&lamdPlusDivs(1,'olympic_val_extra_LM_polynomial_number');" aria-label="Next frame">❯</button></p>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+try{
+if(typeof showDivs==='function'){showDivs(1,'olympic_val_extra_LM_polynomial_number');}
+else{
+console.warn('[lamd] figure-animate.js not loaded; animation "'+'olympic_val_extra_LM_polynomial_number'+'" degraded to static first frame.');
+var c=document.getElementById('animation-olympic_val_extra_LM_polynomial_number');
+if(c){var ctrl=c.querySelector('.animation-controls');if(ctrl){ctrl.style.display='none';}}
+var f=document.getElementsByClassName('olympic_val_extra_LM_polynomial_number');
+for(var i=1;i<f.length;i++){f[i].style.display='none';}
+if(f.length>0){f[0].style.display='block';}
+}
+}catch(e){console.warn('[lamd] Animation "'+'olympic_val_extra_LM_polynomial_number'+'" failed to initialize:',e);}
+});
+</script>
+<div class="olympic_val_extra_LM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_extra_LM_polynomial_number"
+data-animation-frame="olympic_val_extra_LM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_extra_LM_polynomial_number001.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_extra_LM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_extra_LM_polynomial_number"
+data-animation-frame="olympic_val_extra_LM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_extra_LM_polynomial_number002.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_extra_LM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_extra_LM_polynomial_number"
+data-animation-frame="olympic_val_extra_LM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_extra_LM_polynomial_number003.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_extra_LM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_extra_LM_polynomial_number"
+data-animation-frame="olympic_val_extra_LM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_extra_LM_polynomial_number004.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_extra_LM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_extra_LM_polynomial_number"
+data-animation-frame="olympic_val_extra_LM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_extra_LM_polynomial_number005.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_extra_LM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_extra_LM_polynomial_number"
+data-animation-frame="olympic_val_extra_LM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_extra_LM_polynomial_number006.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_extra_LM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_extra_LM_polynomial_number"
+data-animation-frame="olympic_val_extra_LM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_extra_LM_polynomial_number007.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_extra_LM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_extra_LM_polynomial_number"
+data-animation-frame="olympic_val_extra_LM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_extra_LM_polynomial_number008.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_extra_LM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_extra_LM_polynomial_number"
+data-animation-frame="olympic_val_extra_LM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_extra_LM_polynomial_number009.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_extra_LM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_extra_LM_polynomial_number"
+data-animation-frame="olympic_val_extra_LM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_extra_LM_polynomial_number010.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_extra_LM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_extra_LM_polynomial_number"
+data-animation-frame="olympic_val_extra_LM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_extra_LM_polynomial_number011.svg" width="80%" style=" ">
+</object>
+</div>
+</div>
+</section>
+<section id="extrapolation" class="slide level2">
+<h2>Extrapolation</h2>
+<ul>
+<li>Here we are training beyond where the model has learnt.</li>
+<li>This is known as <em>extrapolation</em>.</li>
+<li>Extrapolation is predicting into the future here, but could be:
+<ul>
+<li>Predicting back to the unseen past (pre 1892)</li>
+<li>Spatial prediction (e.g. Cholera rates outside Manchester given
+rates inside Manchester).</li>
+</ul></li>
+</ul>
+</section>
+<section id="interpolation" class="slide level2">
+<h2>Interpolation</h2>
+<ul>
+<li>Predicting the wining time for 1946 Olympics is
+<em>interpolation</em>.</li>
+<li>This is because we have times from 1936 and 1948.</li>
+<li>If we want a model for <em>interpolation</em> how can we test
+it?</li>
+<li>One trick is to sample the validation set from throughout the data
+set.</li>
+</ul>
+</section>
+<section id="future-prediction-interpolation" class="slide level2">
+<h2>Future Prediction: Interpolation</h2>
+<div id="animation-olympic_val_inter_LM_polynomial_number"
+class="lamd-animation" role="region" aria-label=""
+data-animation-group="olympic_val_inter_LM_polynomial_number">
+<noscript>
+<style>#animation-olympic_val_inter_LM_polynomial_number .animation-controls{display:none}#animation-olympic_val_inter_LM_polynomial_number .olympic_val_inter_LM_polynomial_number~.olympic_val_inter_LM_polynomial_number{display:none}</style>
+</noscript>
+<div class="animation-controls">
+<p><small></small>
+<input id="range-olympic_val_inter_LM_polynomial_number" type="range" min="1" max="11" value="1" aria-label="Frame slider for " aria-valuemin="1" aria-valuemax="11" aria-valuenow="1" onchange="typeof lamdSetDivs==='function'&&lamdSetDivs('olympic_val_inter_LM_polynomial_number')" oninput="typeof lamdSetDivs==='function'&&lamdSetDivs('olympic_val_inter_LM_polynomial_number')">
+<button type="button" onclick="typeof lamdPlusDivs==='function'&&lamdPlusDivs(-1,'olympic_val_inter_LM_polynomial_number');" aria-label="Previous frame">❮</button>
+<button type="button" onclick="typeof lamdPlusDivs==='function'&&lamdPlusDivs(1,'olympic_val_inter_LM_polynomial_number');" aria-label="Next frame">❯</button></p>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+try{
+if(typeof showDivs==='function'){showDivs(1,'olympic_val_inter_LM_polynomial_number');}
+else{
+console.warn('[lamd] figure-animate.js not loaded; animation "'+'olympic_val_inter_LM_polynomial_number'+'" degraded to static first frame.');
+var c=document.getElementById('animation-olympic_val_inter_LM_polynomial_number');
+if(c){var ctrl=c.querySelector('.animation-controls');if(ctrl){ctrl.style.display='none';}}
+var f=document.getElementsByClassName('olympic_val_inter_LM_polynomial_number');
+for(var i=1;i<f.length;i++){f[i].style.display='none';}
+if(f.length>0){f[0].style.display='block';}
+}
+}catch(e){console.warn('[lamd] Animation "'+'olympic_val_inter_LM_polynomial_number'+'" failed to initialize:',e);}
+});
+</script>
+<div class="olympic_val_inter_LM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_inter_LM_polynomial_number"
+data-animation-frame="olympic_val_inter_LM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_inter_LM_polynomial_number001.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_inter_LM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_inter_LM_polynomial_number"
+data-animation-frame="olympic_val_inter_LM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_inter_LM_polynomial_number002.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_inter_LM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_inter_LM_polynomial_number"
+data-animation-frame="olympic_val_inter_LM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_inter_LM_polynomial_number003.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_inter_LM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_inter_LM_polynomial_number"
+data-animation-frame="olympic_val_inter_LM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_inter_LM_polynomial_number004.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_inter_LM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_inter_LM_polynomial_number"
+data-animation-frame="olympic_val_inter_LM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_inter_LM_polynomial_number005.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_inter_LM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_inter_LM_polynomial_number"
+data-animation-frame="olympic_val_inter_LM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_inter_LM_polynomial_number006.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_inter_LM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_inter_LM_polynomial_number"
+data-animation-frame="olympic_val_inter_LM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_inter_LM_polynomial_number007.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_inter_LM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_inter_LM_polynomial_number"
+data-animation-frame="olympic_val_inter_LM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_inter_LM_polynomial_number008.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_inter_LM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_inter_LM_polynomial_number"
+data-animation-frame="olympic_val_inter_LM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_inter_LM_polynomial_number009.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_inter_LM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_inter_LM_polynomial_number"
+data-animation-frame="olympic_val_inter_LM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_inter_LM_polynomial_number010.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_inter_LM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_inter_LM_polynomial_number"
+data-animation-frame="olympic_val_inter_LM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_inter_LM_polynomial_number011.svg" width="80%" style=" ">
+</object>
+</div>
+</div>
+</section>
+<section id="choice-of-validation-set" class="slide level2">
+<h2>Choice of Validation Set</h2>
+<ul>
+<li>The choice of validation set should reflect how you will use the
+model in practice.</li>
+<li>For extrapolation into the future we tried validating with data from
+the future.</li>
+<li>For interpolation we chose validation set from data.</li>
+<li>For different validation sets we could get different results.</li>
+</ul>
+</section>
+<section id="bias-variance-decomposition" class="slide level2">
+<h2>Bias Variance Decomposition</h2>
+<p>Generalisation error <span class="math display">\[\begin{align*}
+R(\mathbf{ w}) = &amp; \int \left(y- f^*(\mathbf{ x})\right)^2
+\mathbb{P}(y, \mathbf{ x}) \text{d}y\text{d}\mathbf{ x}\\
+&amp; \triangleq \mathbb{E}\left[ \left(y- f^*(\mathbf{ x})\right)^2
+\right].
+\end{align*}\]</span></p>
+</section>
+<section id="decompose" class="slide level2">
+<h2>Decompose</h2>
+<p>Decompose as <span class="math display">\[
+\begin{align*}
+\mathbb{E}\left[ \left(y- f(\mathbf{ x})\right)^2 \right] = &amp;
+\text{bias}\left[f^*(\mathbf{ x})\right]^2 \\
+&amp; + \text{variance}\left[f^*(\mathbf{ x})\right] \\ \\
+&amp;+\sigma^2,
+\end{align*}
+\]</span></p>
+</section>
+<section id="bias" class="slide level2">
+<h2>Bias</h2>
+<ul>
+<li><p>Given by <span class="math display">\[
+\text{bias}\left[f^*(\mathbf{ x})\right] =
+\mathbb{E}\left[f^*(\mathbf{ x})\right] - f(\mathbf{ x})
+\]</span></p></li>
+<li><p>Error due to bias comes from a model that’s too simple.</p></li>
+</ul>
+</section>
+<section id="variance" class="slide level2">
+<h2>Variance</h2>
+<ul>
+<li><p>Given by <span class="math display">\[
+\text{variance}\left[f^*(\mathbf{ x})\right] =
+\mathbb{E}\left[\left(f^*(\mathbf{ x}) - \mathbb{E}\left[f^*(\mathbf{
+x})\right]\right)^2\right].
+\]</span></p></li>
+<li><p>Slight variations in the training set cause changes in the
+prediction. Error due to variance is error in the model due to an overly
+complex model.</p></li>
+</ul>
+</section>
+<section id="section-12" class="slide level2">
+<h2></h2>
+<!--
+ 
+
+<div id="animation-bias-variance-plots" class="lamd-animation" role="region" aria-label="" data-animation-group="bias-variance-plots"><noscript><style>#animation-bias-variance-plots .animation-controls{display:none}#animation-bias-variance-plots .bias-variance-plots~.bias-variance-plots{display:none}</style></noscript><div class="animation-controls">
+<small></small> <input id="range-bias-variance-plots" type="range" min="0" max="10" value="0" aria-label="Frame slider for " aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" onchange="typeof lamdSetDivs==='function'&&lamdSetDivs('bias-variance-plots')" oninput="typeof lamdSetDivs==='function'&&lamdSetDivs('bias-variance-plots')">
+<button type="button" onclick="typeof lamdPlusDivs==='function'&&lamdPlusDivs(-1,'bias-variance-plots');" aria-label="Previous frame">❮</button>
+<button type="button" onclick="typeof lamdPlusDivs==='function'&&lamdPlusDivs(1,'bias-variance-plots');" aria-label="Next frame">❯</button>
+</div><script>
+document.addEventListener('DOMContentLoaded',function(){
+try{
+if(typeof showDivs==='function'){showDivs(1,'bias-variance-plots');}
+else{
+console.warn('[lamd] figure-animate.js not loaded; animation "'+'bias-variance-plots'+'" degraded to static first frame.');
+var c=document.getElementById('animation-bias-variance-plots');
+if(c){var ctrl=c.querySelector('.animation-controls');if(ctrl){ctrl.style.display='none';}}
+var f=document.getElementsByClassName('bias-variance-plots');
+for(var i=1;i<f.length;i++){f[i].style.display='none';}
+if(f.length>0){f[0].style.display='block';}
+}
+}catch(e){console.warn('[lamd] Animation "'+'bias-variance-plots'+'" failed to initialize:',e);}
+});
+</script>
+ 
+<div style="text-align:center;" class="bias-variance-plots" role="img" aria-label="bias-variance-plots" data-animation-frame="bias-variance-plots"><div class="centered " style=""><img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/ml/bias-variance000.png" width="80%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle"></div></div>
+<div style="text-align:center;" class="bias-variance-plots" role="img" aria-label="bias-variance-plots" data-animation-frame="bias-variance-plots"><div class="centered " style=""><img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/ml/bias-variance001.png" width="80%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle"></div></div>
+<div style="text-align:center;" class="bias-variance-plots" role="img" aria-label="bias-variance-plots" data-animation-frame="bias-variance-plots"><div class="centered " style=""><img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/ml/bias-variance002.png" width="80%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle"></div></div>
+<div style="text-align:center;" class="bias-variance-plots" role="img" aria-label="bias-variance-plots" data-animation-frame="bias-variance-plots"><div class="centered " style=""><img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/ml/bias-variance003.png" width="80%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle"></div></div>
+<div style="text-align:center;" class="bias-variance-plots" role="img" aria-label="bias-variance-plots" data-animation-frame="bias-variance-plots"><div class="centered " style=""><img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/ml/bias-variance004.png" width="80%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle"></div></div>
+<div style="text-align:center;" class="bias-variance-plots" role="img" aria-label="bias-variance-plots" data-animation-frame="bias-variance-plots"><div class="centered " style=""><img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/ml/bias-variance005.png" width="80%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle"></div></div>
+<div style="text-align:center;" class="bias-variance-plots" role="img" aria-label="bias-variance-plots" data-animation-frame="bias-variance-plots"><div class="centered " style=""><img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/ml/bias-variance006.png" width="80%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle"></div></div>
+<div style="text-align:center;" class="bias-variance-plots" role="img" aria-label="bias-variance-plots" data-animation-frame="bias-variance-plots"><div class="centered " style=""><img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/ml/bias-variance007.png" width="80%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle"></div></div>
+<div style="text-align:center;" class="bias-variance-plots" role="img" aria-label="bias-variance-plots" data-animation-frame="bias-variance-plots"><div class="centered " style=""><img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/ml/bias-variance008.png" width="80%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle"></div></div>
+<div style="text-align:center;" class="bias-variance-plots" role="img" aria-label="bias-variance-plots" data-animation-frame="bias-variance-plots"><div class="centered " style=""><img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/ml/bias-variance009.png" width="80%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle"></div></div>
+<div style="text-align:center;" class="bias-variance-plots" role="img" aria-label="bias-variance-plots" data-animation-frame="bias-variance-plots"><div class="centered " style=""><img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/ml/bias-variance010.png" width="80%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle"></div></div>
+
+</div>
+<div class="caption" style="">Figure: simple models on left complex models on right</div>
+-->
+</section>
+<section id="section-13" class="slide level2">
+<h2></h2>
+<div class="figure">
+<div id="bias-variance-figure" class="figure-frame">
+<div class="centered" style="">
+<img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/ml/bias-variance000.png" width="80%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+</div>
+</div>
+<aside class="notes">
+</aside>
+</section>
+<section id="section-14" class="slide level2">
+<h2></h2>
+<div class="figure">
+<div id="bias-variance-figure" class="figure-frame">
+<div class="centered" style="">
+<img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/ml/bias-variance001.png" width="80%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+</div>
+</div>
+<aside class="notes">
+</aside>
+</section>
+<section id="section-15" class="slide level2">
+<h2></h2>
+<div class="figure">
+<div id="bias-variance-figure" class="figure-frame">
+<div class="centered" style="">
+<img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/ml/bias-variance002.png" width="80%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+</div>
+</div>
+<aside class="notes">
+</aside>
+</section>
+<section id="section-16" class="slide level2">
+<h2></h2>
+<div class="figure">
+<div id="bias-variance-figure" class="figure-frame">
+<div class="centered" style="">
+<img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/ml/bias-variance003.png" width="80%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+</div>
+</div>
+<aside class="notes">
+</aside>
+</section>
+<section id="section-17" class="slide level2">
+<h2></h2>
+<div class="figure">
+<div id="bias-variance-figure" class="figure-frame">
+<div class="centered" style="">
+<img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/ml/bias-variance004.png" width="80%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+</div>
+</div>
+<aside class="notes">
+</aside>
+</section>
+<section id="section-18" class="slide level2">
+<h2></h2>
+<div class="figure">
+<div id="bias-variance-figure" class="figure-frame">
+<div class="centered" style="">
+<img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/ml/bias-variance005.png" width="80%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+</div>
+</div>
+<aside class="notes">
+</aside>
+</section>
+<section id="section-19" class="slide level2">
+<h2></h2>
+<div class="figure">
+<div id="bias-variance-figure" class="figure-frame">
+<div class="centered" style="">
+<img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/ml/bias-variance006.png" width="80%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+</div>
+</div>
+<aside class="notes">
+</aside>
+</section>
+<section id="section-20" class="slide level2">
+<h2></h2>
+<div class="figure">
+<div id="bias-variance-figure" class="figure-frame">
+<div class="centered" style="">
+<img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/ml/bias-variance007.png" width="80%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+</div>
+</div>
+<aside class="notes">
+</aside>
+</section>
+<section id="section-21" class="slide level2">
+<h2></h2>
+<div class="figure">
+<div id="bias-variance-figure" class="figure-frame">
+<div class="centered" style="">
+<img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/ml/bias-variance008.png" width="80%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+</div>
+</div>
+<aside class="notes">
+</aside>
+</section>
+<section id="section-22" class="slide level2">
+<h2></h2>
+<div class="figure">
+<div id="bias-variance-figure" class="figure-frame">
+<div class="centered" style="">
+<img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/ml/bias-variance009.png" width="80%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+</div>
+</div>
+<aside class="notes">
+</aside>
+</section>
+<section id="section-23" class="slide level2">
+<h2></h2>
+<div class="figure">
+<div id="bias-variance-figure" class="figure-frame">
+<div class="centered" style="">
+<img class="" src="https://mlatcl.github.io/dsa/slides/diagrams/ml/bias-variance010.png" width="80%" height="auto" align="center" style="background:none; border:none; box-shadow:none; display:block; margin-left:auto; margin-right:auto;vertical-align:middle">
+</div>
+</div>
+</div>
+<aside class="notes">
+</aside>
+</section>
+<section id="overfitting-1" class="slide level2">
+<h2>Overfitting</h2>
+<div class="figure">
+<div id="alex-ihler-overfitting-figure" class="figure-frame">
+<iframe width="600" height="450" src="https://www.youtube.com/embed/py8QrZPT48s?start=4m0s" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen>
+</iframe>
+</div>
+</div>
+<aside class="notes">
+Alex Ihler discusses polynomials and overfitting.
+</aside>
+<p><em>Alex Ihler on Polynomials and Overfitting</em></p>
+</section>
+<section id="olympic-data-with-bayesian-polynomials"
+class="slide level2">
+<h2>Olympic Data with Bayesian Polynomials</h2>
+<div id="animation-olympic_BLM_polynomial_number" class="lamd-animation"
+role="region" aria-label=""
+data-animation-group="olympic_BLM_polynomial_number">
+<noscript>
+<style>#animation-olympic_BLM_polynomial_number .animation-controls{display:none}#animation-olympic_BLM_polynomial_number .olympic_BLM_polynomial_number~.olympic_BLM_polynomial_number{display:none}</style>
+</noscript>
+<div class="animation-controls">
+<p><small></small>
+<input id="range-olympic_BLM_polynomial_number" type="range" min="1" max="29" value="1" aria-label="Frame slider for " aria-valuemin="1" aria-valuemax="29" aria-valuenow="1" onchange="typeof lamdSetDivs==='function'&&lamdSetDivs('olympic_BLM_polynomial_number')" oninput="typeof lamdSetDivs==='function'&&lamdSetDivs('olympic_BLM_polynomial_number')">
+<button type="button" onclick="typeof lamdPlusDivs==='function'&&lamdPlusDivs(-1,'olympic_BLM_polynomial_number');" aria-label="Previous frame">❮</button>
+<button type="button" onclick="typeof lamdPlusDivs==='function'&&lamdPlusDivs(1,'olympic_BLM_polynomial_number');" aria-label="Next frame">❯</button></p>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+try{
+if(typeof showDivs==='function'){showDivs(1,'olympic_BLM_polynomial_number');}
+else{
+console.warn('[lamd] figure-animate.js not loaded; animation "'+'olympic_BLM_polynomial_number'+'" degraded to static first frame.');
+var c=document.getElementById('animation-olympic_BLM_polynomial_number');
+if(c){var ctrl=c.querySelector('.animation-controls');if(ctrl){ctrl.style.display='none';}}
+var f=document.getElementsByClassName('olympic_BLM_polynomial_number');
+for(var i=1;i<f.length;i++){f[i].style.display='none';}
+if(f.length>0){f[0].style.display='block';}
+}
+}catch(e){console.warn('[lamd] Animation "'+'olympic_BLM_polynomial_number'+'" failed to initialize:',e);}
+});
+</script>
+<div class="olympic_BLM_polynomial_number" style="text-align:center;"
+role="img" aria-label="olympic_BLM_polynomial_number"
+data-animation-frame="olympic_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_BLM_polynomial_number001.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_BLM_polynomial_number" style="text-align:center;"
+role="img" aria-label="olympic_BLM_polynomial_number"
+data-animation-frame="olympic_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_BLM_polynomial_number002.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_BLM_polynomial_number" style="text-align:center;"
+role="img" aria-label="olympic_BLM_polynomial_number"
+data-animation-frame="olympic_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_BLM_polynomial_number003.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_BLM_polynomial_number" style="text-align:center;"
+role="img" aria-label="olympic_BLM_polynomial_number"
+data-animation-frame="olympic_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_BLM_polynomial_number004.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_BLM_polynomial_number" style="text-align:center;"
+role="img" aria-label="olympic_BLM_polynomial_number"
+data-animation-frame="olympic_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_BLM_polynomial_number005.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_BLM_polynomial_number" style="text-align:center;"
+role="img" aria-label="olympic_BLM_polynomial_number"
+data-animation-frame="olympic_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_BLM_polynomial_number006.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_BLM_polynomial_number" style="text-align:center;"
+role="img" aria-label="olympic_BLM_polynomial_number"
+data-animation-frame="olympic_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_BLM_polynomial_number007.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_BLM_polynomial_number" style="text-align:center;"
+role="img" aria-label="olympic_BLM_polynomial_number"
+data-animation-frame="olympic_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_BLM_polynomial_number008.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_BLM_polynomial_number" style="text-align:center;"
+role="img" aria-label="olympic_BLM_polynomial_number"
+data-animation-frame="olympic_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_BLM_polynomial_number009.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_BLM_polynomial_number" style="text-align:center;"
+role="img" aria-label="olympic_BLM_polynomial_number"
+data-animation-frame="olympic_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_BLM_polynomial_number010.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_BLM_polynomial_number" style="text-align:center;"
+role="img" aria-label="olympic_BLM_polynomial_number"
+data-animation-frame="olympic_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_BLM_polynomial_number011.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_BLM_polynomial_number" style="text-align:center;"
+role="img" aria-label="olympic_BLM_polynomial_number"
+data-animation-frame="olympic_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_BLM_polynomial_number012.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_BLM_polynomial_number" style="text-align:center;"
+role="img" aria-label="olympic_BLM_polynomial_number"
+data-animation-frame="olympic_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_BLM_polynomial_number013.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_BLM_polynomial_number" style="text-align:center;"
+role="img" aria-label="olympic_BLM_polynomial_number"
+data-animation-frame="olympic_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_BLM_polynomial_number014.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_BLM_polynomial_number" style="text-align:center;"
+role="img" aria-label="olympic_BLM_polynomial_number"
+data-animation-frame="olympic_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_BLM_polynomial_number015.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_BLM_polynomial_number" style="text-align:center;"
+role="img" aria-label="olympic_BLM_polynomial_number"
+data-animation-frame="olympic_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_BLM_polynomial_number016.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_BLM_polynomial_number" style="text-align:center;"
+role="img" aria-label="olympic_BLM_polynomial_number"
+data-animation-frame="olympic_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_BLM_polynomial_number017.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_BLM_polynomial_number" style="text-align:center;"
+role="img" aria-label="olympic_BLM_polynomial_number"
+data-animation-frame="olympic_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_BLM_polynomial_number018.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_BLM_polynomial_number" style="text-align:center;"
+role="img" aria-label="olympic_BLM_polynomial_number"
+data-animation-frame="olympic_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_BLM_polynomial_number019.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_BLM_polynomial_number" style="text-align:center;"
+role="img" aria-label="olympic_BLM_polynomial_number"
+data-animation-frame="olympic_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_BLM_polynomial_number020.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_BLM_polynomial_number" style="text-align:center;"
+role="img" aria-label="olympic_BLM_polynomial_number"
+data-animation-frame="olympic_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_BLM_polynomial_number021.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_BLM_polynomial_number" style="text-align:center;"
+role="img" aria-label="olympic_BLM_polynomial_number"
+data-animation-frame="olympic_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_BLM_polynomial_number022.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_BLM_polynomial_number" style="text-align:center;"
+role="img" aria-label="olympic_BLM_polynomial_number"
+data-animation-frame="olympic_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_BLM_polynomial_number023.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_BLM_polynomial_number" style="text-align:center;"
+role="img" aria-label="olympic_BLM_polynomial_number"
+data-animation-frame="olympic_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_BLM_polynomial_number024.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_BLM_polynomial_number" style="text-align:center;"
+role="img" aria-label="olympic_BLM_polynomial_number"
+data-animation-frame="olympic_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_BLM_polynomial_number025.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_BLM_polynomial_number" style="text-align:center;"
+role="img" aria-label="olympic_BLM_polynomial_number"
+data-animation-frame="olympic_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_BLM_polynomial_number026.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_BLM_polynomial_number" style="text-align:center;"
+role="img" aria-label="olympic_BLM_polynomial_number"
+data-animation-frame="olympic_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_BLM_polynomial_number027.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_BLM_polynomial_number" style="text-align:center;"
+role="img" aria-label="olympic_BLM_polynomial_number"
+data-animation-frame="olympic_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_BLM_polynomial_number028.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_BLM_polynomial_number" style="text-align:center;"
+role="img" aria-label="olympic_BLM_polynomial_number"
+data-animation-frame="olympic_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_BLM_polynomial_number029.svg" width="80%" style=" ">
+</object>
+</div>
+</div>
+</section>
+<section id="hold-out-validation" class="slide level2">
+<h2>Hold Out Validation</h2>
+<div id="animation-olympic_val_BLM_polynomial_number"
+class="lamd-animation" role="region" aria-label=""
+data-animation-group="olympic_val_BLM_polynomial_number">
+<noscript>
+<style>#animation-olympic_val_BLM_polynomial_number .animation-controls{display:none}#animation-olympic_val_BLM_polynomial_number .olympic_val_BLM_polynomial_number~.olympic_val_BLM_polynomial_number{display:none}</style>
+</noscript>
+<div class="animation-controls">
+<p><small></small>
+<input id="range-olympic_val_BLM_polynomial_number" type="range" min="1" max="29" value="1" aria-label="Frame slider for " aria-valuemin="1" aria-valuemax="29" aria-valuenow="1" onchange="typeof lamdSetDivs==='function'&&lamdSetDivs('olympic_val_BLM_polynomial_number')" oninput="typeof lamdSetDivs==='function'&&lamdSetDivs('olympic_val_BLM_polynomial_number')">
+<button type="button" onclick="typeof lamdPlusDivs==='function'&&lamdPlusDivs(-1,'olympic_val_BLM_polynomial_number');" aria-label="Previous frame">❮</button>
+<button type="button" onclick="typeof lamdPlusDivs==='function'&&lamdPlusDivs(1,'olympic_val_BLM_polynomial_number');" aria-label="Next frame">❯</button></p>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+try{
+if(typeof showDivs==='function'){showDivs(1,'olympic_val_BLM_polynomial_number');}
+else{
+console.warn('[lamd] figure-animate.js not loaded; animation "'+'olympic_val_BLM_polynomial_number'+'" degraded to static first frame.');
+var c=document.getElementById('animation-olympic_val_BLM_polynomial_number');
+if(c){var ctrl=c.querySelector('.animation-controls');if(ctrl){ctrl.style.display='none';}}
+var f=document.getElementsByClassName('olympic_val_BLM_polynomial_number');
+for(var i=1;i<f.length;i++){f[i].style.display='none';}
+if(f.length>0){f[0].style.display='block';}
+}
+}catch(e){console.warn('[lamd] Animation "'+'olympic_val_BLM_polynomial_number'+'" failed to initialize:',e);}
+});
+</script>
+<div class="olympic_val_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_BLM_polynomial_number"
+data-animation-frame="olympic_val_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_BLM_polynomial_number001.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_BLM_polynomial_number"
+data-animation-frame="olympic_val_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_BLM_polynomial_number002.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_BLM_polynomial_number"
+data-animation-frame="olympic_val_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_BLM_polynomial_number003.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_BLM_polynomial_number"
+data-animation-frame="olympic_val_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_BLM_polynomial_number004.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_BLM_polynomial_number"
+data-animation-frame="olympic_val_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_BLM_polynomial_number005.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_BLM_polynomial_number"
+data-animation-frame="olympic_val_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_BLM_polynomial_number006.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_BLM_polynomial_number"
+data-animation-frame="olympic_val_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_BLM_polynomial_number007.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_BLM_polynomial_number"
+data-animation-frame="olympic_val_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_BLM_polynomial_number008.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_BLM_polynomial_number"
+data-animation-frame="olympic_val_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_BLM_polynomial_number009.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_BLM_polynomial_number"
+data-animation-frame="olympic_val_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_BLM_polynomial_number010.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_BLM_polynomial_number"
+data-animation-frame="olympic_val_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_BLM_polynomial_number011.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_BLM_polynomial_number"
+data-animation-frame="olympic_val_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_BLM_polynomial_number012.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_BLM_polynomial_number"
+data-animation-frame="olympic_val_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_BLM_polynomial_number013.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_BLM_polynomial_number"
+data-animation-frame="olympic_val_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_BLM_polynomial_number014.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_BLM_polynomial_number"
+data-animation-frame="olympic_val_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_BLM_polynomial_number015.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_BLM_polynomial_number"
+data-animation-frame="olympic_val_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_BLM_polynomial_number016.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_BLM_polynomial_number"
+data-animation-frame="olympic_val_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_BLM_polynomial_number017.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_BLM_polynomial_number"
+data-animation-frame="olympic_val_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_BLM_polynomial_number018.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_BLM_polynomial_number"
+data-animation-frame="olympic_val_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_BLM_polynomial_number019.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_BLM_polynomial_number"
+data-animation-frame="olympic_val_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_BLM_polynomial_number020.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_BLM_polynomial_number"
+data-animation-frame="olympic_val_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_BLM_polynomial_number021.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_BLM_polynomial_number"
+data-animation-frame="olympic_val_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_BLM_polynomial_number022.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_BLM_polynomial_number"
+data-animation-frame="olympic_val_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_BLM_polynomial_number023.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_BLM_polynomial_number"
+data-animation-frame="olympic_val_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_BLM_polynomial_number024.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_BLM_polynomial_number"
+data-animation-frame="olympic_val_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_BLM_polynomial_number025.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_BLM_polynomial_number"
+data-animation-frame="olympic_val_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_BLM_polynomial_number026.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_BLM_polynomial_number"
+data-animation-frame="olympic_val_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_BLM_polynomial_number027.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_BLM_polynomial_number"
+data-animation-frame="olympic_val_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_BLM_polynomial_number028.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_val_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_val_BLM_polynomial_number"
+data-animation-frame="olympic_val_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_val_BLM_polynomial_number029.svg" width="80%" style=" ">
+</object>
+</div>
+</div>
+</section>
+<section id="fold-cross-validation" class="slide level2">
+<h2>5-fold Cross Validation</h2>
+<div id="animation-olympic_5cv05_BLM_polynomial_number"
+class="lamd-animation" role="region" aria-label=""
+data-animation-group="olympic_5cv05_BLM_polynomial_number">
+<noscript>
+<style>#animation-olympic_5cv05_BLM_polynomial_number .animation-controls{display:none}#animation-olympic_5cv05_BLM_polynomial_number .olympic_5cv05_BLM_polynomial_number~.olympic_5cv05_BLM_polynomial_number{display:none}</style>
+</noscript>
+<div class="animation-controls">
+<p><small></small>
+<input id="range-olympic_5cv05_BLM_polynomial_number" type="range" min="1" max="29" value="1" aria-label="Frame slider for " aria-valuemin="1" aria-valuemax="29" aria-valuenow="1" onchange="typeof lamdSetDivs==='function'&&lamdSetDivs('olympic_5cv05_BLM_polynomial_number')" oninput="typeof lamdSetDivs==='function'&&lamdSetDivs('olympic_5cv05_BLM_polynomial_number')">
+<button type="button" onclick="typeof lamdPlusDivs==='function'&&lamdPlusDivs(-1,'olympic_5cv05_BLM_polynomial_number');" aria-label="Previous frame">❮</button>
+<button type="button" onclick="typeof lamdPlusDivs==='function'&&lamdPlusDivs(1,'olympic_5cv05_BLM_polynomial_number');" aria-label="Next frame">❯</button></p>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+try{
+if(typeof showDivs==='function'){showDivs(1,'olympic_5cv05_BLM_polynomial_number');}
+else{
+console.warn('[lamd] figure-animate.js not loaded; animation "'+'olympic_5cv05_BLM_polynomial_number'+'" degraded to static first frame.');
+var c=document.getElementById('animation-olympic_5cv05_BLM_polynomial_number');
+if(c){var ctrl=c.querySelector('.animation-controls');if(ctrl){ctrl.style.display='none';}}
+var f=document.getElementsByClassName('olympic_5cv05_BLM_polynomial_number');
+for(var i=1;i<f.length;i++){f[i].style.display='none';}
+if(f.length>0){f[0].style.display='block';}
+}
+}catch(e){console.warn('[lamd] Animation "'+'olympic_5cv05_BLM_polynomial_number'+'" failed to initialize:',e);}
+});
+</script>
+<div class="olympic_5cv05_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_5cv05_BLM_polynomial_number"
+data-animation-frame="olympic_5cv05_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_5cv05_BLM_polynomial_number001.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_5cv05_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_5cv05_BLM_polynomial_number"
+data-animation-frame="olympic_5cv05_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_5cv05_BLM_polynomial_number002.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_5cv05_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_5cv05_BLM_polynomial_number"
+data-animation-frame="olympic_5cv05_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_5cv05_BLM_polynomial_number003.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_5cv05_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_5cv05_BLM_polynomial_number"
+data-animation-frame="olympic_5cv05_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_5cv05_BLM_polynomial_number004.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_5cv05_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_5cv05_BLM_polynomial_number"
+data-animation-frame="olympic_5cv05_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_5cv05_BLM_polynomial_number005.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_5cv05_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_5cv05_BLM_polynomial_number"
+data-animation-frame="olympic_5cv05_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_5cv05_BLM_polynomial_number006.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_5cv05_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_5cv05_BLM_polynomial_number"
+data-animation-frame="olympic_5cv05_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_5cv05_BLM_polynomial_number007.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_5cv05_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_5cv05_BLM_polynomial_number"
+data-animation-frame="olympic_5cv05_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_5cv05_BLM_polynomial_number008.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_5cv05_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_5cv05_BLM_polynomial_number"
+data-animation-frame="olympic_5cv05_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_5cv05_BLM_polynomial_number009.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_5cv05_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_5cv05_BLM_polynomial_number"
+data-animation-frame="olympic_5cv05_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_5cv05_BLM_polynomial_number010.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_5cv05_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_5cv05_BLM_polynomial_number"
+data-animation-frame="olympic_5cv05_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_5cv05_BLM_polynomial_number011.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_5cv05_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_5cv05_BLM_polynomial_number"
+data-animation-frame="olympic_5cv05_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_5cv05_BLM_polynomial_number012.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_5cv05_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_5cv05_BLM_polynomial_number"
+data-animation-frame="olympic_5cv05_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_5cv05_BLM_polynomial_number013.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_5cv05_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_5cv05_BLM_polynomial_number"
+data-animation-frame="olympic_5cv05_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_5cv05_BLM_polynomial_number014.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_5cv05_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_5cv05_BLM_polynomial_number"
+data-animation-frame="olympic_5cv05_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_5cv05_BLM_polynomial_number015.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_5cv05_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_5cv05_BLM_polynomial_number"
+data-animation-frame="olympic_5cv05_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_5cv05_BLM_polynomial_number016.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_5cv05_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_5cv05_BLM_polynomial_number"
+data-animation-frame="olympic_5cv05_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_5cv05_BLM_polynomial_number017.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_5cv05_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_5cv05_BLM_polynomial_number"
+data-animation-frame="olympic_5cv05_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_5cv05_BLM_polynomial_number018.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_5cv05_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_5cv05_BLM_polynomial_number"
+data-animation-frame="olympic_5cv05_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_5cv05_BLM_polynomial_number019.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_5cv05_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_5cv05_BLM_polynomial_number"
+data-animation-frame="olympic_5cv05_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_5cv05_BLM_polynomial_number020.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_5cv05_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_5cv05_BLM_polynomial_number"
+data-animation-frame="olympic_5cv05_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_5cv05_BLM_polynomial_number021.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_5cv05_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_5cv05_BLM_polynomial_number"
+data-animation-frame="olympic_5cv05_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_5cv05_BLM_polynomial_number022.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_5cv05_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_5cv05_BLM_polynomial_number"
+data-animation-frame="olympic_5cv05_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_5cv05_BLM_polynomial_number023.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_5cv05_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_5cv05_BLM_polynomial_number"
+data-animation-frame="olympic_5cv05_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_5cv05_BLM_polynomial_number024.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_5cv05_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_5cv05_BLM_polynomial_number"
+data-animation-frame="olympic_5cv05_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_5cv05_BLM_polynomial_number025.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_5cv05_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_5cv05_BLM_polynomial_number"
+data-animation-frame="olympic_5cv05_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_5cv05_BLM_polynomial_number026.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_5cv05_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_5cv05_BLM_polynomial_number"
+data-animation-frame="olympic_5cv05_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_5cv05_BLM_polynomial_number027.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_5cv05_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_5cv05_BLM_polynomial_number"
+data-animation-frame="olympic_5cv05_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_5cv05_BLM_polynomial_number028.svg" width="80%" style=" ">
+</object>
+</div>
+<div class="olympic_5cv05_BLM_polynomial_number"
+style="text-align:center;" role="img"
+aria-label="olympic_5cv05_BLM_polynomial_number"
+data-animation-frame="olympic_5cv05_BLM_polynomial_number">
+<object class="svgplot " data="https://mlatcl.github.io/dsa/slides/diagrams/ml/olympic_5cv05_BLM_polynomial_number029.svg" width="80%" style=" ">
+</object>
+</div>
+</div>
+<!-- Leave unsupervised and reinforcement learning in the notes -->
+</section>
+<section id="thanks" class="slide level2 scrollable">
+<h2 class="scrollable">Thanks!</h2>
+<ul>
+<li><p>company: <a href="https://trent.ai">Trent AI</a></p></li>
+<li><p>book: <a
+href="https://www.penguin.co.uk/books/455130/the-atomic-human-by-lawrence-neil-d/9780241625248">The
+Atomic Human</a></p></li>
+<li><p>twitter: <a
+href="https://twitter.com/lawrennd">@lawrennd</a></p></li>
+<li><p><a href="https://the-atomic-human.ai">The Atomic
+Human</a></p></li>
+<li><p>Guardian article on <a
+href="https://www.theguardian.com/media-network/2015/aug/25/africa-benefit-data-science-information">How
+African can benefit from the data revolution</a></p></li>
+<li><p>Guardian article on <a
+href="https://www.theguardian.com/media-network/2015/aug/25/africa-benefit-data-science-information">Data
+Science Africa</a></p></li>
+<li><p>blog posts:</p>
+<p><a
+href="http://inverseprobability.com/2014/07/01/open-data-science">Open
+Data Science</a></p></li>
+</ul>
+</section>
+<section id="references" class="slide level2 unnumbered scrollable">
+<h2 class="unnumbered scrollable">References</h2>
+<div id="refs" class="references csl-bib-body hanging-indent"
+role="list">
+<div id="ref-Andrade:consistent14" class="csl-entry" role="listitem">
+Andrade-Pacheco, R., Mubangizi, M., Quinn, J., Lawrence, N.D., 2014.
+Consistent mapping of government malaria records across a changing
+territory delimitation. Malaria Journal 13, 5. <a
+href="https://doi.org/10.1186/1475-2875-13-S1-P5">https://doi.org/10.1186/1475-2875-13-S1-P5</a>
+</div>
+<div id="ref-Gelman:bayesian13" class="csl-entry" role="listitem">
+Gelman, A., Carlin, J.B., Stern, H.S., Dunson, D.B., Vehtari, A., Rubin,
+D.B., 2013. Bayesian data analysis, 3rd ed. Chapman; Hall.
+</div>
+<div id="ref-McCulloch-neuron43" class="csl-entry" role="listitem">
+McCulloch, W.S., Pitts, W., 1943. A logical calculus of the ideas
+immanent in nervous activity. Bulletin of Mathematical Biophysics 5,
+115–133. <a
+href="https://doi.org/10.1007/BF02478259">https://doi.org/10.1007/BF02478259</a>
+</div>
+<div id="ref-Mubangizi:malaria14" class="csl-entry" role="listitem">
+Mubangizi, M., Andrade-Pacheco, R., Smith, M.T., Quinn, J., Lawrence,
+N.D., 2014. Malaria surveillance with multiple data sources using
+<span>Gaussian</span> process models, in: 1st International Conference
+on the Use of Mobile <span>ICT</span> in Africa.
+</div>
+<div id="ref-Russakovsky-imagenet15" class="csl-entry" role="listitem">
+Russakovsky, O., Deng, J., Su, H., Krause, J., Satheesh, S., Ma, S.,
+Huang, Z., Karpathy, A., Khosla, A., Bernstein, M., Berg, A.C., Fei-Fei,
+L., 2015. <span>ImageNet Large Scale Visual Recognition
+Challenge</span>. International Journal of Computer Vision (IJCV) 115,
+211–252. <a
+href="https://doi.org/10.1007/s11263-015-0816-y">https://doi.org/10.1007/s11263-015-0816-y</a>
+</div>
+<div id="ref-Taigman:deepface14" class="csl-entry" role="listitem">
+Taigman, Y., Yang, M., Ranzato, M., Wolf, L., 2014.
+<span>DeepFace</span>: Closing the gap to human-level performance in
+face verification, in: Proceedings of the <span>IEEE</span> Computer
+Society Conference on Computer Vision and Pattern Recognition. <a
+href="https://doi.org/10.1109/CVPR.2014.220">https://doi.org/10.1109/CVPR.2014.220</a>
+</div>
+</div>
+</section>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/reveal.js@3.9.2/lib/js/head.min.js"></script>
+  <script src="https://unpkg.com/reveal.js@3.9.2/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+        // Display a presentation progress bar
+        progress: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+        // Enable the slide overview mode
+        overview: true,
+        // Vertical centering of slides
+        center: true,
+        // Enables touch navigation on devices with touch input
+        touch: true,
+        // Turns fragments on and off globally
+        fragments: true,
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+        // Transition style
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+        // Transition speed
+        transitionSpeed: 'default', // default/fast/slow
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'fade', // none/fade/slide/convex/concave/zoom
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'https://unpkg.com/reveal.js@3.9.2/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'https://unpkg.com/reveal.js@3.9.2/plugin/zoom-js/zoom.js', async: true },
+          { src: 'https://unpkg.com/reveal.js@3.9.2/plugin/math/math.js', async: true },
+          { src: 'https://unpkg.com/reveal.js@3.9.2/plugin/notes/notes.js', async: true }
+        ]
+      });
+    </script>
+  <!-- Mermaid: after Reveal.initialize (CIP-0012 template hygiene) -->
+  <script>
+    if (typeof Reveal !== 'undefined' && Reveal.addEventListener) {
+      Reveal.addEventListener('ready', function () {
+        if (typeof mermaid === 'undefined') return;
+        mermaid.initialize({
+          startOnLoad: true,
+          theme: 'base',
+          themeVariables: {
+            primaryColor: '#4a90e2',
+            primaryTextColor: '#fff',
+            primaryBorderColor: '#357abd',
+            lineColor: '#67b246',
+            fontSize: '30px',
+            fontFamily: 'arial',
+            edgeLabelBackground: 'transparent',
+            tertiaryColor: 'transparent'
+          }
+        });
+      });
+    }
+  </script>
+    </body>
+</html>

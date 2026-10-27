@@ -16,7 +16,7 @@ author:
 date: 2021-10-06
 ipynb: true
 venue: Virtual DSA, Kimberley
-transition: None
+transition: "none"
 ---
 
 
