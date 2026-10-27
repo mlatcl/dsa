@@ -17,7 +17,7 @@ author:
 date: 2020-07-24
 ipynb: true
 venue: Virtual DSA
-transition: None
+transition: "none"
 ---
 
 \slides{\section{AI via ML Systems}

@@ -25,7 +25,7 @@ author:
   gscholar: EaaOeJwAAAAJ
 date: 2018-11-14
 venue: DSA, Abuja
-transition: None
+transition: "none"
 ---
 
 \include{_ml/includes/what-is-ml.md}

@@ -1,0 +1,8 @@
+# Course-specific notebook smoke defaults (scripts/smoke_notebooks.py).
+# skip: filename prefixes to omit. plot_dirs: extra dirs created under _notebooks.
+# timeout_by_prefix: optional per-prefix cell timeouts in seconds.
+skip:
+  - 04-gaussian-processes_modified  # local WIP variant, not the lecture notebook
+plot_dirs: []
+timeout: 900
+timeout_by_prefix: {}
